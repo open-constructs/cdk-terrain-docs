@@ -24,11 +24,15 @@ CDKTN [synthesizes](/docs/cli-reference/commands#synth) infrastructure that you 
 
 The following diagram shows how synthesizing a CDKTN application produces a series of artifacts in a designated output folder. You can then either use the JSON file with Terraform directly or provision your infrastructure using CDKTN CLI commands. All CDKTN CLI operations like `diff`, `deploy`, and `destroy` communicate with Terraform (or OpenTofu) for execution.
 
-![cdktn-terraform](/images/cdktn-terraform-workflow.png)
+import { WorkflowDiagram } from '/snippets/WorkflowDiagram.jsx';
+
+<WorkflowDiagram />
 
 CDKTN also automatically extracts the schemas from existing Terraform [providers](/docs/concepts/providers) or [modules](/docs/concepts/modules) and generates the necessary code bindings for your application.
 
-![cdktn-terraform](/images/provider-modules.png)
+import { ProviderModulesDiagram } from '/snippets/ProviderModulesDiagram.jsx';
+
+<ProviderModulesDiagram />
 
 ## CDKTN Components
 
@@ -42,7 +46,9 @@ CDKTN has two major components that allow you to define and provision infrastruc
 
 CDKTN applications are structured as a tree of [constructs](https://github.com/aws/constructs), which the AWS documentation defines as "classes that define a 'piece of system state'". The foundational classes to build a CDKTN application are `App`, `Stack`, and `Resource`.
 
-![cdktn-terraform](/images/cdktn-app-architecture.png)
+import { AppArchitectureDiagram } from '/snippets/AppArchitectureDiagram.jsx';
+
+<AppArchitectureDiagram />
 
 ### `App` Class
 
