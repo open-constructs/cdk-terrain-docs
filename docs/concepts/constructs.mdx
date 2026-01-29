@@ -1,15 +1,15 @@
 ---
-title: Constructs - CDK for Terraform
+title: Constructs - CDK Terrain
 sidebarTitle: Constructs
 description: >-
   “Constructs are classes that allow you to reuse existing configurations. Learn
-  about using constructs in your CDKTF application and how to publish custom
+  about using constructs in your CDKTN application and how to publish custom
   constructs.”
 ---
 
 ## What is a construct?
 
-In CDKTF, a construct is a building block that can represent anything from a single resource to a complex subset of your infrastructure. Each CDKTF program can be thought of as a tree being made up of constructs.
+In CDKTN, a construct is a building block that can represent anything from a single resource to a complex subset of your infrastructure. Each CDKTN program can be thought of as a tree being made up of constructs.
 
 Since constructs can also represent a collection of resources, they are often compared with Terraform modules, but constructs provide a superset of what Terraform modules can do.
 
@@ -23,7 +23,7 @@ Since constructs can also represent a collection of resources, they are often co
 
 - Constructs can be used to codify best practices across the organization / codebase.
 
-- Constructs can be tested like any other code within the CDKTF supported languages.
+- Constructs can be tested like any other code within the CDKTN supported languages.
 
 ### Constructs can enrich and modify resource configuration to match best practices
 
@@ -231,7 +231,7 @@ class MyStack extends TerraformStack {
 
 ### You can codify security constraints earlier in the process
 
-You can shift left security concerns for developers from the end of the workflow (like code review, CI, or solutions like Sentinel policies) to the point where the configuration is authored. This can be done through type hints (disallowing options that are not safe on the type system level) or through validation. Validations allow dynamic verification and are shown to users as hints during cdktf synth. If they are set to the error level, they also fail the synth.
+You can shift left security concerns for developers from the end of the workflow (like code review, CI, or solutions like Sentinel policies) to the point where the configuration is authored. This can be done through type hints (disallowing options that are not safe on the type system level) or through validation. Validations allow dynamic verification and are shown to users as hints during cdktn synth. If they are set to the error level, they also fail the synth.
 
 #### Through Types
 
@@ -282,7 +282,7 @@ class S3Bucket extends Construct {
 Since Constructs can contain logic and are not just a data structure, they can be tested. This allows you to test the composition of your constructs and the logic they contain. This can be done with snapshot testing or unit testing.
 
 ```ts
-import { Testing } from "cdktf";
+import { Testing } from "cdktn";
 import MyApplicationsAbstraction from "../main";
 import { Ec2 } from "./custom-ec2-construct";
 
@@ -320,15 +320,15 @@ describe("Construct is of correct composition and plans successfully", () => {
 
 ### Interoperability
 
-You can use the [`cdktf convert`](/terraform/cdktf/cli-reference/commands#convert) command to translate existing projects written in HashiCorp Configuration Language (HCL) into CDKTF-compatible projects. You could then use the output as a starting point to create custom constructs.
+You can use the [`cdktn convert`](/docs/cli-reference/commands#convert) command to translate existing projects written in HashiCorp Configuration Language (HCL) into CDKTN-compatible projects. You could then use the output as a starting point to create custom constructs.
 
-You can use the [`cdktf get`](/terraform/cdktf/cli-reference/commands#get) command to download Terraform modules and use them as constructs in your CDKTF project. You can also [publish these generated constructs](/terraform/cdktf/develop-custom-constructs/publishing-and-distribution#translate-constructs-to-terraform-modules) representing a module to your registry of choice.
+You can use the [`cdktn get`](/docs/cli-reference/commands#get) command to download Terraform modules and use them as constructs in your CDKTN project. You can also [publish these generated constructs](/docs/develop-custom-constructs/publishing-and-distribution#translate-constructs-to-terraform-modules) representing a module to your registry of choice.
 
-You cannot create a Terraform module directly from an existing CDKTF construct, but you can use the synthesized output of a CDKTF project as a Terraform Module. Refer to the [HCL interoperability](/terraform/cdktf/concepts/hcl-interoperability) page for more details.
+You cannot create a Terraform module directly from an existing CDKTN construct, but you can use the synthesized output of a CDKTN project as a Terraform Module. Refer to the [HCL interoperability](/docs/concepts/hcl-interoperability) page for more details.
 
 ## Constructs vs. Stacks
 
-[Stacks](/terraform/cdktf/concepts/stacks) represent a collection of infrastructure that CDK for Terraform (CDKTF) synthesizes as a dedicated Terraform configuration. Stacks allow you to separate the state management for multiple environments within an application. For example, you may want to have one stack that describes the infrastructure for development and another with slightly different inputs for testing.
+[Stacks](/docs/concepts/stacks) represent a collection of infrastructure that CDK Terrain (CDKTN) synthesizes as a dedicated Terraform configuration. Stacks allow you to separate the state management for multiple environments within an application. For example, you may want to have one stack that describes the infrastructure for development and another with slightly different inputs for testing.
 
 Constructs also provide a way to logically structure a set of resources, but you can only use them as part of a stack. A single stack may contain multiple constructs that act as building blocks to create the full infrastructure configuration. For example, you could use one construct to define a Kubernetes deployment and a different construct to define an AWS DynamoDB table.
 
@@ -338,7 +338,7 @@ Construct classes define system state at various levels of granularity. For exam
 
 The Cloud Development Kit community has identified three major construct types that indicate an increasing level of abstraction:
 
-- **L1** constructs define single resources or very small units of configuration. For example, the code bindings that CDKTF generates for each Terraform provider are considered L1 constructs. Another example would be creating a custom L1 construct that defines the configuration for an Azure virtual machine.
+- **L1** constructs define single resources or very small units of configuration. For example, the code bindings that CDKTN generates for each Terraform provider are considered L1 constructs. Another example would be creating a custom L1 construct that defines the configuration for an Azure virtual machine.
 
 - **L2** constructs define resources and include an intent-driven API with additional helper methods, properties, and functionality. For example, you could create a custom L2 construct that contains a method for adding files to an S3 Bucket and a method for granting resource access to a particular user group.
 
@@ -346,9 +346,9 @@ The Cloud Development Kit community has identified three major construct types t
 
 ## Use Constructs
 
-<Tip>Try [Deploy Applications with CDK for Terraform](/terraform/tutorials/cdktf/cdktf-applications) tutorial to use a custom construct. It includes the example code below.</Tip>
+<Tip>Try [Deploy Applications with CDK Terrain](/terraform/tutorials/cdktn/cdktn-applications) tutorial to use a custom construct. It includes the example code below.</Tip>
 
-You can import any [CDKTF-compatible](#available-constructs) construct that is available in your project's programming language. Then, you can create new instances of the construct and use any exposed properties to customize the construct configuration.
+You can import any [CDKTN-compatible](#available-constructs) construct that is available in your project's programming language. Then, you can create new instances of the construct and use any exposed properties to customize the construct configuration.
 
 The following example instantiates a construct called `KubernetesWebAppDeployment` and uses the available arguments to specify that the deployment will have two replicas.
 
@@ -357,7 +357,7 @@ The following example instantiates a construct called `KubernetesWebAppDeploymen
 
 ```ts TypeScript
 import { Construct } from "constructs";
-import { TerraformStack } from "cdktf";
+import { TerraformStack } from "cdktn";
 import { KubernetesWebAppDeployment } from "./constructs/kubernetes-web-app-deployment";
 import { KubernetesProvider } from "./.gen/providers/kubernetes/provider";
 import * as path from "path";
@@ -446,7 +446,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using kubernetes.Provider;
 using MyConstructs;
 
@@ -478,16 +478,16 @@ package main
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	kubernetes "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/kubernetes/provider"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/myconstructs"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	kubernetes "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/kubernetes/provider"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/myconstructs"
 
 	"os"
 	"path"
 )
 
-func NewConstructsStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewConstructsStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	cwd, _ := os.Getwd()
 
@@ -506,7 +506,7 @@ func NewConstructsStack(scope constructs.Construct, name string) cdktf.Terraform
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	NewConstructsStack(app, "constructs")
 
@@ -519,9 +519,9 @@ func main() {
 
 ### Scope
 
-You can instantiate a construct multiple times throughout your infrastructure. For example, you may want to create multiple S3 Buckets with different configurations. CDKTF infers a unique `name` for each instance from its `Construct#id` and parent construct. Instances that share the same parent element are considered to be part of the same scope. If you instantiate multiple constructs within the same scope, you must set a different `name` for each instance to avoid naming conflicts.
+You can instantiate a construct multiple times throughout your infrastructure. For example, you may want to create multiple S3 Buckets with different configurations. CDKTN infers a unique `name` for each instance from its `Construct#id` and parent construct. Instances that share the same parent element are considered to be part of the same scope. If you instantiate multiple constructs within the same scope, you must set a different `name` for each instance to avoid naming conflicts.
 
-The following example creates three different S3 buckets, two of which are in the same scope. When CDKTF synthesizes this configuration, the Terraform IDs for these resources will be the construct names prefixed by the stack name and suffixed with a hash for each Construct instance.
+The following example creates three different S3 buckets, two of which are in the same scope. When CDKTN synthesizes this configuration, the Terraform IDs for these resources will be the construct names prefixed by the stack name and suffixed with a hash for each Construct instance.
 
 
 <CodeGroup>
@@ -531,7 +531,7 @@ import { S3Bucket } from "./.gen/providers/aws/s3-bucket";
 import { S3BucketWebsiteConfiguration } from "./.gen/providers/aws/s3-bucket-website-configuration";
 import { AwsProvider } from "./.gen/providers/aws/provider";
 import { Construct } from "constructs";
-import { TerraformStack } from "cdktf";
+import { TerraformStack } from "cdktn";
 
 export class PublicS3Bucket extends Construct {
   public bucket: S3Bucket;
@@ -574,7 +574,7 @@ export class ConstructsScopeStack extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import App, TerraformStack
+from cdktn import App, TerraformStack
 
 class PublicS3Bucket(Construct):
 
@@ -614,8 +614,8 @@ app.synth()
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.TerraformStack;
-import com.hashicorp.cdktf.App;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.App;
 public class MainConstructScope extends TerraformStack {
 
     public MainConstructScope(Construct scope, String name){
@@ -658,7 +658,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using aws.Provider;
 using aws.S3Bucket;
 
@@ -708,9 +708,9 @@ package main
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
-	s3bucket "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/s3bucket"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
+	s3bucket "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/s3bucket"
 )
 
 type PublicS3Bucket struct {
@@ -733,8 +733,8 @@ func NewPublicS3Bucket(scope constructs.Construct, name *string) *PublicS3Bucket
 	}
 }
 
-func NewConstructsScopingStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewConstructsScopingStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	aws.NewAwsProvider(stack, jsii.String("aws"), &aws.AwsProviderConfig{
 		Region: jsii.String("us-east-1"),
@@ -746,7 +746,7 @@ func NewConstructsScopingStack(scope constructs.Construct, name string) cdktf.Te
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	NewConstructsScopingStack(app, "constructs-scope")
 
@@ -759,14 +759,14 @@ func main() {
 
 ### Aspects
 
-`Aspects` allow you to implement a visitor pattern, dynamically add or remove constructs, and automatically change attributes of existing constructs when you synthesize your CDTKF application. For example, you could use an aspect to help tag resources based on dynamic conditions. Refer to the [aspects documentation](/terraform/cdktf/concepts/aspects) for more details.
+`Aspects` allow you to implement a visitor pattern, dynamically add or remove constructs, and automatically change attributes of existing constructs when you synthesize your CDTKF application. For example, you could use an aspect to help tag resources based on dynamic conditions. Refer to the [aspects documentation](/docs/concepts/aspects) for more details.
 
 ### Available Constructs
 
-You can search the Amazon Web Services (AWS) [Construct Hub](https://constructs.dev/search?q=&cdk=cdktf&offset=0) for existing CDKTF-compatible constructs. We are also building the [AWS Adapter](/terraform/cdktf/create-and-deploy/aws-adapter), which lets you use AWS Constructs in your CDKTF projects.
+You can search the Amazon Web Services (AWS) [Construct Hub](https://constructs.dev/search?q=&cdk=cdktn&offset=0) for existing CDKTN-compatible constructs. We are also building the [AWS Adapter](/docs/create-and-deploy/aws-adapter), which lets you use AWS Constructs in your CDKTN projects.
 
 <Note>The AWS Adapter is in tech preview.</Note>
 
 ## Write and Publish Constructs
 
-You can write construct classes in any language and distribute them to other users. Refer to [Construct Design](/terraform/cdktf/develop-custom-constructs/construct-design) and [Construct Publishing and Distribution](/terraform/cdktf/develop-custom-constructs/publishing-and-distribution) for details.
+You can write construct classes in any language and distribute them to other users. Refer to [Construct Design](/docs/develop-custom-constructs/construct-design) and [Construct Publishing and Distribution](/docs/develop-custom-constructs/publishing-and-distribution) for details.

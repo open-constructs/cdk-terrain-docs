@@ -1,5 +1,5 @@
 ---
-title: Iterators - CDK for Terraform
+title: Iterators - CDK Terrain
 sidebarTitle: Iterators
 description: >-
   Iterators let you loop over a collection of values that are only available at runtime.
@@ -11,7 +11,7 @@ Iterators let you loop over a collection of values. You can use them to create m
 
 Use iterators when you need to reference dynamic data that is not known until after Terraform applies a configuration. For example, instance IDs that cloud providers assign on creation.
 
-When data is static or you know the values before [synthesizing your code](/terraform/cdktf/cli-reference/commands#synth), we recommend using loops in your preferred programming language.
+When data is static or you know the values before [synthesizing your code](/docs/cli-reference/commands#synth), we recommend using loops in your preferred programming language.
 
 ## Define Iterators
 
@@ -29,10 +29,10 @@ import {
   TerraformStack,
   TerraformVariable,
   Token,
-} from "cdktf";
+} from "cdktn";
 import { Construct } from "constructs";
-import { AwsProvider } from "@cdktf/provider-aws/lib/aws-provider";
-import { S3Bucket } from "@cdktf/provider-aws/lib/s3-bucket";
+import { AwsProvider } from "@cdktn/provider-aws/lib/aws-provider";
+import { S3Bucket } from "@cdktn/provider-aws/lib/s3-bucket";
 
 export class IteratorsStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -71,7 +71,7 @@ export class IteratorsStack extends TerraformStack {
 
 ```python Python
 from imports.aws.s3_bucket import S3Bucket
-from cdktf import TerraformIterator, TerraformVariable, TerraformLocal
+from cdktn import TerraformIterator, TerraformVariable, TerraformLocal
 
         list = TerraformVariable(self, "list",
                                  type="list(string)"
@@ -100,21 +100,21 @@ from cdktf import TerraformIterator, TerraformVariable, TerraformLocal
 ```
 
 ```go Go
-list := cdktf.NewTerraformVariable(stack, jsii.String("list"), &cdktf.TerraformVariableConfig{
-	Type: cdktf.VariableType_LIST_STRING(),
+list := cdktn.NewTerraformVariable(stack, jsii.String("list"), &cdktn.TerraformVariableConfig{
+	Type: cdktn.VariableType_LIST_STRING(),
 })
 
-simpleIterator := cdktf.TerraformIterator_FromList(list.ListValue())
+simpleIterator := cdktn.TerraformIterator_FromList(list.ListValue())
 
 s3bucket.NewS3Bucket(stack, jsii.String("iterator-bucket"), &s3bucket.S3BucketConfig{
 	ForEach: simpleIterator,
-	Bucket:  cdktf.Token_AsString(simpleIterator.Value(), nil),
+	Bucket:  cdktn.Token_AsString(simpleIterator.Value(), nil),
 })
 ```
 
 </CodeGroup>
 
-You cannot access the index of items when iterating over lists. This is because CDKTF implicitly converts lists to sets when iterating over them, but Terraform requires sets for iteration. This behavior prevents Terraform from accidentally deleting and recreating resources when their indices change. If you need an index, use an [escape hatch](/terraform/cdktf/concepts/resources#escape-hatch) with the [`count.index` property](/terraform/language/meta-arguments/count).
+You cannot access the index of items when iterating over lists. This is because CDKTN implicitly converts lists to sets when iterating over them, but Terraform requires sets for iteration. This behavior prevents Terraform from accidentally deleting and recreating resources when their indices change. If you need an index, use an [escape hatch](/docs/concepts/resources#escape-hatch) with the [`count.index` property](/terraform/language/meta-arguments/count).
 
 ## Using Iterators on Complex Types
 
@@ -130,10 +130,10 @@ import {
   TerraformStack,
   TerraformVariable,
   Token,
-} from "cdktf";
+} from "cdktn";
 import { Construct } from "constructs";
-import { AwsProvider } from "@cdktf/provider-aws/lib/aws-provider";
-import { S3Bucket } from "@cdktf/provider-aws/lib/s3-bucket";
+import { AwsProvider } from "@cdktn/provider-aws/lib/aws-provider";
+import { S3Bucket } from "@cdktn/provider-aws/lib/s3-bucket";
 
 export class IteratorsStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -203,7 +203,7 @@ import imports.aws.s3_bucket.S3BucketConfig;
 
 ```python Python
 from imports.aws.s3_bucket import S3Bucket
-from cdktf import TerraformIterator, TerraformVariable, TerraformLocal
+from cdktn import TerraformIterator, TerraformVariable, TerraformLocal
         map = TerraformLocal(self, "my-map", {
             "website": {
                 "name": "website-static-files",
@@ -258,7 +258,7 @@ new S3Bucket(this, "tag-bucket", new S3BucketConfig
 ```
 
 ```go Go
-complexList := cdktf.NewTerraformLocal(stack, jsii.String("complex-list-local"), []map[string]interface{}{
+complexList := cdktn.NewTerraformLocal(stack, jsii.String("complex-list-local"), []map[string]interface{}{
 	{
 		"name": "website-static-files",
 		"tags": map[string]string{"app": "website"},
@@ -269,7 +269,7 @@ complexList := cdktf.NewTerraformLocal(stack, jsii.String("complex-list-local"),
 	},
 })
 
-complexIterator := cdktf.TerraformIterator_FromList(complexList.Expression())
+complexIterator := cdktn.TerraformIterator_FromList(complexList.Expression())
 
 s3bucket.NewS3Bucket(stack, jsii.String("complex-iterator-bucket"), &s3bucket.S3BucketConfig{
 	ForEach: complexIterator,
@@ -441,7 +441,7 @@ dataAwsRoute53ZoneExample := dataawsroute53zone.NewDataAwsRoute53Zone(stack, jsi
 	PrivateZone: jsii.Bool(false),
 })
 
-exampleForEachIterator := cdktf.TerraformIterator_FromComplexList(cert.DomainValidationOptions(), jsii.String("domain_name"))
+exampleForEachIterator := cdktn.TerraformIterator_FromComplexList(cert.DomainValidationOptions(), jsii.String("domain_name"))
 
 records := route53record.NewRoute53Record(stack, jsii.String("record"), &route53record.Route53RecordConfig{
 	ForEach:        exampleForEachIterator,
@@ -453,11 +453,11 @@ records := route53record.NewRoute53Record(stack, jsii.String("record"), &route53
 	ZoneId:         dataAwsRoute53ZoneExample.ZoneId(),
 })
 
-recordsIterator := cdktf.TerraformIterator_FromResources(records)
+recordsIterator := cdktn.TerraformIterator_FromResources(records)
 
 acmcertificatevalidation.NewAcmCertificateValidation(stack, jsii.String("validation"), &acmcertificatevalidation.AcmCertificateValidationConfig{
 	CertificateArn:        cert.Arn(),
-	ValidationRecordFqdns: cdktf.Token_AsList(recordsIterator.PluckProperty(jsii.String("fqdn")), nil),
+	ValidationRecordFqdns: cdktn.Token_AsList(recordsIterator.PluckProperty(jsii.String("fqdn")), nil),
 })
 ```
 
@@ -600,7 +600,7 @@ orgMembers := datagithuborganization.NewDataGithubOrganization(stack, jsii.Strin
 	Name: &orgName,
 })
 
-orgMemberIterator := cdktf.TerraformIterator_FromList(orgMembers.Members())
+orgMemberIterator := cdktn.TerraformIterator_FromList(orgMembers.Members())
 
 teammembers.NewTeamMembers(stack, jsii.String("members"), &teammembers.TeamMembersConfig{
 	TeamId: team.Id(),
@@ -782,7 +782,7 @@ new S3BucketObject(this, "object", {
 ```
 
 ```go Go
-config := cdktf.NewTerraformLocal(stack, jsii.String("config-local"), []map[string]interface{}{
+config := cdktn.NewTerraformLocal(stack, jsii.String("config-local"), []map[string]interface{}{
 	{
 		"name": "website-static-files",
 		"tags": map[string]string{"app": "website"},
@@ -793,15 +793,15 @@ config := cdktf.NewTerraformLocal(stack, jsii.String("config-local"), []map[stri
 	},
 })
 
-s3BucketConfigurationIterator := cdktf.TerraformIterator_FromList(config.Expression())
+s3BucketConfigurationIterator := cdktn.TerraformIterator_FromList(config.Expression())
 s3Buckets := s3bucket.NewS3Bucket(stack, jsii.String("complex-iterator-buckets"), &s3bucket.S3BucketConfig{
 	ForEach: s3BucketConfigurationIterator,
 	Bucket:  s3BucketConfigurationIterator.GetString(jsii.String("name")),
 	Tags:    s3BucketConfigurationIterator.GetStringMap(jsii.String("tags")),
 })
 
-s3BucketsIterator := cdktf.TerraformIterator_FromResources(s3Buckets)
-helpFile := cdktf.NewTerraformAsset(stack, jsii.String("help"), &cdktf.TerraformAssetConfig{
+s3BucketsIterator := cdktn.TerraformIterator_FromResources(s3Buckets)
+helpFile := cdktn.NewTerraformAsset(stack, jsii.String("help"), &cdktn.TerraformAssetConfig{
 	Path: jsii.String("./help"),
 })
 s3bucketobject.NewS3BucketObject(stack, jsii.String("object"), &s3bucketobject.S3BucketObjectConfig{
@@ -942,7 +942,7 @@ new TerraformLocal(this, "map-with-names-as-key-and-tags-as-value-of-included", 
 ```
 
 ```go Go
-values := cdktf.NewTerraformLocal(stack, jsii.String("values"), []map[string]interface{}{
+values := cdktn.NewTerraformLocal(stack, jsii.String("values"), []map[string]interface{}{
 	{
 		"name": "website-static-files",
 		"tags": map[string]string{"app": "website"},
@@ -953,12 +953,12 @@ values := cdktf.NewTerraformLocal(stack, jsii.String("values"), []map[string]int
 	},
 })
 
-mapIterator := cdktf.TerraformIterator_FromList(values.Expression())
-cdktf.NewTerraformLocal(stack, jsii.String("list-of-keys"), mapIterator.Keys())
-cdktf.NewTerraformLocal(stack, jsii.String("list-of-values"), mapIterator.Values())
-cdktf.NewTerraformLocal(stack, jsii.String("list-of-names"), mapIterator.PluckProperty(jsii.String("name")))
-cdktf.NewTerraformLocal(stack, jsii.String("list-of-names-of-included"), mapIterator.ForExpressionForList(jsii.String("val.name if val.included")))
-cdktf.NewTerraformLocal(stack, jsii.String("map-with-names-as-key-and-tags-as-value-of-included"), mapIterator.ForExpressionForMap(jsii.String("val.name"), jsii.String("val.tags if val.included")))
+mapIterator := cdktn.TerraformIterator_FromList(values.Expression())
+cdktn.NewTerraformLocal(stack, jsii.String("list-of-keys"), mapIterator.Keys())
+cdktn.NewTerraformLocal(stack, jsii.String("list-of-values"), mapIterator.Values())
+cdktn.NewTerraformLocal(stack, jsii.String("list-of-names"), mapIterator.PluckProperty(jsii.String("name")))
+cdktn.NewTerraformLocal(stack, jsii.String("list-of-names-of-included"), mapIterator.ForExpressionForList(jsii.String("val.name if val.included")))
+cdktn.NewTerraformLocal(stack, jsii.String("map-with-names-as-key-and-tags-as-value-of-included"), mapIterator.ForExpressionForMap(jsii.String("val.name"), jsii.String("val.tags if val.included")))
 ```
 
 </CodeGroup>
@@ -1045,16 +1045,16 @@ new Instance(this, "server", new InstanceConfig
 ```
 
 ```go Go
-servers := cdktf.NewTerraformVariable(stack, jsii.String("servers"), &cdktf.TerraformVariableConfig{
-	Type: cdktf.VariableType_NUMBER(),
+servers := cdktn.NewTerraformVariable(stack, jsii.String("servers"), &cdktn.TerraformVariableConfig{
+	Type: cdktn.VariableType_NUMBER(),
 })
-count := cdktf.TerraformCount_Of(servers.NumberValue())
+count := cdktn.TerraformCount_Of(servers.NumberValue())
 instance.NewInstance(stack, jsii.String("server"), &instance.InstanceConfig{
 	Count:        count,
 	Ami:          jsii.String("ami-a1b2c3d4"),
 	InstanceType: jsii.String("t2.micro"),
 	Tags: &map[string]*string{
-		"Name": jsii.String("Server ${" + *cdktf.Token_AsString(count.Index(), nil) + "}"),
+		"Name": jsii.String("Server ${" + *cdktn.Token_AsString(count.Index(), nil) + "}"),
 	},
 })
 ```

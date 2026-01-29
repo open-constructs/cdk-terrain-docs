@@ -1,5 +1,5 @@
 ---
-title: Data Sources - CDK for Terraform
+title: Data Sources - CDK Terrain
 sidebarTitle: Data Sources
 description: >-
   Use data sources to allow Terraform to use external data, function output, and
@@ -12,11 +12,11 @@ description: >-
 
 Use data sources when you need to reference dynamic data that is not known until after Terraform applies a configuration. For example, instance IDs that cloud providers assign on creation.
 
-When data is static or you know the values before [synthesizing your code](/terraform/cdktf/cli-reference/commands#synth), we recommend creating static references in your preferred programming language or using [Terraform variables](/terraform/cdktf/concepts/variables-and-outputs).
+When data is static or you know the values before [synthesizing your code](/docs/cli-reference/commands#synth), we recommend creating static references in your preferred programming language or using [Terraform variables](/docs/concepts/variables-and-outputs).
 
 ## Define Data Sources
 
-Data Sources are part of a [Terraform provider](/terraform/cdktf/concepts/providers). All classes representing Data Sources are prefixed with `Data`.
+Data Sources are part of a [Terraform provider](/docs/concepts/providers). All classes representing Data Sources are prefixed with `Data`.
 
 In the following TypeScript example, a Terraform data source fetches the AWS region `DataAwsRegion` from the AWS provider.
 
@@ -24,10 +24,10 @@ In the following TypeScript example, a Terraform data source fetches the AWS reg
 <CodeGroup>
 
 ```ts TypeScript
-import { TerraformStack } from "cdktf";
+import { TerraformStack } from "cdktn";
 import { Construct } from "constructs";
-import { AwsProvider } from "@cdktf/provider-aws/lib/aws-provider";
-import { DataAwsRegion } from "@cdktf/provider-aws/lib/data-aws-region";
+import { AwsProvider } from "@cdktn/provider-aws/lib/aws-provider";
+import { DataAwsRegion } from "@cdktn/provider-aws/lib/data-aws-region";
 
 export class DataSourcesStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -63,7 +63,7 @@ public class DataSourcesDefine extends TerraformStack {
 ```
 
 ```python Python
-from cdktf import TerraformStack, App
+from cdktn import TerraformStack, App
 from imports.aws.data_aws_region import DataAwsRegion
 from imports.aws.provider import AwsProvider
 
@@ -90,7 +90,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using aws.Provider;
 using aws.DataAwsRegion;
 
@@ -119,13 +119,13 @@ namespace Examples
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/dataawsregion"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/dataawsregion"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 )
 
-func NewDatasourcesStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewDatasourcesStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	aws.NewAwsProvider(stack, jsii.String("aws"), &aws.AwsProviderConfig{
 		Region: jsii.String("eu-central-1"),
@@ -144,7 +144,7 @@ func NewDatasourcesStack(scope constructs.Construct, name string) cdktf.Terrafor
 
 ## Remote State Data Source
 
-The [`terraform_remote_state` data source](/terraform/language/state/remote-state-data) retrieves state data from a remote [Terraform backend](/terraform/language/backend). This allows you to use the root-level outputs of one or more Terraform configurations as input data for another configuration. For example, a core infrastructure team can handle building the core machines, networking, etc. and then expose some information to other teams that allows them to run their own infrastructure. Refer to the [Remote Backends page](/terraform/cdktf/concepts/remote-backends) for more details.
+The [`terraform_remote_state` data source](/terraform/language/state/remote-state-data) retrieves state data from a remote [Terraform backend](/terraform/language/backend). This allows you to use the root-level outputs of one or more Terraform configurations as input data for another configuration. For example, a core infrastructure team can handle building the core machines, networking, etc. and then expose some information to other teams that allows them to run their own infrastructure. Refer to the [Remote Backends page](/docs/concepts/remote-backends) for more details.
 
 The following example uses the global `DataTerraformRemoteState` to reference a Terraform Output of another Terraform configuration.
 
@@ -152,11 +152,11 @@ The following example uses the global `DataTerraformRemoteState` to reference a 
 <CodeGroup>
 
 ```ts TypeScript
-import { TerraformStack } from "cdktf";
+import { TerraformStack } from "cdktn";
 import { Construct } from "constructs";
-import { AwsProvider } from "@cdktf/provider-aws/lib/aws-provider";
-import { DataTerraformRemoteState } from "cdktf";
-import { Instance } from "@cdktf/provider-aws/lib/instance";
+import { AwsProvider } from "@cdktn/provider-aws/lib/aws-provider";
+import { DataTerraformRemoteState } from "cdktn";
+import { Instance } from "@cdktn/provider-aws/lib/instance";
 
 export class DataSourcesStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -183,8 +183,8 @@ export class DataSourcesStack extends TerraformStack {
 ```
 
 ```java Java
-import com.hashicorp.cdktf.DataTerraformRemoteState;
-import com.hashicorp.cdktf.DataTerraformRemoteStateRemoteConfig;
+import io.cdktn.cdktn.DataTerraformRemoteState;
+import io.cdktn.cdktn.DataTerraformRemoteStateRemoteConfig;
 import imports.aws.instance.Instance;
 import imports.aws.instance.InstanceConfig;
 
@@ -209,8 +209,8 @@ public class DataSourcesRemoteState extends TerraformStack {
 ```
 
 ```python Python
-from cdktf import TerraformStack, App
-from cdktf import DataTerraformRemoteState, NamedRemoteWorkspace
+from cdktn import TerraformStack, App
+from cdktn import DataTerraformRemoteState, NamedRemoteWorkspace
 class HelloTerraformRemoteState(TerraformStack):
     def __init__(self, scope: Construct, id: str):
         super().__init__(scope, id)
@@ -240,7 +240,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using aws.Provider;
 using aws.Instance;
 
@@ -276,21 +276,21 @@ namespace Examples
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/instance"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/instance"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 )
 
-func RemoteStateDataSourceStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func RemoteStateDataSourceStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	aws.NewAwsProvider(stack, jsii.String("aws"), &aws.AwsProviderConfig{
 		Region: jsii.String("eu-central-1"),
 	})
 
-	remote_state := cdktf.NewDataTerraformRemoteState(stack, jsii.String("remote_state"), &cdktf.DataTerraformRemoteStateRemoteConfig{
+	remote_state := cdktn.NewDataTerraformRemoteState(stack, jsii.String("remote_state"), &cdktn.DataTerraformRemoteStateRemoteConfig{
 		Organization: jsii.String("hashicorp"),
-		Workspaces:   cdktf.NewNamedRemoteWorkspace(jsii.String("vpc-prod")),
+		Workspaces:   cdktn.NewNamedRemoteWorkspace(jsii.String("vpc-prod")),
 	})
 
 	instance.NewInstance(stack, jsii.String("region"), &instance.InstanceConfig{

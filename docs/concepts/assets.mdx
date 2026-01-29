@@ -1,12 +1,12 @@
 ---
-title: Assets - CDK for Terraform
+title: Assets - CDK Terrain
 sidebarTitle: Assets
 description: >-
   Asset constructs manage assets for resources that need them, such as
   template_file, S3 bucket objects, or Lambda function archive files.
 ---
 
-In CDK for Terraform (CDKTF) v0.4+, asset constructs can manage assets for resources that need them, such as template_file, S3 bucket objects, or Lambda function archive files. You can use Terraform assets to move existing files or directories into your CDKTF application so that you can use them in resource definitions.
+In CDK Terrain (CDKTN) v0.4+, asset constructs can manage assets for resources that need them, such as template_file, S3 bucket objects, or Lambda function archive files. You can use Terraform assets to move existing files or directories into your CDKTN application so that you can use them in resource definitions.
 
 Assets are especially useful for:
 
@@ -15,7 +15,7 @@ Assets are especially useful for:
 
 ## Usage Example
 
-<Tip>Try the [Deploy Multiple Lambda Functions with TypeScript](/terraform/tutorials/cdktf/cdktf-assets-stacks-lambda) tutorial. This tutorial guides you through using a `TerraformAsset` to archive a Lambda function, uploading the archive to an S3 bucket, then deploying the Lambda function.</Tip>
+<Tip>Try the [Deploy Multiple Lambda Functions with TypeScript](/terraform/tutorials/cdktn/cdktn-assets-stacks-lambda) tutorial. This tutorial guides you through using a `TerraformAsset` to archive a Lambda function, uploading the archive to an S3 bucket, then deploying the Lambda function.</Tip>
 
 The following example uses `TerraformAsset` to upload the contents of the specified directory into an S3 Bucket. The `TerraformAsset` is responsible for making sure the directory ends up in the correct output folder as a zip file that the `S3BucketObject` can reference.
 
@@ -26,8 +26,8 @@ The stack output directory in `cdktf.out` contains all of the assets that `Terra
 
 ```ts TypeScript
 import { Construct } from "constructs";
-import { TerraformStack } from "cdktf";
-import { TerraformAsset, AssetType } from "cdktf";
+import { TerraformStack } from "cdktn";
+import { TerraformAsset, AssetType } from "cdktn";
 import { AwsProvider } from "./.gen/providers/aws/provider";
 import { S3Bucket } from "./.gen/providers/aws/s3-bucket";
 import { S3BucketObject } from "./.gen/providers/aws/s3-bucket-object";
@@ -61,7 +61,7 @@ export class AssetsStack extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import TerraformAsset, TerraformStack, AssetType
+from cdktn import TerraformAsset, TerraformStack, AssetType
 from imports.aws.provider import AwsProvider
 from imports.aws.s3_bucket import S3Bucket
 from imports.aws.s3_bucket_object import S3BucketObject
@@ -87,17 +87,17 @@ class MyAssetStack(TerraformStack):
             source=asset.path
         )
 
-app = cdktf.App()
+app = cdktn.App()
 MyAssetStack(app, "demo")
 app.synth()
 ```
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.TerraformStack;
-import com.hashicorp.cdktf.TerraformAsset;
-import com.hashicorp.cdktf.TerraformAssetConfig;
-import com.hashicorp.cdktf.AssetType;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.TerraformAsset;
+import io.cdktn.cdktn.TerraformAssetConfig;
+import io.cdktn.cdktn.AssetType;
 import imports.aws.provider.AwsProvider;
 import imports.aws.provider.AwsProviderConfig;
 import imports.aws.s3_bucket.S3Bucket;
@@ -150,7 +150,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using aws.Provider;
 using aws.S3Bucket;
 using aws.S3BucketObject;
@@ -198,14 +198,14 @@ import (
 
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/s3bucket"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/s3bucketobject"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/s3bucket"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/s3bucketobject"
 )
 
-func NewAssetsStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewAssetsStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	cwd, _ := os.Getwd()
 
@@ -217,9 +217,9 @@ func NewAssetsStack(scope constructs.Construct, name string) cdktf.TerraformStac
 		Bucket: jsii.String("demo"),
 	})
 
-	asset := cdktf.NewTerraformAsset(stack, jsii.String("lambda-asset"), &cdktf.TerraformAssetConfig{
+	asset := cdktn.NewTerraformAsset(stack, jsii.String("lambda-asset"), &cdktn.TerraformAssetConfig{
 		Path: jsii.String(path.Join(cwd, "lambda")),
-		Type: cdktf.AssetType_ARCHIVE,
+		Type: cdktn.AssetType_ARCHIVE,
 	})
 
 	s3bucketobject.NewS3BucketObject(stack, jsii.String("lambda-archive"), &s3bucketobject.S3BucketObjectConfig{
@@ -232,7 +232,7 @@ func NewAssetsStack(scope constructs.Construct, name string) cdktf.TerraformStac
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	NewAssetsStack(app, "assets")
 

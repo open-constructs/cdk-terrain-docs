@@ -1,12 +1,12 @@
 ---
-title: Unit Tests - CDK for Terraform
+title: Unit Tests - CDK Terrain
 sidebarTitle: Unit Tests
-description: Write assertions and snapshot tests for your CDK for Terraform application.
+description: Write assertions and snapshot tests for your CDK Terrain application.
 ---
 
 Testing your application can give you faster feedback cycles and guard you against unwanted changes. Testing is currently supported in Typescript with jest and compatible with any testing framework that supports assertions for all other languages.
 
-We generate all files necessary to start testing when you run `cdktf init` so that you can start writing tests right away.
+We generate all files necessary to start testing when you run `cdktn init` so that you can start writing tests right away.
 
 ## Add Testing to Your Application
 
@@ -15,22 +15,22 @@ If you would like to add testing to an existing project, refer the following res
 - **TypeScript:** Follow TypeScript's [Getting Started guide](https://jestjs.io/docs/getting-started) for testing with Jest. Then, add these lines in a [setup file](https://jestjs.io/docs/configuration#setupfiles-array):
 
   ```js
-  const cdktf = require("cdktf");
-  cdktf.Testing.setupJest();
+  const cdktn = require("cdktn");
+  cdktn.Testing.setupJest();
   ```
 
-- **Python:** Follow the [Get Started guide](https://docs.pytest.org/en/7.1.x/getting-started.html) for pytest. The assertions for CDKTF are available in the `cdktf` package under `Testing`.
-- **Java:** Follow the [Using JUnit documentation](https://docs.gradle.org/current/userguide/java_testing.html). The assertions for CDKTF specific are available in the `cdktf` package under `Testing`.
-- **C#:** Follow the [Getting Started with xUnit.net guide](https://xunit.net/docs/getting-started/netcore/cmdline). The assertions for CDKTF are available in the `cdktf` package under `Testing`.
-- **Go:** Follow the [Add a Test guide](https://go.dev/doc/tutorial/add-a-test) in the Go documentation. The assertions for CDKTF specific are available in the `cdktf` package under `Testing`.
+- **Python:** Follow the [Get Started guide](https://docs.pytest.org/en/7.1.x/getting-started.html) for pytest. The assertions for CDKTN are available in the `cdktn` package under `Testing`.
+- **Java:** Follow the [Using JUnit documentation](https://docs.gradle.org/current/userguide/java_testing.html). The assertions for CDKTN specific are available in the `cdktn` package under `Testing`.
+- **C#:** Follow the [Getting Started with xUnit.net guide](https://xunit.net/docs/getting-started/netcore/cmdline). The assertions for CDKTN are available in the `cdktn` package under `Testing`.
+- **Go:** Follow the [Add a Test guide](https://go.dev/doc/tutorial/add-a-test) in the Go documentation. The assertions for CDKTN specific are available in the `cdktn` package under `Testing`.
 
 ### Write Assertions
 
-The following Typescript example uses `Testing.synth` to test a part of the application. Given the desired scope to test, a JSON string representing the synthesized HCL-JSON is returned. Then the custom assertions under `Testing` in the cdktf package can be used to verify the code acts as intended. `Testing.synth` can test the `Stack` that extends the `TerraformStack`.
+The following Typescript example uses `Testing.synth` to test a part of the application. Given the desired scope to test, a JSON string representing the synthesized HCL-JSON is returned. Then the custom assertions under `Testing` in the cdktn package can be used to verify the code acts as intended. `Testing.synth` can test the `Stack` that extends the `TerraformStack`.
 
 The other examples use `Testing.synthScope` to test a part of the application. This creates a scope to test a subset of the application and returns a JSON string representing the synthesized HCL-JSON. Then it uses custom matchers to verify the code acts as intended. `Testing.synthScope` can test the `Constructs` that extends the `IConstruct`.
 
-<Note>CDK for Terraform v0.20 introduces support for a `Testing.synthHcl` function. However, that is not compatible with other assertions, like `toHaveResourceWithProperties` etc. and should not be used.</Note>
+<Note>CDK Terrain v0.20 introduces support for a `Testing.synthHcl` function. However, that is not compatible with other assertions, like `toHaveResourceWithProperties` etc. and should not be used.</Note>
 
 Examples in
 
@@ -44,7 +44,7 @@ Examples in
 <CodeGroup>
 
 ```ts TypeScript
-import { Testing } from "cdktf";
+import { Testing } from "cdktn";
 import { Image } from "../.gen/providers/docker/image";
 import { Container } from "../.gen/providers/docker/container";
 import MyApplicationsAbstraction from "../app"; // Could be a class extending from Construct
@@ -72,7 +72,7 @@ describe("Unit testing using assertions", () => {
 
 ```python Python
 import pytest
-from cdktf import Testing
+from cdktn import Testing
 from imports.docker.image import Image
 from imports.docker.container import Container
 from app import MyApplicationsAbstraction # Could be a class extending from Construct
@@ -95,10 +95,10 @@ class TestApplication:
 ```java Java
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import com.hashicorp.cdktf.Testing;
+import io.cdktn.cdktn.Testing;
 import imports.docker.Container;
 import imports.docker.Image;
-import com.hashicorp.cdktf.MyApplicationsAbstraction; // Could be a class extending from Construct
+import io.cdktn.cdktn.MyApplicationsAbstraction; // Could be a class extending from Construct
 
 public class TestApplication {
 
@@ -124,7 +124,7 @@ public class TestApplication {
 
 ```csharp C#
 using Xunit;
-using HashiCorp.Cdktf; // MyApplicationsAbstraction - Could be a class extending from Construct
+using Io.Cdktn; // MyApplicationsAbstraction - Could be a class extending from Construct
 using MyCompany.MyApp;
 using System;
 using System.Collections.Generic;
@@ -160,15 +160,15 @@ import (
 	"testing"
 	"cdk.tf/go/stack/generated/kreuzwerker/docker/image"
 	"cdk.tf/go/stack/generated/kreuzwerker/docker/container"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
 	"github.com/aws/jsii-runtime-go"
 )
 
-var stack = NewMyApplicationsAbstraction(cdktf.Testing_App(nil), "stack")
-var synth = cdktf.Testing_Synth(stack)
+var stack = NewMyApplicationsAbstraction(cdktn.Testing_App(nil), "stack")
+var synth = cdktn.Testing_Synth(stack)
 
 func TestShouldContainContainer(t *testing.T){
-	assertion := cdktf.Testing_ToHaveResource(synth, container.Container_TfResourceType())
+	assertion := cdktn.Testing_ToHaveResource(synth, container.Container_TfResourceType())
 
 	if !*assertion  {
 		t.Error("Assertion Failed")
@@ -179,7 +179,7 @@ func TestShouldUseUbuntuImage(t *testing.T){
 	properties := map[string]interface{}{
 		"name": "ubuntu:latest",
 	}
-	assertion := cdktf.Testing_ToHaveResourceWithProperties(synth, image.Image_TfResourceType(), &properties)
+	assertion := cdktn.Testing_ToHaveResourceWithProperties(synth, image.Image_TfResourceType(), &properties)
 
 	if !*assertion  {
 		t.Error("Assertion Failed")
@@ -194,7 +194,7 @@ func TestShouldUseUbuntuImage(t *testing.T){
 Snapshot tests are useful when you want to make sure your infrastructure does not change unexpectedly. Snapshot Testing is only supported in Typescript with Jest. Refer to the [Jest docs](https://jestjs.io/docs/snapshot-testing) for details.
 
 ```typescript
-import { Testing } from "cdktf";
+import { Testing } from "cdktn";
 import { Image } from "../.gen/providers/docker/image";
 import { Container } from "../.gen/providers/docker/container";
 import MyApplicationsAbstraction from "../app"; // Could be a class extending from Construct
@@ -213,16 +213,16 @@ describe("Unit testing using snapshots", () => {
 
 ### Integration with Terraform
 
-You can produce invalid Terraform configuration if you are using escape hatches in your CDK for Terraform application. You may use an escape hatch when setting up a [remote backend](/terraform/cdktf/concepts/remote-backends) or when [overriding resource attributes](/terraform/cdktf/concepts/resources#escape-hatch)
+You can produce invalid Terraform configuration if you are using escape hatches in your CDK Terrain application. You may use an escape hatch when setting up a [remote backend](/docs/concepts/remote-backends) or when [overriding resource attributes](/docs/concepts/resources#escape-hatch)
 
-To test this, you can assert that [`terraform validate`](/terraform/cli/commands/validate) or [`terraform plan`](/terraform/cli/commands/plan) run successfully on all or part of your application before running `cdktf plan` or `cdktf deploy`.
+To test this, you can assert that [`terraform validate`](/terraform/cli/commands/validate) or [`terraform plan`](/terraform/cli/commands/plan) run successfully on all or part of your application before running `cdktn plan` or `cdktn deploy`.
 
 Currently only Typescript is capable of testing for successful plans, while all languages are capable of testing for validity of the Terraform produced.
 
 <CodeGroup>
 
 ```ts TypeScript
-import { Testing } from "cdktf";
+import { Testing } from "cdktn";
 
 describe("Checking validity", () => {
   it("check if the produced terraform configuration is valid", () => {
@@ -251,7 +251,7 @@ describe("Checking validity", () => {
 
 ```python Python
 import pytest
-from cdktf import Testing
+from cdktn import Testing
 from app import MyApplicationsAbstraction # Could be a class extending from Construct
 
 class TestApplication:
@@ -267,7 +267,7 @@ class TestApplication:
 ```java Java
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import com.hashicorp.cdktf.MyApplicationsAbstraction; // Could be a class extending from Construct
+import io.cdktn.cdktn.MyApplicationsAbstraction; // Could be a class extending from Construct
 
 public class TestApplication {
 
@@ -284,7 +284,7 @@ public class TestApplication {
 
 ```csharp C#
 using Xunit;
-using HashiCorp.Cdktf; // MyApplicationsAbstraction - Could be a class extending from Construct
+using Io.Cdktn; // MyApplicationsAbstraction - Could be a class extending from Construct
 using MyCompany.MyApp;
 using System;
 
@@ -308,15 +308,15 @@ package main
 
 import (
 	"testing"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
 	"github.com/aws/jsii-runtime-go"
 )
 
-var stack = cdktf.NewTerraformStack(cdktf.Testing_App(nil), "stack")
+var stack = cdktn.NewTerraformStack(cdktn.Testing_App(nil), "stack")
 
 func TestCheckValidity(t *testing.T){
   // We need to do a full synth to validate the terraform configuration
-	assertion := cdktf.Testing_ToBeValidTerraform(cdktf.Testing_FullSynth(stack))
+	assertion := cdktn.Testing_ToBeValidTerraform(cdktn.Testing_FullSynth(stack))
 
 	if !*assertion  {
 		t.Error("Assertion Failed")
@@ -328,4 +328,4 @@ func TestCheckValidity(t *testing.T){
 
 ## Integration Testing
 
-CDK for Terraform does not currently offer many helpers for integration testing, but you can create them for your use cases. Here is a recent example: [CDK Day 2021](https://github.com/ansgarm/talk-cdkday-2021/tree/master/test).
+CDK Terrain does not currently offer many helpers for integration testing, but you can create them for your use cases. Here is a recent example: [CDK Day 2021](https://github.com/ansgarm/talk-cdkday-2021/tree/master/test).

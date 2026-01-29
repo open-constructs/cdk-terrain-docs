@@ -1,33 +1,33 @@
 ---
-title: HCL Interoperability - CDK for Terraform
+title: HCL Interoperability - CDK Terrain
 sidebarTitle: HCL Interoperability
 description: >-
   Use configurations written in HCL and configurations written in CDK for
   Terraform together to define and provision infrastructure.
 ---
 
-Terraform requires infrastructure configuration files written in either [HashiCorp Configuration Language (HCL)](/terraform/language/syntax/configuration) or JSON syntax. CDK for Terraform (CDKTF) works by translating configurations defined in an imperative programming language to JSON configuration files for Terraform.
-Starting from version 0.20, CDKTF can also generate Terraform HCL as output by setting the `--hcl` flag when running `cdktf synth`.
+Terraform requires infrastructure configuration files written in either [HashiCorp Configuration Language (HCL)](/terraform/language/syntax/configuration) or JSON syntax. CDK Terrain (CDKTN) works by translating configurations defined in an imperative programming language to JSON configuration files for Terraform.
+Starting from version 0.20, CDKTN can also generate Terraform HCL as output by setting the `--hcl` flag when running `cdktn synth`.
 
-CDKTF may not be the right choice for every team and project within your organization. For example, some teams may already be very familiar with Terraform and have created HCL modules, providers, etc. To provide flexibility, CDKTF applications are interoperable with Terraform projects written in HCL. Specifically:
+CDKTN may not be the right choice for every team and project within your organization. For example, some teams may already be very familiar with Terraform and have created HCL modules, providers, etc. To provide flexibility, CDKTN applications are interoperable with Terraform projects written in HCL. Specifically:
 
-- CDKTF applications can use all existing Terraform [providers](/terraform/cdktf/concepts/providers) and HCL [modules](/terraform/cdktf/concepts/modules).
-- CDKTF can generate modules that HCL Terraform projects can use in their configurations.
+- CDKTN applications can use all existing Terraform [providers](/docs/concepts/providers) and HCL [modules](/docs/concepts/modules).
+- CDKTN can generate modules that HCL Terraform projects can use in their configurations.
 
-This page shows how you can interoperate HCL and CDK for Terraform configuration.
+This page shows how you can interoperate HCL and CDK Terrain configuration.
 
-## CDKTF to HCL
+## CDKTN to HCL
 
-The following example is a CDKTF application that uses the `hashicorp/random` provider to generate a random name.
+The following example is a CDKTN application that uses the `hashicorp/random` provider to generate a random name.
 
 
 <CodeGroup>
 
 ```ts TypeScript
 import { Construct } from "constructs";
-import { TerraformOutput, TerraformStack, TerraformVariable } from "cdktf";
-import { Pet } from "@cdktf/provider-random/lib/pet";
-import { RandomProvider } from "@cdktf/provider-random/lib/provider";
+import { TerraformOutput, TerraformStack, TerraformVariable } from "cdktn";
+import { Pet } from "@cdktn/provider-random/lib/pet";
+import { RandomProvider } from "@cdktn/provider-random/lib/provider";
 
 export class HCLInteropStack extends TerraformStack {
   constructor(scope: Construct, name: string) {
@@ -53,12 +53,12 @@ export class HCLInteropStack extends TerraformStack {
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.TerraformStack;
-import com.hashicorp.cdktf.TerraformOutput;
-import com.hashicorp.cdktf.TerraformOutputConfig;
-import com.hashicorp.cdktf.TerraformVariable;
-import com.hashicorp.cdktf.TerraformVariableConfig;
-import com.hashicorp.cdktf.App;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.TerraformOutput;
+import io.cdktn.cdktn.TerraformOutputConfig;
+import io.cdktn.cdktn.TerraformVariable;
+import io.cdktn.cdktn.TerraformVariableConfig;
+import io.cdktn.cdktn.App;
 import imports.random.provider.RandomProvider;
 import imports.random.pet.Pet;
 import imports.random.pet.PetConfig;
@@ -94,7 +94,7 @@ public class MainHCL extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import App, TerraformOutput, TerraformStack, TerraformVariable
+from cdktn import App, TerraformOutput, TerraformStack, TerraformVariable
 from imports.random.pet import Pet
 from imports.random.provider import RandomProvider
 
@@ -127,7 +127,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using random.Provider;
 using random.Pet;
 
@@ -164,17 +164,17 @@ namespace Examples
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/random/pet"
-	random "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/random/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/random/pet"
+	random "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/random/provider"
 )
 
-func NewHclInteropStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewHclInteropStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	random.NewRandomProvider(stack, jsii.String("default"), &random.RandomProviderConfig{})
 
-	petNameLength := cdktf.NewTerraformVariable(stack, jsii.String("petNameLength"), &cdktf.TerraformVariableConfig{
+	petNameLength := cdktn.NewTerraformVariable(stack, jsii.String("petNameLength"), &cdktn.TerraformVariableConfig{
 		Type:        jsii.String("number"),
 		Default:     jsii.Number(2),
 		Description: jsii.String("Pet name length"),
@@ -184,7 +184,7 @@ func NewHclInteropStack(scope constructs.Construct, name string) cdktf.Terraform
 		Length: petNameLength.NumberValue(),
 	})
 
-	cdktf.NewTerraformOutput(stack, jsii.String("name"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("name"), &cdktn.TerraformOutputConfig{
 		Value: myPet.Id(),
 	})
 
@@ -195,8 +195,8 @@ func NewHclInteropStack(scope constructs.Construct, name string) cdktf.Terraform
 
 </CodeGroup>
 
-To use this as a Terraform module, run `cdktf synth` and copy the resulting `cdktf.out/stacks/random-pet-module/cdk.tf.json` file out to the module directory in your HCL project.
-By default, `cdktf synth` generates Terraform JSON, but starting from version 0.20, CDKTF can also generate Terraform HCL output by passing the `--hcl` flag to `cdktf synth`.
+To use this as a Terraform module, run `cdktn synth` and copy the resulting `cdktf.out/stacks/random-pet-module/cdk.tf.json` file out to the module directory in your HCL project.
+By default, `cdktn synth` generates Terraform JSON, but starting from version 0.20, CDKTN can also generate Terraform HCL output by passing the `--hcl` flag to `cdktn synth`.
 
 After you transfer the `cdk.tf.json` (or `cdk.tf`) file, you can reference the pet name module as you would any other HCL Terraform module.
 
@@ -220,10 +220,10 @@ output "name" {
 }
 ```
 
-## HCL to CDKTF
+## HCL to CDKTN
 
-HCL can be used with Terraform CDK in two ways. Converting HCL code directly to a CDKTF language, and using Terraform modules directly within CDKTF projects.
+HCL can be used with Terraform CDK in two ways. Converting HCL code directly to a CDKTN language, and using Terraform modules directly within CDKTN projects.
 
-- In order to convert HCL to a CDKTF language, the [`cdktf convert`](/terraform/cdktf/cli-reference/commands#convert) command can be used. It automatically translates HCL into a preferred CDKTF language. This is useful when working with an existing codebase that needs to be converted to CDKTF.
+- In order to convert HCL to a CDKTN language, the [`cdktn convert`](/docs/cli-reference/commands#convert) command can be used. It automatically translates HCL into a preferred CDKTN language. This is useful when working with an existing codebase that needs to be converted to CDKTN.
 
-- While CDKTF has the ability to import HCL modules through `cdktf get` when referenced within the `cdktf.json` file, Terraform modules can also be referenced without generating language specific bindings. The [modules documentation](/terraform/cdktf/concepts/modules) shows how to use existing Terraform modules in CDK for Terraform projects.
+- While CDKTN has the ability to import HCL modules through `cdktn get` when referenced within the `cdktf.json` file, Terraform modules can also be referenced without generating language specific bindings. The [modules documentation](/docs/concepts/modules) shows how to use existing Terraform modules in CDK Terrain projects.

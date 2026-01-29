@@ -1,5 +1,5 @@
 ---
-title: Variables and Outputs - CDK for Terraform
+title: Variables and Outputs - CDK Terrain
 sidebarTitle: Variables and Outputs
 description: >-
   Input variables, local values, and output values allow you to request and
@@ -12,23 +12,23 @@ Terraform can understand configurations written in either HashiCorp Configuratio
 - [**Local Values**](#local-values): These are like a function's temporary local variables.
 - [**Output Values**](#output-values): These are like function return values.
 
-You may need to occasionally use these elements in your CDK for Terraform (CDKTF) application instead of passing data through the conventions available in your preferred programming language.
+You may need to occasionally use these elements in your CDK Terrain (CDKTN) application instead of passing data through the conventions available in your preferred programming language.
 
 ## Input Variables
 
-You can define [Terraform variables](/terraform/language/values/variables) as input parameters to customize [stacks](/terraform/cdktf/concepts/stacks) and [modules](/terraform/cdktf/concepts/modules). For example, rather than hardcoding the number and type of AWS EC2 instances to provision, you can define a variable that lets users change these parameters based on their needs.
+You can define [Terraform variables](/terraform/language/values/variables) as input parameters to customize [stacks](/docs/concepts/stacks) and [modules](/docs/concepts/modules). For example, rather than hardcoding the number and type of AWS EC2 instances to provision, you can define a variable that lets users change these parameters based on their needs.
 
 ### When to use Input Variables
 
-Variables are useful when you plan to synthesize your CDKTF application into a JSON configuration file for Terraform. For example, when you are planning to store configurations and run Terraform inside [HCP Terraform](https://cloud.hashicorp.com/products/terraform).
+Variables are useful when you plan to synthesize your CDKTN application into a JSON configuration file for Terraform. For example, when you are planning to store configurations and run Terraform inside [HCP Terraform](https://cloud.hashicorp.com/products/terraform).
 
-If you plan to use CDKTF to manage your infrastructure, we recommend using your language's APIs to consume the data you would normally pass through Terraform variables. You can read from disk (synchronously) or from the environment variables, just as you would in any normal program.
+If you plan to use CDKTN to manage your infrastructure, we recommend using your language's APIs to consume the data you would normally pass through Terraform variables. You can read from disk (synchronously) or from the environment variables, just as you would in any normal program.
 
-<Warning>The synthesized Terraform configuration will contain any values that you pass directly to CDKTF constructs. This includes credentials and any other sensitive data provided as input for the `cdktf` application. If you plan to commit the generated `cdk.tf.json` to version control, use [input variables](/terraform/cdktf/concepts/variables-and-outputs#input-variables) for secrets instead.</Warning>
+<Warning>The synthesized Terraform configuration will contain any values that you pass directly to CDKTN constructs. This includes credentials and any other sensitive data provided as input for the `cdktn` application. If you plan to commit the generated `cdk.tf.json` to version control, use [input variables](/docs/concepts/variables-and-outputs#input-variables) for secrets instead.</Warning>
 
 ### Define Input Variables
 
-You must specify values in exactly the same way as you would in an HCL configuration file. Refer to the [Terraform variables documentation](/terraform/language/values/variables#variables-on-the-command-line) for details. The CDKTF CLI currently also supports configuration via [environment variables](/terraform/language/values/variables#environment-variables).
+You must specify values in exactly the same way as you would in an HCL configuration file. Refer to the [Terraform variables documentation](/terraform/language/values/variables#variables-on-the-command-line) for details. The CDKTN CLI currently also supports configuration via [environment variables](/terraform/language/values/variables#environment-variables).
 
 The following example uses `TerraformVariable` to provide inputs to resources.
 
@@ -90,7 +90,7 @@ Instance(self, "hello",
 ```
 
 ```go Go
-imageId := cdktf.NewTerraformVariable(stack, jsii.String("imageId"), &cdktf.TerraformVariableConfig{
+imageId := cdktn.NewTerraformVariable(stack, jsii.String("imageId"), &cdktn.TerraformVariableConfig{
 	Type:        jsii.String("string"),
 	Default:     jsii.String("ami-abcde123"),
 	Description: jsii.String("What AMI to use to create an instance"),
@@ -127,13 +127,13 @@ new TerraformResource(this, "resource", {
 ```
 
 ```go Go
-nodeGroupConfig := cdktf.NewTerraformVariable(stack, jsii.String("node-group-config"), &cdktf.TerraformVariableConfig{
-	Type: cdktf.VariableType_Object(&map[string]*string{
-		"node_group_name": cdktf.VariableType_STRING(),
-		"instance_types":  cdktf.VariableType_List(cdktf.VariableType_STRING()),
-		"min_size":        cdktf.VariableType_NUMBER(),
-		"desired_size":    cdktf.VariableType_NUMBER(),
-		"max_size":        cdktf.VariableType_NUMBER(),
+nodeGroupConfig := cdktn.NewTerraformVariable(stack, jsii.String("node-group-config"), &cdktn.TerraformVariableConfig{
+	Type: cdktn.VariableType_Object(&map[string]*string{
+		"node_group_name": cdktn.VariableType_STRING(),
+		"instance_types":  cdktn.VariableType_List(cdktn.VariableType_STRING()),
+		"min_size":        cdktn.VariableType_NUMBER(),
+		"desired_size":    cdktn.VariableType_NUMBER(),
+		"max_size":        cdktn.VariableType_NUMBER(),
 	}),
 	Nullable:    jsii.Bool(false),
 	Description: jsii.String("Node group configuration"),
@@ -144,24 +144,24 @@ eksnodegroup.NewEksNodeGroup(stack, jsii.String("node-group"), &eksnodegroup.Eks
 	NodeRoleArn:   jsii.String("arn:::::dummy"),
 	SubnetIds:     jsii.Strings("id-1234"),
 	NodeGroupName: jsii.String(fmt.Sprintf("${%s.node_group_name}", *nodeGroupConfig.Fqn())),
-	InstanceTypes: cdktf.Token_AsList(fmt.Sprintf("${%s.instance_types}", *nodeGroupConfig.Fqn()), &cdktf.EncodingOptions{}),
+	InstanceTypes: cdktn.Token_AsList(fmt.Sprintf("${%s.instance_types}", *nodeGroupConfig.Fqn()), &cdktn.EncodingOptions{}),
 	ScalingConfig: &eksnodegroup.EksNodeGroupScalingConfig{
-		DesiredSize: cdktf.Token_AsNumber(fmt.Sprintf("${%s.desired_size}", *nodeGroupConfig.Fqn())),
-		MinSize:     cdktf.Token_AsNumber(fmt.Sprintf("${%s.min_size}", *nodeGroupConfig.Fqn())),
-		MaxSize:     cdktf.Token_AsNumber(fmt.Sprintf("${%s.max_size}", *nodeGroupConfig.Fqn())),
+		DesiredSize: cdktn.Token_AsNumber(fmt.Sprintf("${%s.desired_size}", *nodeGroupConfig.Fqn())),
+		MinSize:     cdktn.Token_AsNumber(fmt.Sprintf("${%s.min_size}", *nodeGroupConfig.Fqn())),
+		MaxSize:     cdktn.Token_AsNumber(fmt.Sprintf("${%s.max_size}", *nodeGroupConfig.Fqn())),
 	},
 })
 ```
 
 </CodeGroup>
 
-### Passing Input Variables to CDKTF
+### Passing Input Variables to CDKTN
 
-You can pass input variables to `cdktf diff`, `cdktf deploy`, and `cdktf destroy` in the following ways:
+You can pass input variables to `cdktn diff`, `cdktn deploy`, and `cdktn destroy` in the following ways:
 
 - Environment variable: `TF_VAR_imageId=ami-abcde123`
-- `--var` CLI option: `cdktf deploy --var='imageId=ami-abcde123'`
-- `--var-file` CLI option: `cdktf deploy --var-file=/path/to/variables.tfvars`
+- `--var` CLI option: `cdktn deploy --var='imageId=ami-abcde123'`
+- `--var-file` CLI option: `cdktn deploy --var-file=/path/to/variables.tfvars`
 - Auto-loaded configuration files: We auto-load `*.auto.tfvars` and `terraform.tfvars` files found in the current working directory. Refer to the [Terraform documentation](/terraform/language/values/variables#variable-definitions-tfvars-files) for details.
 
 ## Local Values
@@ -170,9 +170,9 @@ A [Terraform local](/terraform/language/values/locals) assigns a name to an expr
 
 ### When to Use Local Values
 
-Use local values when you need use [Terraform functions](/terraform/cdktf/concepts/functions) to transform data that is only available when Terraform applies a configuration. For example, instance IDs that cloud providers assign upon creation.
+Use local values when you need use [Terraform functions](/docs/concepts/functions) to transform data that is only available when Terraform applies a configuration. For example, instance IDs that cloud providers assign upon creation.
 
-When values are available before [synthesizing your code](/terraform/cdktf/cli-reference/commands#synth), we recommend using native programming language features to modify values instead.
+When values are available before [synthesizing your code](/docs/cli-reference/commands#synth), we recommend using native programming language features to modify values instead.
 
 ### Define Local Values
 
@@ -231,7 +231,7 @@ new Instance(this, "example", new InstanceConfig
 ```
 
 ```go Go
-commonTags := cdktf.NewTerraformLocal(stack, jsii.String("common_tags"), map[string]string{
+commonTags := cdktn.NewTerraformLocal(stack, jsii.String("common_tags"), map[string]string{
 	"Service": "service_name",
 	"Owner":   "owner",
 })
@@ -244,7 +244,7 @@ instance.NewInstance(stack, jsii.String("example"), &instance.InstanceConfig{
 
 </CodeGroup>
 
-When you run `cdktf synth` the `TerraformLocal` synthesizes to the following JSON.
+When you run `cdktn synth` the `TerraformLocal` synthesizes to the following JSON.
 
 ```json
 "locals": {
@@ -269,9 +269,9 @@ You can define [Terraform outputs](/terraform/language/values/outputs) to export
 
 ### When to use Output Values
 
-Use outputs to make data from [Terraform resources](/terraform/cdktf/concepts/resources) and [data sources](/terraform/cdktf/concepts/data-sources) available for further consumption or to share data between [stacks](/terraform/cdktf/concepts/stacks). Outputs are particularly useful when you need to access data that is only known after Terraform applies the configuration. For example, you may want to get the URL of a newly provisioned server.
+Use outputs to make data from [Terraform resources](/docs/concepts/resources) and [data sources](/docs/concepts/data-sources) available for further consumption or to share data between [stacks](/docs/concepts/stacks). Outputs are particularly useful when you need to access data that is only known after Terraform applies the configuration. For example, you may want to get the URL of a newly provisioned server.
 
-When values are available before [synthesizing your code](/terraform/cdktf/cli-reference/commands#synth), we recommend using the functionality in your preferred programming language to supply this data as direct inputs.
+When values are available before [synthesizing your code](/docs/cli-reference/commands#synth), we recommend using the functionality in your preferred programming language to supply this data as direct inputs.
 
 The following example uses a `TerraformOutput` to create an output.
 
@@ -279,9 +279,9 @@ The following example uses a `TerraformOutput` to create an output.
 <CodeGroup>
 
 ```ts TypeScript
-import { TerraformLocal, TerraformStack, TerraformVariable } from "cdktf";
+import { TerraformLocal, TerraformStack, TerraformVariable } from "cdktn";
 import { Construct } from "constructs";
-import { App, TerraformOutput } from "cdktf";
+import { App, TerraformOutput } from "cdktn";
 interface OutputVariableStackConfig {
   readonly myDomain: string;
 }
@@ -303,7 +303,7 @@ class OutputVariableStack extends TerraformStack {
 }
 
 const app = new App();
-new OutputVariableStack(app, "cdktf-producer", {
+new OutputVariableStack(app, "cdktn-producer", {
   myDomain: "example.com",
 });
 app.synth();
@@ -311,10 +311,10 @@ app.synth();
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.TerraformStack;
-import com.hashicorp.cdktf.App;
-import com.hashicorp.cdktf.TerraformOutput;
-import com.hashicorp.cdktf.TerraformOutputConfig;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.App;
+import io.cdktn.cdktn.TerraformOutput;
+import io.cdktn.cdktn.TerraformOutputConfig;
 
 public class VariablesAndOutputsValues extends TerraformStack {
 
@@ -336,7 +336,7 @@ public class VariablesAndOutputsValues extends TerraformStack {
 
     public static void main(String[] args) {
         final App app = new App();
-        new VariablesAndOutputsValues(app, "cdktf-producer", new VariablesAndOutputsValuesProps("example.com"));
+        new VariablesAndOutputsValues(app, "cdktn-producer", new VariablesAndOutputsValuesProps("example.com"));
         app.synth();
     }
 }
@@ -344,7 +344,7 @@ public class VariablesAndOutputsValues extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import App, TerraformStack, TerraformOutput
+from cdktn import App, TerraformStack, TerraformOutput
 
 class OutputValuesProps:
     myDomain: str
@@ -360,7 +360,7 @@ class OutputValuesStack(TerraformStack):
         )
 
 app = App()
-OutputValuesStack(app, "cdktf-producer", OutputValuesProps(myDomain = "example.com"))
+OutputValuesStack(app, "cdktn-producer", OutputValuesProps(myDomain = "example.com"))
 app.synth()
 ```
 
@@ -370,7 +370,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using aws.Provider;
 using aws.Instance;
 
@@ -398,7 +398,7 @@ namespace Examples
                 public static void Main(string[] args)
                 {
                     App app = new App();
-                    new OutputVariableStack(app, "cdktf-producer", new OutputVariableStackConfig("example.com"));
+                    new OutputVariableStack(app, "cdktn-producer", new OutputVariableStackConfig("example.com"));
                     app.Synth();
                 }
     }
@@ -411,17 +411,17 @@ namespace Examples
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
 )
 
 type OutputsStackConfig struct {
 	MyDomain string
 }
 
-func NewOutputsStack(scope constructs.Construct, name string, config OutputsStackConfig) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewOutputsStack(scope constructs.Construct, name string, config OutputsStackConfig) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
-	cdktf.NewTerraformOutput(stack, jsii.String("my-domain"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("my-domain"), &cdktn.TerraformOutputConfig{
 		Value: &config.MyDomain,
 	})
 
@@ -429,7 +429,7 @@ func NewOutputsStack(scope constructs.Construct, name string, config OutputsStac
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	NewOutputsStack(app, "outputs", OutputsStackConfig{
 		MyDomain: "example.com",
@@ -446,7 +446,7 @@ func main() {
 
 To access outputs, use the `_output` suffix for Python and the `Output` suffix for other languages.
 
-Outputs return an HCL expression representing the underlying Terraform resource, so the return type must always be `string`. When `TerraformOutput` is any other type than string, you must add a typecast to compile the application (e.g. `mod.numberOutput as number`). If a module returns a list, you must use an escape hatch to access items or loop over it. Refer to the [Resources page](/terraform/cdktf/concepts/resources) for more information about how to use escape hatches.
+Outputs return an HCL expression representing the underlying Terraform resource, so the return type must always be `string`. When `TerraformOutput` is any other type than string, you must add a typecast to compile the application (e.g. `mod.numberOutput as number`). If a module returns a list, you must use an escape hatch to access items or loop over it. Refer to the [Resources page](/docs/concepts/resources) for more information about how to use escape hatches.
 
 The following Typescript example uses `TerraformOutput` to create an output for a Random provider resource.
 
@@ -454,11 +454,11 @@ The following Typescript example uses `TerraformOutput` to create an output for 
 <CodeGroup>
 
 ```ts TypeScript
-import { TerraformLocal, TerraformStack, TerraformVariable } from "cdktf";
+import { TerraformLocal, TerraformStack, TerraformVariable } from "cdktn";
 import { Construct } from "constructs";
-import { App, TerraformOutput } from "cdktf";
-import { RandomProvider } from "@cdktf/provider-random/lib/provider";
-import { Pet } from "@cdktf/provider-random/lib/pet";
+import { App, TerraformOutput } from "cdktn";
+import { RandomProvider } from "@cdktn/provider-random/lib/provider";
+import { Pet } from "@cdktn/provider-random/lib/pet";
 class OutputsUsageStack extends TerraformStack {
   constructor(scope: Construct, name: string) {
     super(scope, name);
@@ -479,10 +479,10 @@ app.synth();
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.TerraformStack;
-import com.hashicorp.cdktf.App;
-import com.hashicorp.cdktf.TerraformOutput;
-import com.hashicorp.cdktf.TerraformOutputConfig;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.App;
+import io.cdktn.cdktn.TerraformOutput;
+import io.cdktn.cdktn.TerraformOutputConfig;
 import imports.random.pet.Pet;
 import imports.random.provider.RandomProvider;
 
@@ -501,7 +501,7 @@ public class VariablesAndOutputsDefineValues extends TerraformStack {
 
     public static void main(String[] args) {
         final App app = new App();
-        new VariablesAndOutputsDefineValues(app, "cdktf-demo");
+        new VariablesAndOutputsDefineValues(app, "cdktn-demo");
         app.synth();
     }
 }
@@ -511,7 +511,7 @@ public class VariablesAndOutputsDefineValues extends TerraformStack {
 from imports.random.provider import RandomProvider
 
 from constructs import Construct
-from cdktf import App, TerraformStack, TerraformOutput
+from cdktn import App, TerraformStack, TerraformOutput
 
 class DefineOutputStack(TerraformStack):
     def __init__(self, scope: Construct, name: str):
@@ -525,7 +525,7 @@ class DefineOutputStack(TerraformStack):
         )
 
 app = App()
-DefineOutputStack(app, "cdktf-demo")
+DefineOutputStack(app, "cdktn-demo")
 app.synth()
 ```
 
@@ -535,7 +535,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using random.Provider;
 using random.Pet;
 
@@ -568,18 +568,18 @@ namespace Examples
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/random/pet"
-	random "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/random/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/random/pet"
+	random "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/random/provider"
 )
 
-func NewOutputsUsageStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewOutputsUsageStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	random.NewRandomProvider(stack, jsii.String("random"), &random.RandomProviderConfig{})
 
 	pet := pet.NewPet(stack, jsii.String("pet"), &pet.PetConfig{})
-	cdktf.NewTerraformOutput(stack, jsii.String("random-pet"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("random-pet"), &cdktn.TerraformOutputConfig{
 		Value: pet.Id(),
 	})
 
@@ -587,7 +587,7 @@ func NewOutputsUsageStack(scope constructs.Construct, name string) cdktf.Terrafo
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	NewOutputsUsageStack(app, "outputs-usage")
 
@@ -598,7 +598,7 @@ func main() {
 
 </CodeGroup>
 
-When you run `cdktf synth`, CDKTF synthesizes the code to the following JSON configuration.
+When you run `cdktn synth`, CDKTN synthesizes the code to the following JSON configuration.
 
 ```json
 "output": {
@@ -608,10 +608,10 @@ When you run `cdktf synth`, CDKTF synthesizes the code to the following JSON con
 }
 ```
 
-When you run `cdktf deploy`, CDKTF displays the following output.
+When you run `cdktn deploy`, CDKTN displays the following output.
 
 ```
-Deploying Stack: cdktf-demo
+Deploying Stack: cdktn-demo
 Resources
  ✔ RANDOM_PET           pet                 random_pet.pet
 
@@ -622,20 +622,20 @@ Output: random-pet = choice-haddock
 
 ### Define & Reference Outputs via Remote State
 
-The following example uses outputs to share data between stacks, each of which has a [remote backend](/terraform/cdktf/concepts/remote-backends) to store the Terraform state files remotely.
+The following example uses outputs to share data between stacks, each of which has a [remote backend](/docs/concepts/remote-backends) to store the Terraform state files remotely.
 
 
 <CodeGroup>
 
 ```ts TypeScript
-import { TerraformLocal, TerraformStack, TerraformVariable } from "cdktf";
+import { TerraformLocal, TerraformStack, TerraformVariable } from "cdktn";
 import { Construct } from "constructs";
-import { App, TerraformOutput } from "cdktf";
+import { App, TerraformOutput } from "cdktn";
 import {
   CloudBackend,
   DataTerraformRemoteState,
   NamedCloudWorkspace,
-} from "cdktf";
+} from "cdktn";
 
 class Producer extends TerraformStack {
   constructor(scope: Construct, name: string) {
@@ -678,8 +678,8 @@ class Consumer extends TerraformStack {
 }
 
 const app = new App();
-new Producer(app, "cdktf-producer");
-new Consumer(app, "cdktf-consumer");
+new Producer(app, "cdktn-producer");
+new Consumer(app, "cdktn-consumer");
 app.synth();
 ```
 
@@ -688,16 +688,16 @@ import imports.random.provider.RandomProvider;
 import imports.random.pet.Pet;
 
 import software.constructs.Construct;
-import com.hashicorp.cdktf.App;
-import com.hashicorp.cdktf.TerraformStack;
-import com.hashicorp.cdktf.TerraformOutput;
-import com.hashicorp.cdktf.TerraformOutputConfig;
-import com.hashicorp.cdktf.CloudBackend;
-import com.hashicorp.cdktf.CloudBackendConfig;
-import com.hashicorp.cdktf.NamedCloudWorkspace;
-import com.hashicorp.cdktf.NamedRemoteWorkspace;
-import com.hashicorp.cdktf.DataTerraformRemoteState;
-import com.hashicorp.cdktf.DataTerraformRemoteStateRemoteConfig;
+import io.cdktn.cdktn.App;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.TerraformOutput;
+import io.cdktn.cdktn.TerraformOutputConfig;
+import io.cdktn.cdktn.CloudBackend;
+import io.cdktn.cdktn.CloudBackendConfig;
+import io.cdktn.cdktn.NamedCloudWorkspace;
+import io.cdktn.cdktn.NamedRemoteWorkspace;
+import io.cdktn.cdktn.DataTerraformRemoteState;
+import io.cdktn.cdktn.DataTerraformRemoteStateRemoteConfig;
 
 public class VariablesAndOutputsRemoteState {
 
@@ -743,8 +743,8 @@ public class VariablesAndOutputsRemoteState {
 
     public static void main(String[] args) {
         final App app = new App();
-        new Producer(app, "cdktf-producer");
-        new Consumer(app, "cdktf-consumer");
+        new Producer(app, "cdktn-producer");
+        new Consumer(app, "cdktn-consumer");
         app.synth();
     }
 }
@@ -754,7 +754,7 @@ public class VariablesAndOutputsRemoteState {
 import imports.random as random
 
 from constructs import Construct
-from cdktf import App, TerraformStack, TerraformOutput, CloudBackend, NamedRemoteWorkspace, DataTerraformRemoteState
+from cdktn import App, TerraformStack, TerraformOutput, CloudBackend, NamedRemoteWorkspace, DataTerraformRemoteState
 
 class Producer(TerraformStack):
     def __init__(self, scope: Construct, name: str):
@@ -791,8 +791,8 @@ class Consumer(TerraformStack):
         )
 
 app = App()
-Producer(app, "cdktf-producer")
-Consumer(app, "cdktf-consumer")
+Producer(app, "cdktn-producer")
+Consumer(app, "cdktn-consumer")
 app.synth()
 ```
 
@@ -802,7 +802,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using random.Provider;
 using random.Pet;
 
@@ -856,8 +856,8 @@ namespace Examples
                 public static void Main(string[] args)
                 {
                     App app = new App();
-                    new Producer(app, "cdktf-producer");
-                    new Consumer(app, "cdktf-consumer");
+                    new Producer(app, "cdktn-producer");
+                    new Consumer(app, "cdktn-consumer");
                     app.Synth();
                 }
     }
@@ -870,43 +870,43 @@ namespace Examples
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/random/pet"
-	random "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/random/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/random/pet"
+	random "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/random/provider"
 )
 
-func NewProducerStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewProducerStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
-	cdktf.NewCloudBackend(stack, &cdktf.CloudBackendConfig{
+	cdktn.NewCloudBackend(stack, &cdktn.CloudBackendConfig{
 		Organization: jsii.String("hashicorp"),
-		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String("producer"), nil),
+		Workspaces:   cdktn.NewNamedCloudWorkspace(jsii.String("producer"), nil),
 	})
 
 	random.NewRandomProvider(stack, jsii.String("random"), &random.RandomProviderConfig{})
 
 	pet := pet.NewPet(stack, jsii.String("pet"), &pet.PetConfig{})
-	cdktf.NewTerraformOutput(stack, jsii.String("random-pet"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("random-pet"), &cdktn.TerraformOutputConfig{
 		Value: pet.Id(),
 	})
 
 	return stack
 }
 
-func NewConsumerStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewConsumerStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
-	cdktf.NewCloudBackend(stack, &cdktf.CloudBackendConfig{
+	cdktn.NewCloudBackend(stack, &cdktn.CloudBackendConfig{
 		Organization: jsii.String("hashicorp"),
-		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String("consumer"), nil),
+		Workspaces:   cdktn.NewNamedCloudWorkspace(jsii.String("consumer"), nil),
 	})
 
-	remoteState := cdktf.NewDataTerraformRemoteState(stack, jsii.String("remote-pet"), &cdktf.DataTerraformRemoteStateRemoteConfig{
+	remoteState := cdktn.NewDataTerraformRemoteState(stack, jsii.String("remote-pet"), &cdktn.DataTerraformRemoteStateRemoteConfig{
 		Organization: jsii.String("hashicorp"),
-		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String("producer"), nil),
+		Workspaces:   cdktn.NewNamedCloudWorkspace(jsii.String("producer"), nil),
 	})
 
-	cdktf.NewTerraformOutput(stack, jsii.String("random-remote-pet"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("random-remote-pet"), &cdktn.TerraformOutputConfig{
 		Value: remoteState.GetString(jsii.String("random-pet")),
 	})
 
@@ -914,10 +914,10 @@ func NewConsumerStack(scope constructs.Construct, name string) cdktf.TerraformSt
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
-	NewProducerStack(app, "cdktf-producer")
-	NewConsumerStack(app, "cdktf-consumer")
+	NewProducerStack(app, "cdktn-producer")
+	NewConsumerStack(app, "cdktn-consumer")
 
 	app.Synth()
 }

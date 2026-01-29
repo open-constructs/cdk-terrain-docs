@@ -1,22 +1,22 @@
 ---
-title: Functions - CDK for Terraform
+title: Functions - CDK Terrain
 sidebarTitle: Functions
 description: Learn when to use built-in Terraform functions to transform or combine values.
 ---
 
 Terraform provides a set of built-in functions that transform and combine values within Terraform configurations. The [Terraform function documentation](/terraform/language/functions) contains a complete list. You can also use your editor autocompletion on the `Fn` object to find available options.
 
-Functions can handle normal and [token](/terraform/cdktf/concepts/tokens) values and will return either tokenized values or `IResolvable` values.
+Functions can handle normal and [token](/docs/concepts/tokens) values and will return either tokenized values or `IResolvable` values.
 
 ## When to Use Terraform Functions
 
 Use Terraform functions when you need to calculate new values based on runtime values that are unknown before Terraform applies a configuration. For example, instance IDs that cloud providers assign on creation.
 
-When inputs are available before [synthesizing your code](/terraform/cdktf/cli-reference/commands#synth) (e.g. local files), we recommend transforming the values with your preferred programming language.
+When inputs are available before [synthesizing your code](/docs/cli-reference/commands#synth) (e.g. local files), we recommend transforming the values with your preferred programming language.
 
 ## Usage Example
 
-The following example uses a Data Source from the AWS Provider to fetch the Availability Zones of the given region. As this data is unknown until Terraform applies the configuration, this CDKTF application uses both [Terraform Outputs](/terraform/cdktf/concepts/variables-and-outputs#output-values) and the Terraform [`element`](/terraform/language/functions/element) function.
+The following example uses a Data Source from the AWS Provider to fetch the Availability Zones of the given region. As this data is unknown until Terraform applies the configuration, this CDKTN application uses both [Terraform Outputs](/docs/concepts/variables-and-outputs#output-values) and the Terraform [`element`](/terraform/language/functions/element) function.
 
 The `element` function gets the first element from the list of Availability Zone names.
 
@@ -24,11 +24,11 @@ The `element` function gets the first element from the list of Availability Zone
 <CodeGroup>
 
 ```ts TypeScript
-import { TerraformStack, TerraformVariable } from "cdktf";
+import { TerraformStack, TerraformVariable } from "cdktn";
 import { Construct } from "constructs";
-import { AwsProvider } from "@cdktf/provider-aws/lib/aws-provider";
-import { Fn, TerraformOutput } from "cdktf";
-import { DataAwsAvailabilityZones } from "@cdktf/provider-aws/lib/data-aws-availability-zones";
+import { AwsProvider } from "@cdktn/provider-aws/lib/aws-provider";
+import { Fn, TerraformOutput } from "cdktn";
+import { DataAwsAvailabilityZones } from "@cdktn/provider-aws/lib/data-aws-availability-zones";
 export class FunctionsStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -48,11 +48,11 @@ export class FunctionsStack extends TerraformStack {
 ```
 
 ```java Java
-import com.hashicorp.cdktf.Fn;
-import com.hashicorp.cdktf.TerraformVariable;
-import com.hashicorp.cdktf.TerraformVariableConfig;
-import com.hashicorp.cdktf.TerraformOutput;
-import com.hashicorp.cdktf.TerraformOutputConfig;
+import io.cdktn.cdktn.Fn;
+import io.cdktn.cdktn.TerraformVariable;
+import io.cdktn.cdktn.TerraformVariableConfig;
+import io.cdktn.cdktn.TerraformOutput;
+import io.cdktn.cdktn.TerraformOutputConfig;
 import imports.aws.data_aws_availability_zones.DataAwsAvailabilityZones;
 import imports.aws.data_aws_availability_zones.DataAwsAvailabilityZonesConfig;
 
@@ -67,7 +67,7 @@ import imports.aws.data_aws_availability_zones.DataAwsAvailabilityZonesConfig;
 ```
 
 ```python Python
-from cdktf import Fn, TerraformOutput
+from cdktn import Fn, TerraformOutput
 from imports.aws.provider import AwsProvider
 from imports.aws.data_aws_availability_zones import DataAwsAvailabilityZones
 
@@ -87,7 +87,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 using aws.Provider;
 using aws.DataAwsAvailabilityZones;
 
@@ -121,13 +121,13 @@ namespace Examples
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/dataawsavailabilityzones"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/dataawsavailabilityzones"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 )
 
-func NewFunctionsStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewFunctionsStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	aws.NewAwsProvider(stack, jsii.String("aws"), &aws.AwsProviderConfig{
 		Region: jsii.String("use-west-2"),
@@ -137,8 +137,8 @@ func NewFunctionsStack(scope constructs.Construct, name string) cdktf.TerraformS
 		State: jsii.String("available"),
 	})
 
-	cdktf.NewTerraformOutput(stack, jsii.String("first-zone"), &cdktf.TerraformOutputConfig{
-		Value: cdktf.Fn_Element(cdktf.Token_AsAny(zones.Names()), jsii.Number(0)),
+	cdktn.NewTerraformOutput(stack, jsii.String("first-zone"), &cdktn.TerraformOutputConfig{
+		Value: cdktn.Fn_Element(cdktn.Token_AsAny(zones.Names()), jsii.Number(0)),
 	})
 
 	return stack
@@ -152,7 +152,7 @@ func NewFunctionsStack(scope constructs.Construct, name string) cdktf.TerraformS
 
 ### Property Access Helpers
 
-To access nested properties from untyped objects or other datasources that return a dynamic datatype, use the Terraform function `lookup` or, for nested access, the function "Fn.lookupNested()" which is a function offered by CDKTF that allows to avoid nesting `Fn.lookup` calls.
+To access nested properties from untyped objects or other datasources that return a dynamic datatype, use the Terraform function `lookup` or, for nested access, the function "Fn.lookupNested()" which is a function offered by CDKTN that allows to avoid nesting `Fn.lookup` calls.
 
 
 ```ts
@@ -205,20 +205,20 @@ new TerraformOutput(this, "first-user-name", new TerraformOutputConfig
 ```
 
 ```go
-v := cdktf.NewTerraformVariable(stack, jsii.String("complex-object"), &cdktf.TerraformVariableConfig{
+v := cdktn.NewTerraformVariable(stack, jsii.String("complex-object"), &cdktn.TerraformVariableConfig{
 	Type: jsii.String("object({users: list(object({name: string}))})"),
 })
-cdktf.NewTerraformOutput(stack, jsii.String("users"), &cdktf.TerraformOutputConfig{
-	Value: cdktf.Fn_Lookup(v.Value(), jsii.String("users"), nil),
+cdktn.NewTerraformOutput(stack, jsii.String("users"), &cdktn.TerraformOutputConfig{
+	Value: cdktn.Fn_Lookup(v.Value(), jsii.String("users"), nil),
 })
-cdktf.NewTerraformOutput(stack, jsii.String("first-user-name"), &cdktf.TerraformOutputConfig{
-	Value: cdktf.Fn_LookupNested(v.Value(), &[]interface{}{"users", 0, "name"}),
+cdktn.NewTerraformOutput(stack, jsii.String("first-user-name"), &cdktn.TerraformOutputConfig{
+	Value: cdktn.Fn_LookupNested(v.Value(), &[]interface{}{"users", 0, "name"}),
 })
 ```
 
 ### Raw string helper
 
-Another helper function offered by CDKTF is `Fn.rawString` which can be used to escape raw strings that contain characters that CDKTF or Terraform would try to interpret otherwise.
+Another helper function offered by CDKTN is `Fn.rawString` which can be used to escape raw strings that contain characters that CDKTN or Terraform would try to interpret otherwise.
 
 
 ```ts
@@ -260,11 +260,11 @@ new TerraformOutput(this, "template", new TerraformOutputConfig
 ```
 
 ```go
-cdktf.NewTerraformOutput(stack, jsii.String("quotes"), &cdktf.TerraformOutputConfig{
-	Value: cdktf.Fn_RawString(jsii.String("\"b\"")),
+cdktn.NewTerraformOutput(stack, jsii.String("quotes"), &cdktn.TerraformOutputConfig{
+	Value: cdktn.Fn_RawString(jsii.String("\"b\"")),
 })
-cdktf.NewTerraformOutput(stack, jsii.String("template"), &cdktf.TerraformOutputConfig{
-	Value: cdktf.Fn_RawString(jsii.String("${TEMPLATE}")),
+cdktn.NewTerraformOutput(stack, jsii.String("template"), &cdktn.TerraformOutputConfig{
+	Value: cdktn.Fn_RawString(jsii.String("${TEMPLATE}")),
 })
 ```
 
@@ -276,8 +276,8 @@ Use the `Op` object to include operators like `!`, `+`, and `-`.
 <CodeGroup>
 
 ```ts TypeScript
-import { Fn, TerraformOutput } from "cdktf";
-import { Op } from "cdktf";
+import { Fn, TerraformOutput } from "cdktn";
+import { Op } from "cdktn";
 
 const zones = new DataAwsAvailabilityZones(this, "zones", {
   state: "available",
@@ -306,9 +306,9 @@ import (
 
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/dataawsavailabilityzones"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/dataawsavailabilityzones"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 )
 
 	zones := dataawsavailabilityzones.NewDataAwsAvailabilityZones(stack, jsii.String("zones"),
@@ -317,9 +317,9 @@ import (
 		},
 	)
 
-	cdktf.NewTerraformOutput(stack, jsii.String("half-of-the-zone"), &cdktf.TerraformOutputConfig{
-		Value: cdktf.Op_Div(
-			cdktf.Fn_LengthOf(cdktf.Token_AsAny(zones.Names())),
+	cdktn.NewTerraformOutput(stack, jsii.String("half-of-the-zone"), &cdktn.TerraformOutputConfig{
+		Value: cdktn.Op_Div(
+			cdktn.Fn_LengthOf(cdktn.Token_AsAny(zones.Names())),
 			jsii.Number(2),
 		),
 	})
@@ -329,15 +329,15 @@ import (
 
 # Using Terraform built-in functions directly within strings
 
-It is also possible to use all built-in Terraform functions without using CDKTF's `Fn.*` functions described above. To write Terraform built-in functions the same as you would in HCL, simply wrap the desired string within the HCL `${` and `}` syntax. **Note:** CDKTF doesn't do any further processing within the escaped syntax (`${` and `}`), and thus is unable to handle nested escape syntaxes yet.
+It is also possible to use all built-in Terraform functions without using CDKTN's `Fn.*` functions described above. To write Terraform built-in functions the same as you would in HCL, simply wrap the desired string within the HCL `${` and `}` syntax. **Note:** CDKTN doesn't do any further processing within the escaped syntax (`${` and `}`), and thus is unable to handle nested escape syntaxes yet.
 
 
 <CodeGroup>
 
 ```ts TypeScript
-import { Fn, TerraformOutput } from "cdktf";
-import { Op } from "cdktf";
-import { DataAwsAvailabilityZones } from "@cdktf/provider-aws/lib/data-aws-availability-zones";
+import { Fn, TerraformOutput } from "cdktn";
+import { Op } from "cdktn";
+import { DataAwsAvailabilityZones } from "@cdktn/provider-aws/lib/data-aws-availability-zones";
 
 const zones = new DataAwsAvailabilityZones(this, "zones", {
   state: "available",
@@ -368,9 +368,9 @@ import (
 
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/dataawsavailabilityzones"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/dataawsavailabilityzones"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 )
 
 	zones := dataawsavailabilityzones.NewDataAwsAvailabilityZones(stack, jsii.String("zones"),
@@ -379,10 +379,10 @@ import (
 		},
 	)
 
-	cdktf.NewTerraformOutput(stack, jsii.String("half-of-the-zone-raw"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("half-of-the-zone-raw"), &cdktn.TerraformOutputConfig{
 		Value: jsii.String(
 			fmt.Sprintf("${length(%s.names) / 2}",
-				*cdktf.Token_AsString(zones.Names(), &cdktf.EncodingOptions{}),
+				*cdktn.Token_AsString(zones.Names(), &cdktn.EncodingOptions{}),
 			),
 		),
 	})

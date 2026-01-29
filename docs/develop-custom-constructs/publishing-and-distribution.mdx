@@ -1,31 +1,31 @@
 ---
-title: Distributing and Consuming Constructs | CDK for Terraform
+title: Distributing and Consuming Constructs | CDK Terrain
 sidebarTitle: Publishing and Distribution
 description: |-
   Translate custom constructs to multiple languages. Use the projen project to quickly package and distribute constructs to public or private registries.
 ---
 
-Custom construct classes are reusable infrastructure configurations written in a programming language. After you [write a custom construct](/terraform/cdktf/develop-custom-constructs/construct-design), you can translate it to multiple languages and publish it for others to import and use in CDK for Terraform (CDKTF) applications.
+Custom construct classes are reusable infrastructure configurations written in a programming language. After you [write a custom construct](/docs/develop-custom-constructs/construct-design), you can translate it to multiple languages and publish it for others to import and use in CDK Terrain (CDKTN) applications.
 
 ## Translate Constructs to Terraform Modules
 
-You can write a CDKTF construct class and then synthesize the code into an HCL [Terraform module](/terraform/language/modules). When you use this approach, you are limited to the structure and functionality available in a Terraform module. For example, you cannot use enums or methods to provide advanced configuration options.
+You can write a CDKTN construct class and then synthesize the code into an HCL [Terraform module](/terraform/language/modules). When you use this approach, you are limited to the structure and functionality available in a Terraform module. For example, you cannot use enums or methods to provide advanced configuration options.
 
 Use the [cdktf-tf-module-stack](https://github.com/cdktf/cdktf-tf-module-stack) to transform your code into a Terraform module. This library exposes `TFModuleStack`, `TFModuleVariable`, `TFModuleOutput` constructs that you can use as replacements for `TerraformStack`, `TerraformVariable`, `TerraformOutput`.
 
-The library also offers a `ProviderRequirement` construct that replaces the provider construct you typically use in CDKTF applications. Typical provider constructs pin a specific provider version, but the `ProviderRequirement `construct lets you select a version range. This behavior more closely matches how many modules specify provider versions.
+The library also offers a `ProviderRequirement` construct that replaces the provider construct you typically use in CDKTN applications. Typical provider constructs pin a specific provider version, but the `ProviderRequirement `construct lets you select a version range. This behavior more closely matches how many modules specify provider versions.
 
-The following example shows a CDKTF program written using the `cdktf-tf-module-stack` library. CDKTF could then [synthesize](/terraform/cdktf/cli-reference/commands#synth) this code into a `cdktf.tf.json` file to use with Terraform. If you want to use this module, you need to list the full path to the folder containing the synthesized file, such as `../my-cdktf-application/cdktf.out/stacks/my-awesome-module`.
+The following example shows a CDKTN program written using the `cdktf-tf-module-stack` library. CDKTN could then [synthesize](/docs/cli-reference/commands#synth) this code into a `cdktf.tf.json` file to use with Terraform. If you want to use this module, you need to list the full path to the folder containing the synthesized file, such as `../my-cdktn-application/cdktf.out/stacks/my-awesome-module`.
 
 ```typescript
-import { App } from "cdktf";
+import { App } from "cdktn";
 import {
   TFModuleStack,
   TFModuleVariable,
   TFModuleOutput,
   ProviderRequirement,
 } from "cdktf-tf-module-stack";
-import { Resource } from "@cdktf/provider-null";
+import { Resource } from "@cdktn/provider-null";
 
 class MyAwesomeModule extends TFModuleStack {
   constructor(scope: Construct, id: string) {
@@ -57,15 +57,15 @@ Follow the [Terraform module publishing requirements and instructions](/terrafor
 
 ## Publish Constructs with Projen
 
-We recommend using the [`cdktf-construct` projen template](https://github.com/projen/projen/blob/main/src/cdktf/cdktf-construct.ts) to package and publish your constructs to either public or private registries. [Projen](https://github.com/projen/projen) synthesizes files and directories into different target languages based on a Javascript or Typescript file. The process is similar to how CDKTF synthesizes code into JSON configuration files for Terraform.
+We recommend using the [`cdktn-construct` projen template](https://github.com/projen/projen/blob/main/src/cdktn/cdktn-construct.ts) to package and publish your constructs to either public or private registries. [Projen](https://github.com/projen/projen) synthesizes files and directories into different target languages based on a Javascript or Typescript file. The process is similar to how CDKTN synthesizes code into JSON configuration files for Terraform.
 
-The projen deployment mechanism uses GitHub Actions, so `cdktf-construct` expects GitHub to host the Git repository for your construct package. If you prefer to use a different CI provider, you can use projen to bootstrap the project, run `yarn run eject` to opt out of projen, and then customize the CI implementation.
+The projen deployment mechanism uses GitHub Actions, so `cdktn-construct` expects GitHub to host the Git repository for your construct package. If you prefer to use a different CI provider, you can use projen to bootstrap the project, run `yarn run eject` to opt out of projen, and then customize the CI implementation.
 
-Use the following steps to publish your constructs with the `cdktf-construct` projen template.
+Use the following steps to publish your constructs with the `cdktn-construct` projen template.
 
 ### Initialize Construct Package
 
-Navigate into your construct directory and run `npx projen new cdktf-construct` to initialize a new construct package. The script creates a new project that you can configure and then deploy to private or public registries.
+Navigate into your construct directory and run `npx projen new cdktn-construct` to initialize a new construct package. The script creates a new project that you can configure and then deploy to private or public registries.
 
 ### Configure the Construct Project
 
@@ -74,11 +74,11 @@ Projen manages all non-code files, like the package.json or JSII configuration, 
 The following example shows how to configure your `.projenrc.js` file to publish your project to public or private registries.
 
 ```typescript
-const { cdktf } = require("projen");
-const project = new cdktf.ConstructLibraryCdktf({
+const { cdktn } = require("projen");
+const project = new cdktn.ConstructLibraryCdktn({
   author: "Your Name",
   authorAddress: "your-name@company.com",
-  cdktfVersion: "0.13.0",
+  cdktnVersion: "0.13.0",
   defaultReleaseBranch: "main",
   name: "your-project-name",
   repositoryUrl: "https://github.com/your-org/your-project-name.git",
@@ -118,9 +118,9 @@ const project = new cdktf.ConstructLibraryCdktf({
 // You should use pre-built providers as peer dependencies so your
 // package manager can warn you if you have incompatible versions
 project.addPeerDeps(
-  "@cdktf/provider-aws@10.x", // You want to pin the major version to stay
-  "@cdktf/provider-pagerduty@3.x", // compatible with the current cdktf version
-  "@cdktf/provider-datadog@3.x",
+  "@cdktn/provider-aws@10.x", // You want to pin the major version to stay
+  "@cdktn/provider-pagerduty@3.x", // compatible with the current cdktn version
+  "@cdktn/provider-datadog@3.x",
 );
 
 project.synth();

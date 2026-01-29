@@ -1,77 +1,77 @@
 ---
-title: CLI Commands - CDK for Terraform
+title: CLI Commands - CDK Terrain
 sidebarTitle: Commands
 description: >-
-  Use the CLI to initialize a new project, deploy your CDKTF app, generate
+  Use the CLI to initialize a new project, deploy your CDKTN app, generate
   Terraform configuration files, and more.
 ---
 
-The CDK for Terraform CLI has the following commands:
+The CDK Terrain CLI has the following commands:
 
-- [completion](/terraform/cdktf/cli-reference/commands#completion)
-- [convert](/terraform/cdktf/cli-reference/commands#convert)
-- [debug](/terraform/cdktf/cli-reference/commands#debug)
-- [deploy](/terraform/cdktf/cli-reference/commands#deploy)
-- [destroy](/terraform/cdktf/cli-reference/commands#destroy)
-- [diff](/terraform/cdktf/cli-reference/commands#diff)
-- [get](/terraform/cdktf/cli-reference/commands#get)
-- [init](/terraform/cdktf/cli-reference/commands#init)
-- [login](/terraform/cdktf/cli-reference/commands#login)
-- [output](/terraform/cdktf/cli-reference/commands#output)
-- [provider add](/terraform/cdktf/cli-reference/commands#provider-add)
-- [provider upgrade](/terraform/cdktf/cli-reference/commands#provider-upgrade)
-- [provider list](/terraform/cdktf/cli-reference/commands#provider-list)
-- [synth](/terraform/cdktf/cli-reference/commands#synth)
-- [watch](/terraform/cdktf/cli-reference/commands#watch)
+- [completion](/docs/cli-reference/commands#completion)
+- [convert](/docs/cli-reference/commands#convert)
+- [debug](/docs/cli-reference/commands#debug)
+- [deploy](/docs/cli-reference/commands#deploy)
+- [destroy](/docs/cli-reference/commands#destroy)
+- [diff](/docs/cli-reference/commands#diff)
+- [get](/docs/cli-reference/commands#get)
+- [init](/docs/cli-reference/commands#init)
+- [login](/docs/cli-reference/commands#login)
+- [output](/docs/cli-reference/commands#output)
+- [provider add](/docs/cli-reference/commands#provider-add)
+- [provider upgrade](/docs/cli-reference/commands#provider-upgrade)
+- [provider list](/docs/cli-reference/commands#provider-list)
+- [synth](/docs/cli-reference/commands#synth)
+- [watch](/docs/cli-reference/commands#watch)
 
 ## completion
 
 This command outputs a script that you can use to set up autocompletion for bash or zsh.
 
 ```
-> cdktf completion
+> cdktn completion
 
-#compdef cdktf
-###-begin-cdktf-completions-###
+#compdef cdktn
+###-begin-cdktn-completions-###
 #
 # yargs command completion script
 #
-# Installation: cdktf completion >> ~/.zshrc
-#    or cdktf completion >> ~/.zsh_profile on OSX.
+# Installation: cdktn completion >> ~/.zshrc
+#    or cdktn completion >> ~/.zsh_profile on OSX.
 #
 _cdktf_yargs_completions()
 {
   local reply
   local si=$IFS
   IFS=$'
-' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" cdktf --get-yargs-completions "${words[@]}"))
+' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" cdktn --get-yargs-completions "${words[@]}"))
   IFS=$si
   _describe 'values' reply
 }
-compdef _cdktf_yargs_completions cdktf
-###-end-cdktf-completions-###
+compdef _cdktf_yargs_completions cdktn
+###-end-cdktn-completions-###
 
 ```
 
 The output also contains the installation instructions. For example, here are the instructions for Mac OSX:
 
 ```
-cdktf completion >> ~/.bash_profile on OSX.
+cdktn completion >> ~/.bash_profile on OSX.
 # or if using zsh instead of bash
-cdktf completion >> ~/.zshrc
+cdktn completion >> ~/.zshrc
 ```
 
-After you configure auto completion, reload your shell by running `source ~/.zshrc`, `source ~/.bash_profile` or opening a new terminal window. You can now autocomplete `cdktf` commands by pressing the `<TAB>` key. You may need to enter a space after `cdktf` for autocomplete to take effect.
+After you configure auto completion, reload your shell by running `source ~/.zshrc`, `source ~/.bash_profile` or opening a new terminal window. You can now autocomplete `cdktn` commands by pressing the `<TAB>` key. You may need to enter a space after `cdktn` for autocomplete to take effect.
 
 ```
-> cdktf <TAB>
+> cdktn <TAB>
 completion  -- generate completion script
-convert     -- Converts a single file of HCL configuration to CDK for Terraform. Takes the file to be converted on stdin.
+convert     -- Converts a single file of HCL configuration to CDK Terrain. Takes the file to be converted on stdin.
 deploy      -- Deploy the given stacks
 destroy     -- Destroy the given stacks
 diff        -- Perform a diff (terraform plan) for the given stack
 get         -- Generate CDK Constructs for Terraform providers and modules.
-init        -- Create a new cdktf project from a template.
+init        -- Create a new cdktn project from a template.
 list        -- List stacks in app.
 login       -- Retrieves an API token to connect to Terraform Cloud.
 synth       -- Synthesizes Terraform code for the given app in a directory.
@@ -85,18 +85,18 @@ This command converts Terraform configuration written in HCL to the equivalent c
 <Note>The `convert` command has [known limitations](https://cdk.tf/convert-limitations).</Note>
 
 ```
-cdktf convert
+cdktn convert
 
-Converts a single file of HCL configuration to CDK for Terraform. Takes the file to be converted on stdin.
+Converts a single file of HCL configuration to CDK Terrain. Takes the file to be converted on stdin.
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
       --language                                                                                       [choices: "typescript", "python", "csharp", "java", "go"] [default: "typescript"]
       --provider                                 The conversion needs to know which providers are used in addition to the ones in your cdktf.json file. We search for a cdktf.json below
@@ -105,11 +105,11 @@ Options:
   -h, --help                                     Show help                                                                                                                     [boolean]
 
 Examples:
-  cat main.tf | cdktf convert  --provider integrations/github                                   Takes the HCL content of main.tf and converts it to CDK for Terraform content and prints
+  cat main.tf | cdktn convert  --provider integrations/github                                   Takes the HCL content of main.tf and converts it to CDK Terrain content and prints
                                                                                                 it
-  cat main.tf | cdktf convert --provider hashicorp/aws > imported.ts                            Takes the HCL content of main.tf and converts it to CDK for Terraform content in
+  cat main.tf | cdktn convert --provider hashicorp/aws > imported.ts                            Takes the HCL content of main.tf and converts it to CDK Terrain content in
                                                                                                 imported.ts
-  cat main.tf | cdktf convert --provider 'hashicorp/aws@ ~>3.62.0' 'integrations/github@        Takes the HCL content of main.tf and converts it to CDK for Terraform content in
+  cat main.tf | cdktn convert --provider 'hashicorp/aws@ ~>3.62.0' 'integrations/github@        Takes the HCL content of main.tf and converts it to CDK Terrain content in
   ~>4.16.0' --language python > imported.py                                                     imported.py
 ```
 
@@ -118,19 +118,19 @@ Examples:
 Convert a local file.
 
 ```bash
-cat main.tf | cdktf convert > imported.ts
+cat main.tf | cdktn convert > imported.ts
 ```
 
-Convert a local file and wrap it into a `cdktf.TerraformStack` instead of a `cdktf.Construct`.
+Convert a local file and wrap it into a `cdktn.TerraformStack` instead of a `cdktn.Construct`.
 
 ```bash
-cat main.tf | cdktf convert --stack > imported.ts
+cat main.tf | cdktn convert --stack > imported.ts
 ```
 
 Convert HCL in your clipboard to Python on OSX.
 
 ```bash
-pbpaste | cdktf convert --language python | pbcopy
+pbpaste | cdktn convert --language python | pbcopy
 ```
 
 ## deploy
@@ -138,13 +138,13 @@ pbpaste | cdktf convert --language python | pbcopy
 This command deploys a given application.
 
 ```bash
-$ cdktf deploy --help
+$ cdktn deploy --help
 ```
 
 **Help Output**
 
 ```
-cdktf deploy [stacks...]
+cdktn deploy [stacks...]
 
 Deploy the given stacks
 
@@ -153,20 +153,20 @@ Positionals:
 
 Options:
       --version                                  Show version number                                                                                                                    [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                         [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                                       [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                                   [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard out at
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard out at
                                                  the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
-  -a, --app                                      Command to use in order to execute cdktf app                                                         [required] [default: "npx ts-node main.ts"]
+  -a, --app                                      Command to use in order to execute cdktn app                                                         [required] [default: "npx ts-node main.ts"]
   -o, --output                                   Output directory for the synthesized Terraform config                                                          [required] [default: "cdktf.out"]
       --auto-approve                             Auto approve                                                                                                          [boolean] [default: false]
       --outputs-file                             Path to file where stack outputs will be written as JSON                                                                                [string]
       --outputs-file-include-sensitive-outputs   Whether to include sensitive outputs in the output file                                                               [boolean] [default: false]
       --ignore-missing-stack-dependencies        Don't check if all stacks specified in the command have their dependencies included as well                           [boolean] [default: false]
-      --parallelism                              Number of concurrent CDKTF stacks to run. Defaults to infinity, denoted by -1                                             [number] [default: -1]
+      --parallelism                              Number of concurrent CDKTN stacks to run. Defaults to infinity, denoted by -1                                             [number] [default: -1]
       --refresh-only                             Select the "refresh only" planning mode, which checks whether remote objects still match the outcome of the most recent Terraform apply but does
                                                  not propose any actions to undo any changes made outside of Terraform.                                                [boolean] [default: false]
       --terraform-parallelism                    Forwards value as the `-parallelism` flag to Terraform. By default, the this flag is not forwarded to Terraform. Note: This flag is not
@@ -190,49 +190,49 @@ Options:
 Deploy an application.
 
 ```bash
-$ cdktf deploy
+$ cdktn deploy
 ```
 
 Deploy an application with automatic approval of the diff (Terraform plan).
 
 ```bash
-$ cdktf deploy --auto-approve my-first-stack my-second-stack my-third-stack
+$ cdktn deploy --auto-approve my-first-stack my-second-stack my-third-stack
 ```
 
 Deploy multiple stacks in one run.
 
 ```bash
-$ cdktf deploy my-first-stack my-second-stack my-third-stack
+$ cdktn deploy my-first-stack my-second-stack my-third-stack
 ```
 
 Deploy all stacks in one run:
 
 ```bash
-$ cdktf deploy '*'
+$ cdktn deploy '*'
 ```
 
 Deploy all stacks ending with `-production` in one run:
 
 ```bash
-$ cdktf deploy '*-production'
+$ cdktn deploy '*-production'
 ```
 
 If the stacks have dependencies (through cross stack references or by calling `myStack.addDependency(otherStack)`) deploy will figure out the right order to run.
 
-For more info on the `--outputs-file` option, refer to the [`output` command](/terraform/cdktf/cli-reference/commands#output).
+For more info on the `--outputs-file` option, refer to the [`output` command](/docs/cli-reference/commands#output).
 
 ## destroy
 
 This command destroys a given application.
 
 ```bash
-$ cdktf destroy --help
+$ cdktn destroy --help
 ```
 
 Help output:
 
 ```
-cdktf destroy [stacks..]
+cdktn destroy [stacks..]
 
 Destroy the given stacks
 
@@ -241,18 +241,18 @@ Positionals:
 
 Options:
       --version                                  Show version number                                                                                                                    [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                         [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                                       [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                                   [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard out at
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard out at
                                                  the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
-  -a, --app                                      Command to use in order to execute cdktf app                                                         [required] [default: "npx ts-node main.ts"]
+  -a, --app                                      Command to use in order to execute cdktn app                                                         [required] [default: "npx ts-node main.ts"]
   -o, --output                                   Output directory for the synthesized Terraform config                                                          [required] [default: "cdktf.out"]
       --auto-approve                             Auto approve                                                                                                          [boolean] [default: false]
       --ignore-missing-stack-dependencies        Don't check if all stacks specified in the command have their dependencies included as well                           [boolean] [default: false]
-      --parallelism                              Number of concurrent CDKTF stacks to run. Defaults to infinity, denoted by -1                                             [number] [default: -1]
+      --parallelism                              Number of concurrent CDKTN stacks to run. Defaults to infinity, denoted by -1                                             [number] [default: -1]
       --terraform-parallelism                    Forwards value as the `-parallelism` flag to Terraform. By default, the this flag is not forwarded to Terraform. Note: This flag is not
                                                  supported by remote / cloud backend                                                                                       [number] [default: -1]
       --var                                      Set a value for one of the input variables in the stack or stacks to apply. Use this option more than once to set more than one variable.
@@ -274,31 +274,31 @@ Options:
 Destroy an application.
 
 ```bash
-$ cdktf destroy
+$ cdktn destroy
 ```
 
 Destroy an application with automatic approval of the diff (Terraform plan).
 
 ```bash
-$ cdktf destroy --auto-approve
+$ cdktn destroy --auto-approve
 ```
 
 Destroy multiple stacks in one run.
 
 ```bash
-$ cdktf destroy my-first-stack my-second-stack my-third-stack
+$ cdktn destroy my-first-stack my-second-stack my-third-stack
 ```
 
 Destroy all stacks in one run:
 
 ```bash
-$ cdktf destroy '*'
+$ cdktn destroy '*'
 ```
 
 Destroy all stacks ending with production in one run:
 
 ```bash
-$ cdktf destroy '*-production'
+$ cdktn destroy '*-production'
 ```
 
 If the stacks have dependencies (through cross stack references or by calling `myStack.addDependency(otherStack)`) deploy will figure out the right order to run.
@@ -308,13 +308,13 @@ If the stacks have dependencies (through cross stack references or by calling `m
 This command generates a diff for a given application by running Terraform plan.
 
 ```bash
-$ cdktf diff --help
+$ cdktn diff --help
 ```
 
 Help output:
 
 ```
-cdktf diff [stack]
+cdktn diff [stack]
 
 Perform a diff (terraform plan) for the given stack
 
@@ -323,14 +323,14 @@ Positionals:
 
 Options:
       --version                                  Show version number                                                                                                                    [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                         [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                                       [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                                   [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard out at
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard out at
                                                  the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
-  -a, --app                                      Command to use in order to execute cdktf app                                                         [required] [default: "npx ts-node main.ts"]
+  -a, --app                                      Command to use in order to execute cdktn app                                                         [required] [default: "npx ts-node main.ts"]
   -o, --output                                   Output directory for the synthesized Terraform config                                                          [required] [default: "cdktf.out"]
       --refresh-only                             Select the "refresh only" planning mode, which checks whether remote objects still match the outcome of the most recent Terraform apply but does
                                                  not propose any actions to undo any changes made outside of Terraform.                                                [boolean] [default: false]
@@ -354,7 +354,7 @@ Examples:
 Generate a diff for a given application.
 
 ```bash
-$ cdktf diff
+$ cdktn diff
 ```
 
 ## get
@@ -362,29 +362,29 @@ $ cdktf diff
 This command downloads the providers and modules for an application and
 generates CDK constructs for them. It can use the `cdktf.json` configuration file to read the list of providers and modules.
 This command only generates currently missing provider bindings, so it is very fast if nothing changed.
-The command does not update the version when you specify loose version constraints in your `cdktf.json` file and have already generated an existing version locally. To update the version anyway, run `cdktf get --force` to recreate all bindings.
+The command does not update the version when you specify loose version constraints in your `cdktf.json` file and have already generated an existing version locally. To update the version anyway, run `cdktn get --force` to recreate all bindings.
 
-When you change a version constraint, the `cdktf get` command recreates the bindings for that provider.
+When you change a version constraint, the `cdktn get` command recreates the bindings for that provider.
 
 ```bash
-$ cdktf get --help
+$ cdktn get --help
 ```
 
 **Help Output**
 
 ```
-cdktf get
+cdktn get
 
 Generate CDK Constructs for Terraform providers and modules.
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
   -o, --output                                   Output directory for generated Constructs                                                                    [string] [default: ".gen"]
   -l, --language                                 Output programming language       [string] [required] [choices: "typescript", "python", "java", "csharp", "go"] [default: "typescript"]
@@ -409,45 +409,45 @@ $ cat cdktf.json
 ```
 
 ```bash
-$ cdktf get
+$ cdktn get
 ```
 
 If you run into issues generating a lot of bindings you can use the `--parallelism` option to limit the number of bindings generated in parallel.
 
 ```bash
-$ cdktf get --parallelism 1
+$ cdktn get --parallelism 1
 ```
 
 ## init
 
-This command creates a new CDK for Terraform project using a template.
+This command creates a new CDK Terrain project using a template.
 
 ```sh
-$ cdktf init --help
+$ cdktn init --help
 ```
 
 **Help Output**
 
 ```
-cdktf init
+cdktn init
 
-Create a new cdktf project from a template.
+Create a new cdktn project from a template.
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
       --template                                 The template to be used to create a new project. Either URL to zip file or one of the built-in templates.                      [string]
       --project-name                             The name of the project.                                                                                                       [string]
       --project-description                      The description of the project.                                                                                                [string]
       --dist                                     Install dependencies from a "dist" directory (for development)                                                                 [string]
       --local                                    Use local state storage for generated Terraform.                                                             [boolean] [default: false]
-      --cdktf-version                            The cdktf version to use while creating a new project.                                                      [string] [default: "0.0.0"]
+      --cdktf-version                            The cdktn version to use while creating a new project.                                                      [string] [default: "0.0.0"]
       --from-terraform-project                   Use a terraform project as the basis, CDK constructs will be generated based on the .tf files in the path                      [string]
       --enable-crash-reporting                   Enable crash reporting for the CLI, refer to https://cdk.tf/crash-reporting for more details                                  [boolean]
       --providers                                Providers to add to your project                                                                                  [array] [default: []]
@@ -461,19 +461,19 @@ Options:
 Create a new Typescript project.
 
 ```bash
-$ cdktf init --template="typescript"
+$ cdktn init --template="typescript"
 ```
 
-Create a new Python project and use a specific version of the `cdktf` package.
+Create a new Python project and use a specific version of the `cdktn` package.
 
 ```bash
-$ cdktf init --template="python" --cdktf-version="0.0.1"
+$ cdktn init --template="python" --cdktf-version="0.0.1"
 ```
 
 Create a new Typescript project from an existing Terraform codebase. Currently, you can only use the `--from-terraform-project` flag with TypeScript, and there are some known limitations.
 
 ```bash
-$ cdktf init --template="typescript" --from-terraform-project /path/to/terraform/project
+$ cdktn init --template="typescript" --from-terraform-project /path/to/terraform/project
 ```
 
 ## login
@@ -481,33 +481,33 @@ $ cdktf init --template="typescript" --from-terraform-project /path/to/terraform
 This command helps log in to HCP Terraform by fetching a HCP Terraform API token.
 
 ```bash
-$ cdktf login --help
+$ cdktn login --help
 ```
 
 **Help Output**
 
 ```
-cdktf login
+cdktn login
 
 Retrieves an API token to connect to Terraform Cloud or Terraform Enterprise.
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
       --tfe-hostname                             The Terraform Enterprise hostname to authenticate against. If you use Terraform Cloud you can leave this on the default.
                                                                                                                                                   [string] [default: "app.terraform.io"]
   -h, --help                                     Show help                                                                                                                     [boolean]
 
 Examples:
-  cdktf login                                    Takes you through the interactive login process
-  cdktf login --tfe-hostname tfe.my-company.com  Takes you through the interactive login process on your companies Terraform Enterprise instance.
-  cat my-token.txt | cdktf login                 Uses a locally stored token directly, instead of going through the interactive login process
+  cdktn login                                    Takes you through the interactive login process
+  cdktn login --tfe-hostname tfe.my-company.com  Takes you through the interactive login process on your companies Terraform Enterprise instance.
+  cat my-token.txt | cdktn login                 Uses a locally stored token directly, instead of going through the interactive login process
 ```
 
 Please note that we currently expect custom TFE instances to be using the `https` protocol.
@@ -517,34 +517,34 @@ Please note that we currently expect custom TFE instances to be using the `https
 Fetch an API token from HCP Terraform.
 
 ```bash
-$ cdktf login
+$ cdktn login
 ```
 
 ## synth
 
-This command synthesizes Terraform configuration for an application. CDKTF stores the synthesized configuration in the `cdktf.out` directory, unless you use the `--output` flag to specify a different location. The output folder is ephemeral and might be erased for each `synth` that you run manually or that happens automatically when you run `deploy`, `diff`, or `destroy`.
+This command synthesizes Terraform configuration for an application. CDKTN stores the synthesized configuration in the `cdktf.out` directory, unless you use the `--output` flag to specify a different location. The output folder is ephemeral and might be erased for each `synth` that you run manually or that happens automatically when you run `deploy`, `diff`, or `destroy`.
 
 ```sh
-$ cdktf synth --help
+$ cdktn synth --help
 ```
 
 **Help Output**
 
 ```
-cdktf synth
+cdktn synth
 
 Synthesizes Terraform code for the given app in a directory.
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
-  -a, --app                                      Command to use in order to execute cdktf app                                                           [default: "npx ts-node main.ts"]
+  -a, --app                                      Command to use in order to execute cdktn app                                                           [default: "npx ts-node main.ts"]
   -o, --output                                   Output directory for the synthesized Terraform config                                                            [default: "cdktf.out"]
       --check-code-maker-output                  Should `codeMakerOutput` existence check be performed? By default it will be checked if providers or modules are configured.
                                                                                                                                                               [boolean] [default: false]
@@ -557,19 +557,19 @@ Options:
 Synthesize code for an application.
 
 ```bash
-$ cdktf synth
+$ cdktn synth
 ```
 
 Synthesize code when providing a custom command to execute and an output directory.
 
 ```bash
-$ cdktf synth --app="npm compile && node main.js" --output="dirname"
+$ cdktn synth --app="npm compile && node main.js" --output="dirname"
 ```
 
 Synthesize code in Terraform HCL instead of JSON
 
 ```bash
-$ cdktf synth --hcl
+$ cdktn synth --hcl
 ```
 
 ## watch
@@ -578,22 +578,22 @@ $ cdktf synth --hcl
 
 When the `watch` command is first run it creates a `watchPattern` in your `cdktf.json` based on the language you configured. It's a list of glob patterns matching all files that should be watched.
 
-Whenever a file matching the watch pattern is changed, the command will run `cdktf deploy --auto-approve` for you. It allows for rapid iterations when developing infrastructure, especially when working with serverless services. You can specify the stacks you want to deploy or you can use `cdktf watch --auto-approve '*'` to deploy all stacks.
+Whenever a file matching the watch pattern is changed, the command will run `cdktn deploy --auto-approve` for you. It allows for rapid iterations when developing infrastructure, especially when working with serverless services. You can specify the stacks you want to deploy or you can use `cdktn watch --auto-approve '*'` to deploy all stacks.
 
 ### Requirements
 
-Before using `watch` you should check your environment. The `watch` command should only be used for development environments. We recommend making sure that the terminal where you want to run `watch` has no access keys that allow the `cdktf-cli` to deploy to your production environment.
+Before using `watch` you should check your environment. The `watch` command should only be used for development environments. We recommend making sure that the terminal where you want to run `watch` has no access keys that allow the `cdktn-cli` to deploy to your production environment.
 
 ### Run watch
 
 ```sh
-$ cdktf watch --help
+$ cdktn watch --help
 ```
 
 **Help Output**
 
 ```
-cdktf watch [stacks..]
+cdktn watch [stacks..]
 
 [experimental] Watch for file changes and automatically trigger a deploy
 
@@ -602,17 +602,17 @@ Positionals:
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
-  -a, --app                                      Command to use in order to execute cdktf app                                                [required] [default: "npx ts-node main.ts"]
+  -a, --app                                      Command to use in order to execute cdktn app                                                [required] [default: "npx ts-node main.ts"]
   -o, --output                                   Output directory for the synthesized Terraform config                                                 [required] [default: "cdktf.out"]
       --auto-approve                             Auto approve                                                                                                 [boolean] [default: false]
-      --parallelism                              Number of concurrent CDKTF stacks to run. Defaults to infinity, denoted by -1                                    [number] [default: -1]
+      --parallelism                              Number of concurrent CDKTN stacks to run. Defaults to infinity, denoted by -1                                    [number] [default: -1]
       --terraform-parallelism                    Forwards value as the `-parallelism` flag to Terraform. By default, the this flag is not forwarded to Terraform. Note: This flag is not
                                                  supported by remote / cloud backend                                                                              [number] [default: -1]
   -h, --help                                     Show help                                                                                                                     [boolean]
@@ -625,10 +625,10 @@ Options:
 Run `watch` on the development stack (dev). The `--auto-approve` flag skips the explicit plan approval step and is currently always required.
 
 ```
-cdktf watch dev --auto-approve
+cdktn watch dev --auto-approve
 ```
 
-Besides for the required `--auto-approve` flag, you can use the same configuration options as in `cdktf deploy`.
+Besides for the required `--auto-approve` flag, you can use the same configuration options as in `cdktn deploy`.
 
 ### Troubleshoot watch
 
@@ -643,13 +643,13 @@ The debug output is directed to a `cdktf.log` file in your projects root directo
 This command gets the outputs defined in the Terraform configuration of the given stack. It uses `terraform output` under the hood.
 
 ```sh
-$ cdktf output --help
+$ cdktn output --help
 ```
 
 **Help Output**
 
 ```
-cdktf output [stacks..]
+cdktn output [stacks..]
 
 Prints the output of stacks
 
@@ -658,14 +658,14 @@ Positionals:
 
 Options:
       --version                                  Show version number                                                                                                                    [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                         [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                                       [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                                   [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard out at
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard out at
                                                  the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
-  -a, --app                                      Command to use in order to execute cdktf app                                                         [required] [default: "npx ts-node main.ts"]
+  -a, --app                                      Command to use in order to execute cdktn app                                                         [required] [default: "npx ts-node main.ts"]
   -o, --output                                   Output directory for the synthesized Terraform config                                                          [required] [default: "cdktf.out"]
       --outputs-file                             Path to file where stack outputs will be written as JSON                                                                                [string]
       --outputs-file-include-sensitive-outputs   Whether to include sensitive outputs in the output file                                                               [boolean] [default: false]
@@ -700,34 +700,34 @@ This command prints debug information about the current project and environment 
 **Help Output**
 
 ```sh
-$ cdktf debug --help
+$ cdktn debug --help
 
-cdktf debug
+cdktn debug
 
 Get debug information about the current project and environment
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
       --json                                     If set, output will be in JSON format.                                                                       [boolean] [default: false]
   -h, --help                                     Show help                                                                                                                     [boolean]
 ```
 
-The debug information depends on the programming language. The following example is from a Java application, where CDKTF collects information about Java, Gradle, and Maven. CDKTF detects the installed `constructs` version through Gradle.
+The debug information depends on the programming language. The following example is from a Java application, where CDKTN collects information about Java, Gradle, and Maven. CDKTN detects the installed `constructs` version through Gradle.
 
 ```
-$ cdktf debug
-cdktf debug
+$ cdktn debug
+cdktn debug
 language: java
-cdktf-cli: 0.20.1
+cdktn-cli: 0.20.1
 node: v18.12.0
-cdktf: 0.20.1
+cdktn: 0.20.1
 constructs: 10.1.167
 jsii: null
 terraform: 1.4.0
@@ -739,24 +739,24 @@ gradle: ------------------------------------------------------------Gradle 8.2.1
 providers
 kreuzwerker/docker@~>2.0 (LOCAL)
         terraform provider version: 2.25.0
-com.hashicorp.cdktf-provider-ad (PREBUILT)
+io.cdktn.cdktn-provider-ad (PREBUILT)
         terraform provider version: 0.4.4
         prebuilt provider version: 8.0.0
-        cdktf version: ^0.20.0
+        cdktn version: ^0.20.0
 ```
 
 ## provider add
 
-This command facilitates adding Terraform providers to a CDKTF project. If a [pre-built provider](/terraform/cdktf/concepts/providers#install-pre-built-providers) is available for the CDKTF version you are using and the Terraform provider version you requested (if any), it will be installed using e.g. `npm install` or `dotnet add` depending on the language you are using. Otherwise, the provider will be added to the `cdktf.json` config and `cdktf get` will be automatically invoked to generate [local provider bindings](/terraform/cdktf/concepts/providers#add-provider-to-cdktf-json).
+This command facilitates adding Terraform providers to a CDKTN project. If a [pre-built provider](/docs/concepts/providers#install-pre-built-providers) is available for the CDKTN version you are using and the Terraform provider version you requested (if any), it will be installed using e.g. `npm install` or `dotnet add` depending on the language you are using. Otherwise, the provider will be added to the `cdktf.json` config and `cdktn get` will be automatically invoked to generate [local provider bindings](/docs/concepts/providers#add-provider-to-cdktn-json).
 
 ```sh
-$ cdktf provider add --help
+$ cdktn provider add --help
 ```
 
 **Help Output**
 
 ```
-cdktf provider add <provider...>
+cdktn provider add <provider...>
 
 Add one or more Terraform providers to your project.
 
@@ -765,12 +765,12 @@ Positionals:
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
       --force-local                              force local provider installation, even if pre-built provider exists                                                          [boolean]
   -h, --help                                     Show help                                                                                                                     [boolean]
@@ -781,39 +781,39 @@ Options:
 Add the `aws` provider to the project. As the namespace of the AWS Terraform provider is `hashicorp` it can be left out.
 
 ```bash
-$ cdktf provider add aws
+$ cdktn provider add aws
 ```
 
 Add a specific version of the `aws` provider to the project. You can use the `@` symbol to specify a [version constraint](/terraform/language/providers/requirements#version-constraints).
 
 ```bash
-$ cdktf provider add aws@~>4.0
+$ cdktn provider add aws@~>4.0
 ```
 
 Add multiple providers to the project and force local generation of provider bindings.
 
 ```bash
-$ cdktf provider add kreuzwerker/docker google --force-local
+$ cdktn provider add kreuzwerker/docker google --force-local
 ```
 
 Add a provider from a private registry to the project.
 
 ```bash
-$ cdktf provider add registry.example.com/acme/my-provider
+$ cdktn provider add registry.example.com/acme/my-provider
 ```
 
 ## provider upgrade
 
-This command lets you upgrade Terraform providers in a CDKTF project to the newest version compatible with your `cdktf` version. You can also optionally add a version constraint.
+This command lets you upgrade Terraform providers in a CDKTN project to the newest version compatible with your `cdktn` version. You can also optionally add a version constraint.
 
-If your project has the associated [pre-built provider](/terraform/cdktf/concepts/providers#install-pre-built-providers) already installed, CDKTF updates the pre-built provider. Otherwise, CDKTF adds the provider to the `cdktf.json` configuration file and invokes `cdktf get` to generate [local provider bindings](/terraform/cdktf/concepts/providers#add-provider-to-cdktf-json).
+If your project has the associated [pre-built provider](/docs/concepts/providers#install-pre-built-providers) already installed, CDKTN updates the pre-built provider. Otherwise, CDKTN adds the provider to the `cdktf.json` configuration file and invokes `cdktn get` to generate [local provider bindings](/docs/concepts/providers#add-provider-to-cdktn-json).
 
 ```sh
-$ cdktf provider upgrade --help
-cdktf provider upgrade <provider...>
+$ cdktn provider upgrade --help
+cdktn provider upgrade <provider...>
 
-Upgrade one or more Terraform providers in your project to the newest version compatible with your CDKTF version.
-If your project has the associated pre-built provider already installed, CDKTF updates the pre-built provider. Otherwise, CDKTF adds the specified provider to the cdktf.json
+Upgrade one or more Terraform providers in your project to the newest version compatible with your CDKTN version.
+If your project has the associated pre-built provider already installed, CDKTN updates the pre-built provider. Otherwise, CDKTN adds the specified provider to the cdktf.json
 configuration file and generates local provider bindings.
 
 Positionals:
@@ -821,12 +821,12 @@ Positionals:
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
   -h, --help                                     Show help                                                                                                                     [boolean]
 ```
@@ -835,22 +835,22 @@ Options:
 
 This command prints out a table (or json with the `--json` option) containing details about the providers installed for the project. It gathers information for both locally built and pre-built providers.
 
-Information printed varies between locally generated and prebuilt providers. The information for each provider includes the Terraform provider version, the CDKTF version, and the package name and version (if pre-built provider).
+Information printed varies between locally generated and prebuilt providers. The information for each provider includes the Terraform provider version, the CDKTN version, and the package name and version (if pre-built provider).
 
 ```sh
-$ cdktf provider list --help
-cdktf provider list [flags]
+$ cdktn provider list --help
+cdktn provider list [flags]
 
 List installed providers
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
       --json                                     get providers list as json                                                                                   [boolean] [default: false]
   -h, --help                                     Show help                                                                                                                     [boolean]
@@ -859,10 +859,10 @@ Options:
 **Help Output**
 
 ```
-cdktf provider upgrade <provider...>
+cdktn provider upgrade <provider...>
 
-Upgrade one or more Terraform providers in your project to the newest version compatible with your CDKTF version.
-If your project has the associated pre-built provider already installed, CDKTF updates the pre-built provider. Otherwise, CDKTF adds the specified provider to the cdktf.json
+Upgrade one or more Terraform providers in your project to the newest version compatible with your CDKTN version.
+If your project has the associated pre-built provider already installed, CDKTN updates the pre-built provider. Otherwise, CDKTN adds the specified provider to the cdktf.json
 configuration file and generates local provider bindings.
 
 Positionals:
@@ -870,32 +870,32 @@ Positionals:
 
 Options:
       --version                                  Show version number                                                                                                           [boolean]
-      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktf get and convert. Supported using the env
+      --experimental-provider-schema-cache-path  An experimental schema cache that can be used to improve the speed of cdktn get and convert. Supported using the env
                                                  CDKTF_EXPERIMENTAL_PROVIDER_SCHEMA_CACHE_PATH.                                                                [string] [default: false]
       --disable-plugin-cache-env                 Dont set TF_PLUGIN_CACHE_DIR automatically. This is useful when the plugin cache is configured differently. Supported using the env
                                                  CDKTF_DISABLE_PLUGIN_CACHE_ENV.                                                                              [boolean] [default: false]
       --log-level                                Which log level should be written. Only supported via setting the env CDKTF_LOG_LEVEL                                          [string]
-      --log-file-directory                       The directory path where CDKTF should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTF writes logs to standard
+      --log-file-directory                       The directory path where CDKTN should create `cdktf.log` and print logs at the `debug` level. If not set, CDKTN writes logs to standard
                                                  out at the level specified in `CDKTF_LOG_LEVEL`. Only supported via setting the env CDKTF_LOG_FILE_DIRECTORY
   -h, --help                                     Show help                                                                                                                     [boolean]
 ```
 
 **Examples**
 
-Upgrade the `aws` provider to the newest version available for your `cdktf` version.
+Upgrade the `aws` provider to the newest version available for your `cdktn` version.
 
 ```bash
-$ cdktf provider add aws
+$ cdktn provider add aws
 ```
 
-Upgrade the `aws` provider to the newest version available for your `cdktf` version and at version `4` of the provider version.
+Upgrade the `aws` provider to the newest version available for your `cdktn` version and at version `4` of the provider version.
 
 ```bash
-$ cdktf provider add aws@~>4.0
+$ cdktn provider add aws@~>4.0
 ```
 
-Upgrade multiple providers to the latest version available for your `cdktf` version.
+Upgrade multiple providers to the latest version available for your `cdktn` version.
 
 ```bash
-$ cdktf provider add kreuzwerker/docker google
+$ cdktn provider add kreuzwerker/docker google
 ```

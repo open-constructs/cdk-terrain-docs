@@ -1,45 +1,45 @@
 ---
-title: "[technical preview] AWS Adapter - CDK for Terraform"
+title: "[technical preview] AWS Adapter - CDK Terrain"
 sidebarTitle: AWS Adapter [preview]
-description: "[technical preview] Use AWS CDK (v2) constructs in CDK for Terraform projects."
+description: "[technical preview] Use AWS CDK (v2) constructs in CDK Terrain projects."
 ---
 
 <Note>The AWS Adapter is a technical preview and not ready for production usage. Its API is not stable and things might break unexpectedly.</Note>
 
-The `AwsTerraformAdapter` is included in the [`@cdktf/aws-cdk`](https://github.com/hashicorp/cdktf-aws-cdk) package and allows you to use Amazon Web Services Cloud Development Kit (AWS CDK) constructs in your CDK for Terraform (CDKTF) projects.
+The `AwsTerraformAdapter` is included in the [`@cdktn/aws-cdk`](https://github.com/hashicorp/cdktn-aws-cdk) package and allows you to use Amazon Web Services Cloud Development Kit (AWS CDK) constructs in your CDK Terrain (CDKTN) projects.
 
 The `AwsTerraformAdapter` uses the [`aws_cloudcontrolapi_resource`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudcontrolapi_resource) Terraform resource to communicate with the [AWS Cloud Control API](https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/what-is-cloudcontrolapi.html). Reference this [list of supported resources](https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/supported-resources.html) for the Cloud Control API.
 
-You need to [manually map](#write-manual-mappings) resources that the AWS Cloud Control API does not yet support to specific Terraform resources because attribute names and resource types differ between CloudFormation and Terraform. Some manual mappings are [included in the adapter](https://github.com/hashicorp/cdktf-aws-cdk/tree/main/src/mapping/aws), and we are happy to accept PRs that add manual mappings for currently unsupported resources!
+You need to [manually map](#write-manual-mappings) resources that the AWS Cloud Control API does not yet support to specific Terraform resources because attribute names and resource types differ between CloudFormation and Terraform. Some manual mappings are [included in the adapter](https://github.com/hashicorp/cdktn-aws-cdk/tree/main/src/mapping/aws), and we are happy to accept PRs that add manual mappings for currently unsupported resources!
 
 ## Requirements
 
 The `AwsTerraformAdapter` currently only supports TypeScript projects:
 
 - `aws-cdk-lib` >= 2.0.0 (requires `constructs` version 10)
-- `cdktf` >= 0.7.0
-- `@cdktf/aws-cdk` >= 0.1 (contains the adapter)
+- `cdktn` >= 0.7.0
+- `@cdktn/aws-cdk` >= 0.1 (contains the adapter)
 
 ## Install the Adapter
 
 To install the `AwsTerraformAdapter`:
 
-1. Set up a CDKTF TypeScript project. Refer to [Project Setup](/terraform/cdktf/create-and-deploy/project-setup) for details.
+1. Set up a CDKTN TypeScript project. Refer to [Project Setup](/docs/create-and-deploy/project-setup) for details.
 
 1. Install the required packages via yarn or npm.
 
    ```
-   yarn add aws-cdk-lib@^2.0.0-rc.17 @cdktf/aws-cdk
+   yarn add aws-cdk-lib@^2.0.0-rc.17 @cdktn/aws-cdk
    // or
-   npm install aws-cdk-lib@^2.0.0-rc.17 @cdktf/aws-cdk
+   npm install aws-cdk-lib@^2.0.0-rc.17 @cdktn/aws-cdk
    ```
 
 ## Use the Adapter
 
-Import the `AwsTerraformAdapter` from `@cdktf/aws-cdk` and initialize it the same way you would initialize any other construct.
+Import the `AwsTerraformAdapter` from `@cdktn/aws-cdk` and initialize it the same way you would initialize any other construct.
 
 ```typescript
-import { AwsTerraformAdapter, AwsProvider } from "@cdktf/aws-cdk";
+import { AwsTerraformAdapter, AwsProvider } from "@cdktn/aws-cdk";
 
 export class MyStack extends TerraformStack {
   constructor(scope: Construct, name: string) {
@@ -61,7 +61,7 @@ import {
   aws_events,
   aws_events_targets,
 } from "aws-cdk-lib";
-import { AwsTerraformAdapter, AwsProvider } from "@cdktf/aws-cdk";
+import { AwsTerraformAdapter, AwsProvider } from "@cdktn/aws-cdk";
 
 export class MyStack extends TerraformStack {
   constructor(scope: Construct, name: string) {
@@ -90,9 +90,9 @@ export class MyStack extends TerraformStack {
 }
 ```
 
-The `AwsTerraformAdapter` adds an Aspect to `MyStack` that is invoked when the stack is synthesized. That Aspect then iterates over all AWS CDK constructs that have been added to the adapter, converts them to CDK for Terraform constructs, and adds them to the stack. It does not add the AWS CDK constructs themselves.
+The `AwsTerraformAdapter` adds an Aspect to `MyStack` that is invoked when the stack is synthesized. That Aspect then iterates over all AWS CDK constructs that have been added to the adapter, converts them to CDK Terrain constructs, and adds them to the stack. It does not add the AWS CDK constructs themselves.
 
-The [full example code](https://github.com/hashicorp/cdktf-aws-cdk/tree/main/examples/typescript-cron-lambda) is available in the cdktf-aws-cdk repository.
+The [full example code](https://github.com/hashicorp/cdktn-aws-cdk/tree/main/examples/typescript-cron-lambda) is available in the cdktn-aws-cdk repository.
 
 ## Write Manual Mappings
 
@@ -126,7 +126,7 @@ export class MyStack extends TerraformStack {
 The adapter will throw an error explaining that there is currently no mapping in place for a DynamoDB table resource.
 
 ```
-Error: Unsupported resource Type AWS::DynamoDB::Table. There is no custom mapping registered for AWS::DynamoDB::Table and the AWS CloudControl API does not seem to support it yet. If you think this is an error or you need support for this resource, file an issue at: https://github.com/hashicorp/cdktf-aws-cdk/issues/new?title=Unsupported%20Resource%20Type%20%60AWS::DynamoDB::Table%60 and mention the AWS CDK constructs you want to use
+Error: Unsupported resource Type AWS::DynamoDB::Table. There is no custom mapping registered for AWS::DynamoDB::Table and the AWS CloudControl API does not seem to support it yet. If you think this is an error or you need support for this resource, file an issue at: https://github.com/hashicorp/cdktn-aws-cdk/issues/new?title=Unsupported%20Resource%20Type%20%60AWS::DynamoDB::Table%60 and mention the AWS CDK constructs you want to use
 ```
 
 To write a custom mapping, add the following code right below the imports and above the stack `MyStack`.
@@ -136,7 +136,7 @@ To write a custom mapping, add the following code right below the imports and ab
 The example code imports the `registerMapping` function and invokes it with arguments for registering an `AWS::DynamoDB::Table` resource. The second argument to the function is an object with two parts: `resource` and `attributes`. The `resource` is a function that is called for each instance of the registered CloudFormation type. The example logs the `props` and returns `null`, so AWS doesn't create any resources.
 
 ```typescript
-import { registerMapping } from "@cdktf/aws-cdk/lib/mapping";
+import { registerMapping } from "@cdktn/aws-cdk/lib/mapping";
 
 registerMapping("AWS::DynamoDB::Table", {
   resource: (_scope: Construct, _id: string, props: any) => {
@@ -147,7 +147,7 @@ registerMapping("AWS::DynamoDB::Table", {
 });
 ```
 
-The example DynamoDB resource results in CDKTF outputting the following `props`.
+The example DynamoDB resource results in CDKTN outputting the following `props`.
 
 ```js
 {
@@ -174,7 +174,7 @@ These attributes are the properties you would find in the rendered CloudFormatio
 
 Write code that maps all attributes to a format that matches the Terraform resource for an AWS DynamoDBTable. For the target schema, you can either look at the [docs on the Terraform Registry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table) or at the code of the `DynamoDB.DynamodbTableConfig` you will supply to the resource upon creation.
 
-The logged `props` show that you need to support at least setting these attributes and that you need to make sure they appear in the resulting CDKTF resources.
+The logged `props` show that you need to support at least setting these attributes and that you need to make sure they appear in the resulting CDKTN resources.
 
 ```js
 {
@@ -185,7 +185,7 @@ The logged `props` show that you need to support at least setting these attribut
 }
 ```
 
-Synthesizing the code with this initial mapping function fails with an error listing properties that may not be properly mapped. CDKTF checks whether there are any object properties left on the `props` object (that are not `undefined`) after the mapping function returned. This is a safeguard of the mapping implementation to block mappings that do not support all properties at the time they were written.
+Synthesizing the code with this initial mapping function fails with an error listing properties that may not be properly mapped. CDKTN checks whether there are any object properties left on the `props` object (that are not `undefined`) after the mapping function returned. This is a safeguard of the mapping implementation to block mappings that do not support all properties at the time they were written.
 
 ```
 Error: cannot map some properties of AWS::DynamoDB::Table: {
@@ -212,8 +212,8 @@ Error: cannot map some properties of AWS::DynamoDB::Table: {
 The following example adds mapping for missing values in the error message. First, it maps the `AttributeDefinitions` array to make sure it fits the schema of the Terraform resource. It also looks up the `hashKey` in the `KeySchema array`. Finally, it deletes the properties that have been handled and returns a new `DynamodbTable` resource.
 
 ```typescript
-import { DynamoDB } from "@cdktf/aws-cdk";
-import { registerMapping } from "@cdktf/aws-cdk/lib/mapping";
+import { DynamoDB } from "@cdktn/aws-cdk";
+import { registerMapping } from "@cdktn/aws-cdk/lib/mapping";
 
 registerMapping("AWS::DynamoDB::Table", {
   resource: (scope: Construct, id: string, props: any) => {
@@ -258,8 +258,8 @@ Error: cannot map some properties of AWS::DynamoDB::Table: {
 The error indicates that the `ProvisionedThroughput` property has not yet been mapped or deleted. The following example shows a complete mapping for the DynamoDB table.
 
 ```typescript
-import { DynamoDB } from "@cdktf/aws-cdk";
-import { registerMapping } from "@cdktf/aws-cdk/lib/mapping";
+import { DynamoDB } from "@cdktn/aws-cdk";
+import { registerMapping } from "@cdktn/aws-cdk/lib/mapping";
 
 registerMapping("AWS::DynamoDB::Table", {
   resource: (scope: Construct, id: string, props: any) => {
@@ -359,19 +359,19 @@ registerMapping("AWS::DynamoDB::Table", {
 
 ## Examples
 
-For additional examples, reference the [adapters repository](https://github.com/hashicorp/cdktf-aws-cdk/tree/main/examples).
+For additional examples, reference the [adapters repository](https://github.com/hashicorp/cdktn-aws-cdk/tree/main/examples).
 
 ## Known limitations
 
 The adapter is an early preview of interoperability with AWS CDK constructs, and it has the following limitations:
 
-- Limited interoperability between CDKTF and AWS CDK tokens. For example, passing Terraform functions as arguments into AWS CDK constructs might unexpectedly fail.
+- Limited interoperability between CDKTN and AWS CDK tokens. For example, passing Terraform functions as arguments into AWS CDK constructs might unexpectedly fail.
 - AWS CDK App, Stack, and nested Stack constructs are not supported.
 - These CloudFormation features are not yet supported: Transforms, Parameters, Mappings, and Includes.
 - These AWS CDK features are not yet supported: Assets, Aspects, and Annotations.
 
-Refer to the [issues in the adapters repository](https://github.com/hashicorp/cdktf-aws-cdk/issues) for more detail.
+Refer to the [issues in the adapters repository](https://github.com/hashicorp/cdktn-aws-cdk/issues) for more detail.
 
 ## Roadmap
 
-Refer to the [cdktf-aws-cdk](https://github.com/hashicorp/cdktf-aws-cdk) repository on Github for the [AWS adapter roadmap](https://github.com/hashicorp/cdktf-aws-cdk/issues/10).
+Refer to the [cdktn-aws-cdk](https://github.com/hashicorp/cdktn-aws-cdk) repository on Github for the [AWS adapter roadmap](https://github.com/hashicorp/cdktn-aws-cdk/issues/10).

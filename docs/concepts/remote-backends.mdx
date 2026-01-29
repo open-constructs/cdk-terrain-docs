@@ -1,5 +1,5 @@
 ---
-title: Remote Backends - CDK for Terraform
+title: Remote Backends - CDK Terrain
 sidebarTitle: Remote Backends
 description: >-
   Configure a remote backend where Terraform can store infrastructure state
@@ -8,9 +8,9 @@ description: >-
 
 Terraform stores [state](/terraform/language/state) about managed infrastructure to map real-world resources to the configuration, keep track of metadata, and improve performance. Terraform stores this state in a local file by default, but you can also use a Terraform [remote backend](/terraform/language/settings/backends/remote) to store state remotely.
 
-By default, `cdktf init` will configure a HCP Terraform workspace and a corresponding remote backend to store state for the new project. If you run `cdktf init --local` to configure your new project to use a local backend to store state, you can still [migrate the state](#migrate-local-state-storage-to-remote) to a remote backend later.
+By default, `cdktn init` will configure a HCP Terraform workspace and a corresponding remote backend to store state for the new project. If you run `cdktn init --local` to configure your new project to use a local backend to store state, you can still [migrate the state](#migrate-local-state-storage-to-remote) to a remote backend later.
 
-You can configure your CDK for Terraform (CDKTF) remote backend to be [HCP Terraform](https://cloud.hashicorp.com/products/terraform), another Terraform [supported backend](#supported-backends), or a custom location.
+You can configure your CDK Terrain (CDKTN) remote backend to be [HCP Terraform](https://cloud.hashicorp.com/products/terraform), another Terraform [supported backend](#supported-backends), or a custom location.
 
 ## When to Use Remote Backends
 
@@ -36,7 +36,7 @@ import {
   TerraformOutput,
   NamedCloudWorkspace,
   App,
-} from "cdktf";
+} from "cdktn";
 
 export class CloudBackendStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -57,13 +57,13 @@ export class CloudBackendStack extends TerraformStack {
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.TerraformStack;
-import com.hashicorp.cdktf.App;
-import com.hashicorp.cdktf.CloudBackend;
-import com.hashicorp.cdktf.CloudBackendConfig;
-import com.hashicorp.cdktf.NamedCloudWorkspace;
-import com.hashicorp.cdktf.TerraformOutput;
-import com.hashicorp.cdktf.TerraformOutputConfig;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.App;
+import io.cdktn.cdktn.CloudBackend;
+import io.cdktn.cdktn.CloudBackendConfig;
+import io.cdktn.cdktn.NamedCloudWorkspace;
+import io.cdktn.cdktn.TerraformOutput;
+import io.cdktn.cdktn.TerraformOutputConfig;
 
 public class MainRemoteBackendDefine extends TerraformStack {
 
@@ -87,7 +87,7 @@ public class MainRemoteBackendDefine extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import App, CloudBackend, NamedCloudWorkspace, TerraformStack, TerraformOutput
+from cdktn import App, CloudBackend, NamedCloudWorkspace, TerraformStack, TerraformOutput
 class RemoteBackendStack(TerraformStack):
     def __init__(self, scope: Construct, id: str):
         super().__init__(scope, id)
@@ -113,7 +113,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 
 namespace Examples
 {
@@ -141,19 +141,19 @@ namespace Examples
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
 )
 
-func NewCloudBackendStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewCloudBackendStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
-	cdktf.NewCloudBackend(stack, &cdktf.CloudBackendConfig{
+	cdktn.NewCloudBackend(stack, &cdktn.CloudBackendConfig{
 		Hostname:     jsii.String("app.terraform.io"),
 		Organization: jsii.String("company"),
-		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String("my-app-prod"), nil),
+		Workspaces:   cdktn.NewNamedCloudWorkspace(jsii.String("my-app-prod"), nil),
 	})
 
-	cdktf.NewTerraformOutput(stack, jsii.String("dns-server"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("dns-server"), &cdktn.TerraformOutputConfig{
 		Value: "hello-world",
 	})
 
@@ -164,7 +164,7 @@ func NewCloudBackendStack(scope constructs.Construct, name string) cdktf.Terrafo
 
 </CodeGroup>
 
-When you call `cdktf synth`, CDKTF stores the backend metadata like the organization name and workspace name in the `cdk.tf.json` file within the `cdktf.out` stack sub-directory containing the synthesized CDKTF code. For example, CDKTF creates the output for a stack called `hello-terraform` in `cdktf.out/stacks/hello-terraform`.
+When you call `cdktn synth`, CDKTN stores the backend metadata like the organization name and workspace name in the `cdk.tf.json` file within the `cdktf.out` stack sub-directory containing the synthesized CDKTN code. For example, CDKTN creates the output for a stack called `hello-terraform` in `cdktf.out/stacks/hello-terraform`.
 
 The following example shows the stack output directory.
 
@@ -200,7 +200,7 @@ The following example shows a relevant snippet of the generated `cdk.tf.json` fi
 
 ## Initialize Remote Backends
 
-All `cdktf` operations perform an automatic `terraform init`, but you can also initialize manually.
+All `cdktn` operations perform an automatic `terraform init`, but you can also initialize manually.
 
 To manually initialize a remote backend, go to the corresponding stack output directory in the `cdktf.out` folder and run `terraform init`.
 
@@ -211,7 +211,7 @@ $ terraform init
 
 ## Migrate Local State Storage to Remote
 
-After you define your remote backend, you can migrate existing local state files to the designated remote location. This requires moving Terraform state files to the CDKTF output directory.
+After you define your remote backend, you can migrate existing local state files to the designated remote location. This requires moving Terraform state files to the CDKTN output directory.
 
 Consider an example project called `hello-terraform` that is using local storage to store the Terraform state. To migrate the local stage files to the remote backend:
 
@@ -283,7 +283,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Constructs;
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 
 namespace Examples
 {
@@ -312,10 +312,10 @@ app.Synth();
 
 ```go Go
 
-func NewLocalBackendStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewLocalBackendStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
-	cdktf.NewTerraformOutput(stack, jsii.String("dns-server"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("dns-server"), &cdktn.TerraformOutputConfig{
 		Value: "local",
 	})
 
@@ -323,13 +323,13 @@ func NewLocalBackendStack(scope constructs.Construct, name string) cdktf.Terrafo
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	stack := NewLocalBackendStack(app, "hello-terraform")
-	cdktf.NewCloudBackend(stack, &cdktf.CloudBackendConfig{
+	cdktn.NewCloudBackend(stack, &cdktn.CloudBackendConfig{
 		Hostname:     jsii.String("app.terraform.io"),
 		Organization: jsii.String("company"),
-		Workspaces:   cdktf.NewNamedCloudWorkspace(jsii.String("my-app-prod"), nil),
+		Workspaces:   cdktn.NewNamedCloudWorkspace(jsii.String("my-app-prod"), nil),
 	})
 
 	app.Synth()
@@ -339,7 +339,7 @@ func main() {
 
 </CodeGroup>
 
-3. Run `cdktf diff <stack name> --migrate-state` to migrate the state into HCP Terraform or Terraform Enterprise.
+3. Run `cdktn diff <stack name> --migrate-state` to migrate the state into HCP Terraform or Terraform Enterprise.
 
    ```bash
    Initializing Terraform Cloud...
@@ -366,7 +366,7 @@ func main() {
 
 # Supported Backends
 
-In addition to HCP Terraform, Terraform and CDKTF support the following backends.
+In addition to HCP Terraform, Terraform and CDKTN support the following backends.
 
 - [local](/terraform/language/settings/backends/local)
   ```typescript
@@ -405,11 +405,11 @@ In addition to HCP Terraform, Terraform and CDKTF support the following backends
   new S3Backend(stack, {...});
   ```
 
-<Note>CDK for Terraform v0.14 deprecated the artifactory, etcd, etcdv3, manta, and swift backends, and removed them in v0.20. Terraform removed these backends in v1.3. For migration paths from these removed backends, refer to [Upgrading to Terraform v1.3](/terraform/language/v1.3.x/upgrade-guides).</Note>
+<Note>CDK Terrain v0.14 deprecated the artifactory, etcd, etcdv3, manta, and swift backends, and removed them in v0.20. Terraform removed these backends in v1.3. For migration paths from these removed backends, refer to [Upgrading to Terraform v1.3](/terraform/language/v1.3.x/upgrade-guides).</Note>
 
 ## Escape Hatches
 
-Escape hatches can add to or override existing resources, and you can use them for backends or backend constructs that CDKTF does not natively support. Escape hatch methods have an `Override` suffix (e.g., `addOverride`).
+Escape hatches can add to or override existing resources, and you can use them for backends or backend constructs that CDKTN does not natively support. Escape hatch methods have an `Override` suffix (e.g., `addOverride`).
 
 The following example uses an escape hatch to add an unsupported remote backend on a `Stack` object.
 

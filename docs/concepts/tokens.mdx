@@ -1,20 +1,20 @@
 ---
-title: Tokens - CDK for Terraform
+title: Tokens - CDK Terrain
 sidebarTitle: Tokens
 description: >-
-  Tokens allow CDK for Terraform to resolve programming language types to
+  Tokens allow CDK Terrain to resolve programming language types to
   Terraform language syntax.
 ---
 
 Tokens represent values that are unknown until Terraform applies your configuration. For example, names of cloud resources are only assigned upon creation.
 
-Some attributes specified using CDK for Terraform (CDKTF) may not directly map to the values required for Terraform configurations. You can use [Tokens](https://docs.aws.amazon.com/cdk/latest/guide/tokens.html) to cast these attributes to the correct Terraform language syntax.
+Some attributes specified using CDK Terrain (CDKTN) may not directly map to the values required for Terraform configurations. You can use [Tokens](https://docs.aws.amazon.com/cdk/latest/guide/tokens.html) to cast these attributes to the correct Terraform language syntax.
 
 ## Use Tokens
 
 You may need to use Tokens for:
 
-- [Module outputs](/terraform/cdktf/concepts/modules) for boolean, string, lists, maps, and other complex types.
+- [Module outputs](/docs/concepts/modules) for boolean, string, lists, maps, and other complex types.
 - Resource attributes (such as `id`).
 - Terraform outputs based on resource attributes.
 - Using Terraforms `null` type.
@@ -31,7 +31,7 @@ output as a list of strings.
 <CodeGroup>
 
 ```ts TypeScript
-import { TerraformStack, TerraformVariable, Token } from "cdktf";
+import { TerraformStack, TerraformVariable, Token } from "cdktn";
 import { Construct } from "constructs";
 import { Vpc } from "./.gen/modules/terraform-aws-modules/aws/vpc";
 import { Eks } from "./.gen/modules/terraform-aws-modules/aws/eks";
@@ -129,15 +129,15 @@ export class TokensStack extends TerraformStack {
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/terraform-aws-modules/aws/eks"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/terraform-aws-modules/aws/vpc"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/terraform-aws-modules/aws/eks"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/terraform-aws-modules/aws/vpc"
 )
 
-func NewTokensStack(scope constructs.Construct, name string, vpcName string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewTokensStack(scope constructs.Construct, name string, vpcName string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
-	logRetention := cdktf.NewTerraformVariable(stack, jsii.String("logRetentionInDays"), &cdktf.TerraformVariableConfig{
+	logRetention := cdktn.NewTerraformVariable(stack, jsii.String("logRetentionInDays"), &cdktn.TerraformVariableConfig{
 		Type: jsii.String("number"),
 	})
 
@@ -148,7 +148,7 @@ func NewTokensStack(scope constructs.Construct, name string, vpcName string) cdk
 
 	eks.NewEks(stack, jsii.String("EksModule"), &eks.EksConfig{
 		ClusterName:                       jsii.String("my-kubernetes-cluster"),
-		SubnetIds:                         cdktf.Token_AsList(vpc.PublicSubnetsOutput(), nil),
+		SubnetIds:                         cdktn.Token_AsList(vpc.PublicSubnetsOutput(), nil),
 		CloudwatchLogGroupRetentionInDays: logRetention.NumberValue(),
 	})
 
@@ -159,8 +159,8 @@ func NewTokensStack(scope constructs.Construct, name string, vpcName string) cdk
 
 </CodeGroup>
 
-Initially, CDKTF will resolve `Token.asList(vpc.publicSubnetsOutput)` to `["#{TOKEN[TOKEN.9]}"]` and `logRetention.numberValue` to a big negative number like `-123828381238238`.
-Later in synthesis, CDKTF will resolve the token to `${module.<module id>.public_subnets}` and `${var.logRetentionInDays}`.
+Initially, CDKTN will resolve `Token.asList(vpc.publicSubnetsOutput)` to `["#{TOKEN[TOKEN.9]}"]` and `logRetention.numberValue` to a big negative number like `-123828381238238`.
+Later in synthesis, CDKTN will resolve the token to `${module.<module id>.public_subnets}` and `${var.logRetentionInDays}`.
 
 ```json
 {
@@ -182,28 +182,28 @@ Some edge cases require passing the Terraform `null` value to for example an att
 <CodeGroup>
 
 ```typescript TypeScript
-import { Token } from "cdktf";
+import { Token } from "cdktn";
 Token.nullValue();
 ```
 
 ```python Python
-from cdktf import Token
+from cdktn import Token
 Token.null_value()
 ```
 
 ```java Java
-import com.hashicorp.cdktf.Token;
+import io.cdktn.cdktn.Token;
 Token.nullValue()
 ```
 
 ```csharp C#
-using HashiCorp.Cdktf;
+using Io.Cdktn;
 Token.NullValue()
 ```
 
 ```go Go
-import "github.com/hashicorp/terraform-cdk-go/cdktf"
-cdktf.Token_NullValue()
+import "github.com/open-constructs/cdk-terrain-go/cdktn"
+cdktn.Token_NullValue()
 ```
 
 </CodeGroup>

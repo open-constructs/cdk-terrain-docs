@@ -25,7 +25,7 @@
                 "group": "Concepts",
                 "expanded": false,
                 "pages": [
-                  "docs/concepts/cdktf-architecture",
+                  "docs/concepts/cdktn-architecture",
                   "docs/concepts/hcl-interoperability",
                   "docs/concepts/constructs",
                   "docs/concepts/providers",

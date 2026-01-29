@@ -1,34 +1,34 @@
 ---
-title: Stacks - CDK for Terraform
+title: Stacks - CDK Terrain
 sidebarTitle: Stacks
 description: >-
   Use stacks to specify separate collections of infrastructure for different
   environments, like test and production.
 ---
 
-A stack represents a collection of infrastructure that CDK for Terraform (CDKTF) synthesizes as a dedicated Terraform configuration. Stacks allow you to separate the state management for multiple environments within an application.
+A stack represents a collection of infrastructure that CDK Terrain (CDKTN) synthesizes as a dedicated Terraform configuration. Stacks allow you to separate the state management for multiple environments within an application.
 
-<Note>Stacks in CDKTF are different from the Terraform stacks concept announced at HashiConf 2023. Terraform stacks are a configuration layer that simplifies provisioning and managing resources at scale by controlling cross-configuration dependencies between Terraform modules. Refer to [Terraform stacks, explained](https://www.hashicorp.com/blog/terraform-stacks-explained) in the HashiCorp blog for additional information.</Note>
-<Tip>Try the [Deploy Applications with CDK for Terraform](/terraform/tutorials/cdktf/cdktf-applications?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.</Tip>
+<Note>Stacks in CDKTN are different from the Terraform stacks concept announced at HashiConf 2023. Terraform stacks are a configuration layer that simplifies provisioning and managing resources at scale by controlling cross-configuration dependencies between Terraform modules. Refer to [Terraform stacks, explained](https://www.hashicorp.com/blog/terraform-stacks-explained) in the HashiCorp blog for additional information.</Note>
+<Tip>Try the [Deploy Applications with CDK Terrain](/terraform/tutorials/cdktn/cdktn-applications?utm_source=WEBSITE&utm_medium=WEB_IO&utm_offer=ARTICLE_PAGE&utm_content=DOCS) tutorial.</Tip>
 
 ## Scope
 
 You can instantiate the same resource multiple times throughout your infrastructure. For example, you may want to create multiple S3 Buckets with different configurations. Instances that share the same `stack` parent element are considered to be part of the same scope. You must set a different `name` property for each instance to avoid naming conflicts.
 
-Refer to the [constructs documentation](/terraform/cdktf/concepts/constructs#scope) for more details and an example.
+Refer to the [constructs documentation](/docs/concepts/constructs#scope) for more details and an example.
 
 ## Single Stack
 
-The following example generates a single Terraform configuration in the configured output folder. When you run `cdktf synth`, the synthesized Terraform configuration will be in the folder `cdktf.out/stacks/a-single-stack`
+The following example generates a single Terraform configuration in the configured output folder. When you run `cdktn synth`, the synthesized Terraform configuration will be in the folder `cdktf.out/stacks/a-single-stack`
 
 
 <CodeGroup>
 
 ```ts TypeScript
 import { Construct } from "constructs";
-import { App, TerraformStack } from "cdktf";
-import { AwsProvider } from "@cdktf/provider-aws/lib/aws-provider";
-import { Instance } from "@cdktf/provider-aws/lib/instance";
+import { App, TerraformStack } from "cdktn";
+import { AwsProvider } from "@cdktn/provider-aws/lib/aws-provider";
+import { Instance } from "@cdktn/provider-aws/lib/instance";
 
 class MySingleStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -52,8 +52,8 @@ singleStackApp.synth();
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.App;
-import com.hashicorp.cdktf.TerraformStack;
+import io.cdktn.cdktn.App;
+import io.cdktn.cdktn.TerraformStack;
 import imports.aws.provider.AwsProvider;
 import imports.aws.provider.AwsProviderConfig;
 import imports.aws.instance.Instance;
@@ -84,7 +84,7 @@ public class MainSingleStack extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import App, TerraformStack
+from cdktn import App, TerraformStack
 from imports.aws.instance import Instance
 from imports.aws.provider import AwsProvider
 
@@ -139,13 +139,13 @@ app.synth
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/instance"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/instance"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 )
 
-func NewSingleStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewSingleStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	aws.NewAwsProvider(stack, jsii.String("aws"), &aws.AwsProviderConfig{
 		Region: jsii.String("us-east-1"),
@@ -160,7 +160,7 @@ func NewSingleStack(scope constructs.Construct, name string) cdktf.TerraformStac
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	stack := NewSingleStack(app, "a-single-stack")
 
@@ -174,7 +174,7 @@ func main() {
 
 ## Multiple Stacks
 
-<Tip>Try the [Deploy Multiple Lambda Functions with TypeScript](/terraform/tutorials/cdktf/cdktf-assets-stacks-lambda) tutorial. This tutorial guides you through a multi-stack application.</Tip>
+<Tip>Try the [Deploy Multiple Lambda Functions with TypeScript](/terraform/tutorials/cdktn/cdktn-assets-stacks-lambda) tutorial. This tutorial guides you through a multi-stack application.</Tip>
 
 You can specify multiple stacks in your application. For example, you may want a separate configuration for development, testing, and production environments.
 
@@ -185,9 +185,9 @@ The following example synthesizes multiple Terraform configurations in the confi
 
 ```ts TypeScript
 import { Construct } from "constructs";
-import { App, TerraformStack } from "cdktf";
-import { AwsProvider } from "@cdktf/provider-aws/lib/aws-provider";
-import { Instance } from "@cdktf/provider-aws/lib/instance";
+import { App, TerraformStack } from "cdktn";
+import { AwsProvider } from "@cdktn/provider-aws/lib/aws-provider";
+import { Instance } from "@cdktn/provider-aws/lib/instance";
 
 interface MyMultiStackConfig {
   environment: string;
@@ -234,8 +234,8 @@ multiStackApp.synth();
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.App;
-import com.hashicorp.cdktf.TerraformStack;
+import io.cdktn.cdktn.App;
+import io.cdktn.cdktn.TerraformStack;
 import imports.aws.instance.Instance;
 import imports.aws.instance.InstanceConfig;
 import imports.aws.provider.AwsProvider;
@@ -296,7 +296,7 @@ public class MainMultipleStacks extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import App, TerraformStack
+from cdktn import App, TerraformStack
 from imports.aws.instance import Instance
 from imports.aws.provider import AwsProvider
 
@@ -397,9 +397,9 @@ multi_stack_app.synth
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/instance"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/instance"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 )
 
 type MultiStackConfig struct {
@@ -407,8 +407,8 @@ type MultiStackConfig struct {
 	Region      *string
 }
 
-func NewMultiStack(scope constructs.Construct, name string, config MultiStackConfig) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewMultiStack(scope constructs.Construct, name string, config MultiStackConfig) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	region := config.Region
 	if region == nil {
@@ -431,7 +431,7 @@ func NewMultiStack(scope constructs.Construct, name string, config MultiStackCon
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	NewMultiStack(app, "multiple-stacks-dev", MultiStackConfig{
 		Environment: "dev",
@@ -455,10 +455,10 @@ func main() {
 
 </CodeGroup>
 
-Running `cdktf synth` produces the following synthesized stacks.
+Running `cdktn synth` produces the following synthesized stacks.
 
 ```
-$ cdktf list
+$ cdktn list
 
 Stack name                      Path
 multiple-stacks-dev             cdktf.out/stacks/multiple-stacks-dev
@@ -467,9 +467,9 @@ multiple-stacks-production-us   cdktf.out/stacks/multiple-stacks-production-us
 multiple-stacks-production-eu   cdktf.out/stacks/multiple-stacks-production-eu
 ```
 
-To deploy and destroy multiple stacks at once, either specify multiple stacks in the `cdktf deploy` and `cdktf destroy` command or use a wild card glob (e.g., `cdktf deploy '*-production'`).
+To deploy and destroy multiple stacks at once, either specify multiple stacks in the `cdktn deploy` and `cdktn destroy` command or use a wild card glob (e.g., `cdktn deploy '*-production'`).
 
-Refer to [Best Practices](/terraform/cdktf/create-and-deploy/best-practices#separate-business-units-with-stacks) for more details about when to create multiple stacks and how to structure them.
+Refer to [Best Practices](/docs/create-and-deploy/best-practices#separate-business-units-with-stacks) for more details about when to create multiple stacks and how to structure them.
 
 ### Cross-Stack References
 
@@ -480,9 +480,9 @@ When you reference resources from one stack in another stack, you can do so by e
 
 ```ts TypeScript
 import { Construct } from "constructs";
-import { App, TerraformStack } from "cdktf";
-import { AwsProvider } from "@cdktf/provider-aws/lib/aws-provider";
-import { Instance } from "@cdktf/provider-aws/lib/instance";
+import { App, TerraformStack } from "cdktn";
+import { AwsProvider } from "@cdktn/provider-aws/lib/aws-provider";
+import { Instance } from "@cdktn/provider-aws/lib/instance";
 import { Vpc } from "./constructs/vpc";
 import { DockerBackend } from "./constructs/docker-backend";
 
@@ -539,8 +539,8 @@ crossStackReferenceApp.synth();
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.App;
-import com.hashicorp.cdktf.TerraformStack;
+import io.cdktn.cdktn.App;
+import io.cdktn.cdktn.TerraformStack;
 import imports.aws.provider.AwsProvider;
 import imports.aws.provider.AwsProviderConfig;
 import com.mycompany.app.myconstructs.DockerBackend;
@@ -622,7 +622,7 @@ public class MainCrossStackReferences extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import App, TerraformStack, Token
+from cdktn import App, TerraformStack, Token
 from imports.aws.instance import Instance
 from imports.aws.provider import AwsProvider
 from imports.vpc import Vpc
@@ -756,9 +756,9 @@ cross_stack_app.synth()
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/myconstructs"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/myconstructs"
 )
 
 type VPCStack struct {
@@ -767,7 +767,7 @@ type VPCStack struct {
 }
 
 func NewVPCStack(scope constructs.Construct, name string, region *string) *VPCStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	if region == nil {
 		region = jsii.String("us-east-1")
@@ -791,8 +791,8 @@ type BackendStackConfig struct {
 	DockerImage string
 }
 
-func NewBackendStack(scope constructs.Construct, name string, config BackendStackConfig) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewBackendStack(scope constructs.Construct, name string, config BackendStackConfig) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	aws.NewAwsProvider(stack, jsii.String("aws"), &aws.AwsProviderConfig{
 		Region: &config.Region,
@@ -807,7 +807,7 @@ func NewBackendStack(scope constructs.Construct, name string, config BackendStac
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	origin := NewVPCStack(app, "origin-stack", nil)
 	NewBackendStack(app, "target-stack", BackendStackConfig{
@@ -839,7 +839,7 @@ If you e.g. write `this.allResources = Fn.concat([resourceFromStackA.items, reso
 
 To make the dependency explicit, run`stackD.addDependency(stackC)`.
 
-If you want to keep the result of the function attached to one stack and save its state, create a [Terraform Local value](/terraform/cdktf/concepts/variables-and-outputs#local-values) and expose it. The following example creates a `TerraformLocal`.
+If you want to keep the result of the function attached to one stack and save its state, create a [Terraform Local value](/docs/concepts/variables-and-outputs#local-values) and expose it. The following example creates a `TerraformLocal`.
 
 
 <CodeGroup>
@@ -870,9 +870,9 @@ this.allResources = new TerraformLocal(this, "merge_items",
 import (
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/instance"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/instance"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 )
 
 type SourceStack struct {
@@ -880,7 +880,7 @@ type SourceStack struct {
 }
 
 func NewSourceStack(scope constructs.Construct, name string) SourceStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	aws.NewAwsProvider(stack, jsii.String("aws"), &aws.AwsProviderConfig{
 		Region: jsii.String("us-east-1"),
@@ -901,24 +901,24 @@ type DependencyStack struct {
 }
 
 func NewDependencyStack(scope constructs.Construct, name string, dependencies []*SourceStack) DependencyStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	ids := make([]*string, 0)
 	for _, dep := range dependencies {
 		ids = append(ids, dep.Instance.Id())
 	}
 
-	allResources := cdktf.NewTerraformLocal(stack, jsii.String("merged_items"), ids)
+	allResources := cdktn.NewTerraformLocal(stack, jsii.String("merged_items"), ids)
 
 	return DependencyStack{
 		AllResources: allResources.AsList(),
 	}
 }
 
-func NewNestedDependencyStack(scope constructs.Construct, name string, allResources []*string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewNestedDependencyStack(scope constructs.Construct, name string, allResources []*string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
-	cdktf.NewTerraformOutput(stack, jsii.String("all_resources"), &cdktf.TerraformOutputConfig{
+	cdktn.NewTerraformOutput(stack, jsii.String("all_resources"), &cdktn.TerraformOutputConfig{
 		Value: allResources,
 	})
 
@@ -926,7 +926,7 @@ func NewNestedDependencyStack(scope constructs.Construct, name string, allResour
 }
 
 func main() {
-	app := cdktf.NewApp(nil)
+	app := cdktn.NewApp(nil)
 
 	stackA := NewSourceStack(app, "stack-a")
 	stackB := NewSourceStack(app, "stack-b")
@@ -946,13 +946,13 @@ The CLI will error if you deploy your application without first deploying the de
 
 ### Migration from `<= 0.2`
 
-Until version `0.2`, CDKTF only supported a single stack. For local state handling, CDKTF used a `terraform.tfstate` in the project root folder. With version `>= 0.3`, the local state file reflects the stack name it belongs to in its file name. When a `terraform.tfstate` file is still present in the project root folder, it has to be renamed to match the schema `terraform.<stack-name>.tfstate` manually.
+Until version `0.2`, CDKTN only supported a single stack. For local state handling, CDKTN used a `terraform.tfstate` in the project root folder. With version `>= 0.3`, the local state file reflects the stack name it belongs to in its file name. When a `terraform.tfstate` file is still present in the project root folder, it has to be renamed to match the schema `terraform.<stack-name>.tfstate` manually.
 
 ## Escape Hatch
 
 For anything on the top-level `terraform` block that is not natively implemented, use the **stack escape hatch** to define a configuration. For example, define remote backend using the `addOverride` method in TypeScript.
 
-<Warning>Escape hatches **must not** have empty arguments or objects, because CDKTF removes them from the synthesized JSON configuration.</Warning>
+<Warning>Escape hatches **must not** have empty arguments or objects, because CDKTN removes them from the synthesized JSON configuration.</Warning>
 
 The following example synthesizes a Terraform configuration with the `remote` backend included in the `terraform` block.
 
@@ -1015,7 +1015,7 @@ stack.AddOverride("terraform.backend", new Dictionary<string, object> {
 
 ```go Go
 stack.AddOverride(jsii.String("terraform.backend"), map[string]interface{}{
-	"local": cdktf.Token_NullValue(), // delete the default local backend
+	"local": cdktn.Token_NullValue(), // delete the default local backend
 	"remote": map[string]interface{}{
 		"organization": "test",
 		"workspaces": map[string]string{

@@ -1,13 +1,13 @@
 ---
-title: Resources - CDK for Terraform
+title: Resources - CDK Terrain
 sidebarTitle: Resources
 description: >-
-  Resources describe one or more infrastructure objects, like virtual networks, compute instances, and DNS records. Define resources in a CDK for Terraform application.
+  Resources describe one or more infrastructure objects, like virtual networks, compute instances, and DNS records. Define resources in a CDK Terrain application.
 ---
 
-Resources are the most important element when defining infrastructure in CDKTF applications. Each resource describes one or more infrastructure objects, such as virtual networks, compute instances, or higher-level components such as DNS records.
+Resources are the most important element when defining infrastructure in CDKTN applications. Each resource describes one or more infrastructure objects, such as virtual networks, compute instances, or higher-level components such as DNS records.
 
-In your CDK for Terraform (CDKTF) application, you will use your preferred programming language to define the resources you want Terraform to manage on one or more [providers](/terraform/cdktf/concepts/providers). This page explains how to use resources in your application and how to use [escape hatches](#escape-hatch) to change resource behavior when necessary.
+In your CDK Terrain (CDKTN) application, you will use your preferred programming language to define the resources you want Terraform to manage on one or more [providers](/docs/concepts/providers). This page explains how to use resources in your application and how to use [escape hatches](#escape-hatch) to change resource behavior when necessary.
 
 ## Define Resources
 
@@ -41,7 +41,7 @@ export class ResourcesStack extends TerraformStack {
 
 ```java Java
 import software.constructs.Construct;
-import com.hashicorp.cdktf.TerraformStack;
+import io.cdktn.cdktn.TerraformStack;
 import imports.aws.dynamodb_table.DynamodbTable;
 import imports.aws.dynamodb_table.DynamodbTableAttribute;
 import imports.aws.dynamodb_table.DynamodbTableConfig;
@@ -80,7 +80,7 @@ public class MainResourcesDefine extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktf import TerraformStack
+from cdktn import TerraformStack
 
 class ResourceStack(TerraformStack):
     def __init__(self, scope: Construct, id: str):
@@ -123,15 +123,15 @@ import (
 
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/dataawsregion"
-	"github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/dynamodbtable"
-	aws "github.com/hashicorp/terraform-cdk/examples/go/documentation/generated/hashicorp/aws/provider"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/dataawsregion"
+	"github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/dynamodbtable"
+	aws "github.com/open-constructs/cdk-terrain/examples/go/documentation/generated/hashicorp/aws/provider"
 
 )
 
-func NewResourcesStack(scope constructs.Construct, name string) cdktf.TerraformStack {
-	stack := cdktf.NewTerraformStack(scope, &name)
+func NewResourcesStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
 
 	aws.NewAwsProvider(stack, jsii.String("aws"), &aws.AwsProviderConfig{
 		Region: jsii.String("eu-central-1"),
@@ -156,13 +156,13 @@ func NewResourcesStack(scope constructs.Construct, name string) cdktf.TerraformS
 
 </CodeGroup>
 
-The [examples page](/terraform/cdktf/examples-and-guides/examples) contains multiple example projects for every supported programming language.
+The [examples page](/docs/examples-and-guides/examples) contains multiple example projects for every supported programming language.
 
 ## Scope
 
 You can instantiate the same resource multiple times throughout your infrastructure. For example, you may want to create multiple S3 Buckets with different configurations. Instances that share the same parent element are considered to be part of the same scope. You must set a different `name` property for each instance to avoid naming conflicts.
 
-Refer to the [constructs documentation](/terraform/cdktf/concepts/constructs#scope) for more details and an example.
+Refer to the [constructs documentation](/docs/concepts/constructs#scope) for more details and an example.
 
 ## References
 
@@ -373,11 +373,11 @@ new S3Bucket(this, "test-bucket-move-from", {
 }).moveTo("move-s3");
 ```
 
-Refer to our [Refactoring Guide](/terraform/cdktf/examples-and-guides/refactoring#moving-renaming-resources-within-a-stack) for more information
+Refer to our [Refactoring Guide](/docs/examples-and-guides/refactoring#moving-renaming-resources-within-a-stack) for more information
 
 ## Provisioners
 
-Provisioners can be used to model specific actions on the local machine or on a remote machine in order to prepare servers or other infrastructure objects for service. You can find more information on the concept of provisioners in the [Terraform docs](/terraform/language/resources/provisioners/syntax). You can pass the `provisioners` key to define a list of provisioners, connections can be configured with the `connection` key. A working example can be found at [examples/typescript/provisioner](https://github.com/hashicorp/terraform-cdk/blob/main/examples/typescript/provisioner/main.ts).
+Provisioners can be used to model specific actions on the local machine or on a remote machine in order to prepare servers or other infrastructure objects for service. You can find more information on the concept of provisioners in the [Terraform docs](/terraform/language/resources/provisioners/syntax). You can pass the `provisioners` key to define a list of provisioners, connections can be configured with the `connection` key. A working example can be found at [examples/typescript/provisioner](https://github.com/open-constructs/cdk-terrain/blob/main/examples/typescript/provisioner/main.ts).
 
 If you need to use the special [`self` object](/terraform/language/resources/provisioners/syntax#the-self-object) that can only be used in `provisioner` and `connection` blocks to refer to the parent resource you can use the `TerraformSelf` class like this: `TerraformSelf.getString("public_ip")`.
 
@@ -388,7 +388,7 @@ To add one configure the `lifecycle` key on your resource with an object contain
 
 ## Importing Resources
 
-If you have existing resources that you want to manage with CDKTF, you can import them into your CDKTF application. The best way to do this is using the [`import` block feature](/terraform/language/import) of Terraform >= 1.5. You can do this in CDKTF either with a specified configuration or without.
+If you have existing resources that you want to manage with CDKTN, you can import them into your CDKTN application. The best way to do this is using the [`import` block feature](/terraform/language/import) of Terraform >= 1.5. You can do this in CDKTN either with a specified configuration or without.
 
 ### How To Import
 
@@ -398,7 +398,7 @@ To import a resource, first instantiate an instance of the resource type you wis
 new S3Bucket(this, "bucket", {}).importFrom(bucketId);
 ```
 
-When running plan / apply you will get the information that your resource is going to be imported. Once you have ran apply, you can remove the `importFrom` call and the resource will become managed by CDKTF.
+When running plan / apply you will get the information that your resource is going to be imported. Once you have ran apply, you can remove the `importFrom` call and the resource will become managed by CDKTN.
 
 Please note that Terraform is going to update existing fields on the imported resource to match your configuration as it puts it under management. In our case we did not define any specific properties on the `S3Bucket` which causes Terraform e.g. to remove the tags currently defined on the resource (as can be seen on the plan below). If you want to keep existing settings, you can run a plan first, add everything that Terraform would change to your resource config, and only then apply the changes.
 
@@ -487,7 +487,7 @@ If you don't want to specify the configuration of your imported resource yoursel
 S3Bucket.generateConfigForImport(this, "bucket", bucketId);
 ```
 
-When running `cdktf plan <stack-name>` Terraform will generate code for the resource you are importing and CDKTF will convert it to the language you are using.
+When running `cdktn plan <stack-name>` Terraform will generate code for the resource you are importing and CDKTN will convert it to the language you are using.
 
 Your output might look as follows:
 
@@ -581,11 +581,11 @@ ts-import-with-configuration  Import without configuration detected. Terraform h
                               }
 
 
-                              CDKTF has translated the code to the following:
+                              CDKTN has translated the code to the following:
 
                               import { Construct } from "constructs";
                               /*
-                               * Provider bindings are generated by running `cdktf get`.
+                               * Provider bindings are generated by running `cdktn get`.
                                * See https://cdk.tf/provider-generation for more details.
                                */
                               import { S3Bucket } from "./.gen/providers/aws/s3-bucket";
@@ -607,17 +607,17 @@ ts-import-with-configuration  Import without configuration detected. Terraform h
                               Please review the code and make any necessary changes before adding it to your codebase.
                               Make sure to only copy the code within the construct's constructor.
 
-                              NOTE: Your resource has not yet become managed by CDKTF.
+                              NOTE: Your resource has not yet become managed by CDKTN.
                               To finish the import remove the call "generateConfigForImport", add the above code within the construct's constructor, and then append the call importFrom(<resource_id_to_import_from>) to the generated code:
 
                               new SomeResource(...).importFrom("some_id")
 ```
 
-Though at this point, your resource has not been imported. To import, first add the new generated configuration to your project, then remove the initial call of `generateConfigForImport`. Finally, follow the steps outlined in the section "How To Import" above. On apply, your resource will be imported, then becoming managed by CDKTF.
+Though at this point, your resource has not been imported. To import, first add the new generated configuration to your project, then remove the initial call of `generateConfigForImport`. Finally, follow the steps outlined in the section "How To Import" above. On apply, your resource will be imported, then becoming managed by CDKTN.
 
 ## Escape Hatch
 
-Terraform provides [meta-arguments](/terraform/language/resources/syntax#meta-arguments) to change resource behavior. For example, the `for_each` meta-argument creates multiple resource instances according to a map, or set of strings. The escape hatch allows you to use these meta-arguments to your CDKTF application and to override attributes that CDKTF cannot yet fully express.
+Terraform provides [meta-arguments](/terraform/language/resources/syntax#meta-arguments) to change resource behavior. For example, the `for_each` meta-argument creates multiple resource instances according to a map, or set of strings. The escape hatch allows you to use these meta-arguments to your CDKTN application and to override attributes that CDKTN cannot yet fully express.
 
 The following example defines a provisioner for a resource using the `addOverride` method.
 
@@ -643,8 +643,8 @@ table.addOverride("provisioner", [
 ```
 
 ```java Java
-import com.hashicorp.cdktf.TerraformVariable;
-import com.hashicorp.cdktf.TerraformVariableConfig;
+import io.cdktn.cdktn.TerraformVariable;
+import io.cdktn.cdktn.TerraformVariableConfig;
 import imports.aws.dynamodb_table.DynamodbTable;
 import imports.aws.dynamodb_table.DynamodbTableAttribute;
 import imports.aws.dynamodb_table.DynamodbTableConfig;
@@ -739,7 +739,7 @@ table.AddOverride(jsii.String("provisioner"), []map[string]map[string]string{
 
 </CodeGroup>
 
-When you run `cdktf synth`, CDKTF generates a Terraform configuration with the [provisioner added to the JSON object](/terraform/language/syntax/json#nested-block-mapping).
+When you run `cdktn synth`, CDKTN generates a Terraform configuration with the [provisioner added to the JSON object](/terraform/language/syntax/json#nested-block-mapping).
 
 ```json
 {
@@ -811,7 +811,7 @@ topic.AddOverride(jsii.String("display_name"), jsii.String("my-topic"))
 
 </CodeGroup>
 
-When you run `cdktf synth`, CDKTF generates a Terraform configuration with the value overwritten.
+When you run `cdktn synth`, CDKTN generates a Terraform configuration with the value overwritten.
 
 ```json
 {
@@ -831,7 +831,7 @@ Use a dot notation to access elements in arrays: `resource.addOverride("configur
 
 Terraform configurations sometimes use [`dynamic` blocks](/terraform/language/expressions/dynamic-blocks) to create related resources based on dynamic data, or data that is only known after Terraform provisions the infrastructure. For example, you could create a series of nested blocks for a series of Virtual Private Cloud (VPC) ingress ports. A `dynamic` block loops over a complex value and generates a nested resource block for each element of that complex value.
 
-In CDKTF applications, you must use an escape hatch when you want to loop through a dynamic value like a `TerraformVariable` or a resource output.
+In CDKTN applications, you must use an escape hatch when you want to loop through a dynamic value like a `TerraformVariable` or a resource output.
 
 To use an escape hatch to loop over dynamic data, you must:
 
@@ -874,8 +874,8 @@ sg.addOverride("dynamic.ingress", {
 ```
 
 ```java Java
-import com.hashicorp.cdktf.TerraformVariable;
-import com.hashicorp.cdktf.TerraformVariableConfig;
+import io.cdktn.cdktn.TerraformVariable;
+import io.cdktn.cdktn.TerraformVariableConfig;
 import imports.aws.security_group.*;
                 TerraformVariable ports = new TerraformVariable(this, "ports", TerraformVariableConfig.builder()
                                 .type("list")
@@ -970,7 +970,7 @@ sg.AddOverride("dynamic.ingress", new Dictionary<string, object> {
 ```
 
 ```go Go
-portsList := cdktf.NewTerraformVariable(stack, jsii.String("ports"), &cdktf.TerraformVariableConfig{
+portsList := cdktn.NewTerraformVariable(stack, jsii.String("ports"), &cdktn.TerraformVariableConfig{
 	Type:    jsii.String("list"),
 	Default: []int{22, 80, 443, 5432},
 })
@@ -1136,7 +1136,7 @@ securitygroup.NewSecurityGroup(stack, jsii.String("security2"), &securitygroup.S
 
 ### Built-in `terraform_data` resource
 
-The [`terraform_data`](/terraform/language/resources/terraform-data) resource implements the standard resource lifecycle but does not directly perform any other actions. In CDKTF, the resource is exposed as the `TerraformData` class and you can import it directly from the `cdktf` package.
+The [`terraform_data`](/terraform/language/resources/terraform-data) resource implements the standard resource lifecycle but does not directly perform any other actions. In CDKTN, the resource is exposed as the `TerraformData` class and you can import it directly from the `cdktn` package.
 
 ### Large Resource Configurations
 

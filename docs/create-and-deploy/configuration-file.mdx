@@ -1,12 +1,12 @@
 ---
-title: Configuration - CDK for Terraform
+title: Configuration - CDK Terrain
 sidebarTitle: Configuration File
 description: >-
   Use the cdktf.json file to customize configuration settings and define the
   providers and modules to use with your application.
 ---
 
-The `cdktf.json` file is where you can supply custom configuration settings for your application and define the [providers](/terraform/cdktf/concepts/providers) and [modules](/terraform/cdktf/concepts/modules) that you want to use. When you initialize a new CDK for Terraform project with a [built-in template](/terraform/cdktf/create-and-deploy/project-setup), the template generates a basic `cdktf.json` file in your root directory that you can customize for your application. Refer to the [Project Setup documentation](/terraform/cdktf/create-and-deploy/project-setup) for more information about initializing a new project.
+The `cdktf.json` file is where you can supply custom configuration settings for your application and define the [providers](/docs/concepts/providers) and [modules](/docs/concepts/modules) that you want to use. When you initialize a new CDK Terrain project with a [built-in template](/docs/create-and-deploy/project-setup), the template generates a basic `cdktf.json` file in your root directory that you can customize for your application. Refer to the [Project Setup documentation](/docs/create-and-deploy/project-setup) for more information about initializing a new project.
 
 ## Specification
 
@@ -32,7 +32,7 @@ export interface Config {
   readonly output: string; // Default: 'cdktf.out'. Where the synthesized JSON should go. Also will be the working directory for Terraform operations
   readonly codeMakerOutput: string; // Default: '.gen'. Path where generated provider bindings will be rendered to.
   readonly projectId: string; // Default: generated UUID. Unique identifier for the project used to differentiate projects
-  readonly sendCrashReports: boolean; // Default: false. Whether to send crash reports to the CDKTF team
+  readonly sendCrashReports: boolean; // Default: false. Whether to send crash reports to the CDKTN team
   readonly terraformProviders?: RequirementDefinition[]; // Terraform Providers to build
   readonly terraformModules?: RequirementDefinition[]; // Terraform Modules to build
 }
@@ -40,7 +40,7 @@ export interface Config {
 
 ## Minimal Configuration
 
-The most basic configuration only defines `app`. This is useful when you plan to use [pre-built providers](/terraform/cdktf/concepts/providers#install-pre-built-providers) and you don't need to generate any provider or module bindings.
+The most basic configuration only defines `app`. This is useful when you plan to use [pre-built providers](/docs/concepts/providers#install-pre-built-providers) and you don't need to generate any provider or module bindings.
 
 ```json
 {
@@ -50,9 +50,9 @@ The most basic configuration only defines `app`. This is useful when you plan to
 
 ## Declare Providers and Modules
 
-You must declare all of the providers and modules that require code bindings in your `cdktf.json` file. CDKTF generates these code bindings from `cdktf.json` when you run `cdktf get`. We have a selection of pre-built [providers](/terraform/cdktf/concepts/providers#install-pre-built-providers) available, but you may occasionally want to re-generate the code bindings for those providers yourself. For example, you may need a different version of that provider than the pre-built package. We do not provide pre-built modules, so you must always declare them in your `cdktf.json` file.
+You must declare all of the providers and modules that require code bindings in your `cdktf.json` file. CDKTN generates these code bindings from `cdktf.json` when you run `cdktn get`. We have a selection of pre-built [providers](/docs/concepts/providers#install-pre-built-providers) available, but you may occasionally want to re-generate the code bindings for those providers yourself. For example, you may need a different version of that provider than the pre-built package. We do not provide pre-built modules, so you must always declare them in your `cdktf.json` file.
 
-The [schema](/terraform/language/providers/requirements#source-addresses) for both providers and modules in CDK for Terraform consists of a name, a [source](/terraform/language/providers/requirements#source-addresses), and a [version constraint](/terraform/language/providers/requirements#version-constraints).
+The [schema](/terraform/language/providers/requirements#source-addresses) for both providers and modules in CDK Terrain consists of a name, a [source](/terraform/language/providers/requirements#source-addresses), and a [version constraint](/terraform/language/providers/requirements#version-constraints).
 
 You can declare providers and modules using either JSON or a string with the format `source@ ~> version`.
 
@@ -66,7 +66,7 @@ You can declare providers and modules using either JSON or a string with the for
 
 - For modules on the Terraform Registry, provide the the full registry namespace. For example, to define the [AWS VPC module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest): `terraform-aws-modules/vpc/aws@ ~> 3.2.0`.
 
-- For local modules, please use the object format to ensure that CDKTF can properly name the generated classes.
+- For local modules, please use the object format to ensure that CDKTN can properly name the generated classes.
 
   ```jsonc
   {
@@ -82,7 +82,7 @@ You can declare providers and modules using either JSON or a string with the for
 
 ### Version Constraint
 
-When you declare providers and modules in the string format, add the [version constraint](/terraform/language/expressions/version-constraints#version-constraint-syntax) after the provider or module name separated by an `@`. For example, so `provider|module@ ~> version`. The version constraint is optional; when you omit the version constraint, CDK for Terraform will download and use the latest version.
+When you declare providers and modules in the string format, add the [version constraint](/terraform/language/expressions/version-constraints#version-constraint-syntax) after the provider or module name separated by an `@`. For example, so `provider|module@ ~> version`. The version constraint is optional; when you omit the version constraint, CDK Terrain will download and use the latest version.
 
 When you declare providers in JSON, add the constraint in the `version` property.
 
@@ -101,13 +101,13 @@ When you declare providers in JSON, add the constraint in the `version` property
 
 ## Configure Files to Watch
 
-When using `cdktf watch`, CDKTF inspects the `cdktf.json`s `watchPattern` property to determine which files to watch. If you do not specify a `watchPattern` property, CDKTF adds the default watch pattern for your language on the first run. The `watchPattern` expects an array of glob patterns, e.g. `["main.ts", "../constructs/**/*.ts", "lib/*.ts"]`.
+When using `cdktn watch`, CDKTN inspects the `cdktf.json`s `watchPattern` property to determine which files to watch. If you do not specify a `watchPattern` property, CDKTN adds the default watch pattern for your language on the first run. The `watchPattern` expects an array of glob patterns, e.g. `["main.ts", "../constructs/**/*.ts", "lib/*.ts"]`.
 
 ## Configuration Examples
 
 ### Change the Output Directory
 
-Defining `output` changes the directory where `cdktf` stores your generated Terraform configuration file. Terraform performs all operations within this directory.
+Defining `output` changes the directory where `cdktn` stores your generated Terraform configuration file. Terraform performs all operations within this directory.
 
 The following example synthesizes the JSON Terraform configuration into `my-workdir`:
 
@@ -120,7 +120,7 @@ The following example synthesizes the JSON Terraform configuration into `my-work
 
 ### Build Providers
 
-With the following `terraformProviders` configuration, a `cdktf get` builds the latest AWS provider within the 2.X version range. CDKTF saves the generated code in in `.gen` by default. You can adjust this behavior with `codeMakerOutput`. Refer to the other examples on this page.
+With the following `terraformProviders` configuration, a `cdktn get` builds the latest AWS provider within the 2.X version range. CDKTN saves the generated code in in `.gen` by default. You can adjust this behavior with `codeMakerOutput`. Refer to the other examples on this page.
 
 ```json
 {
@@ -132,7 +132,7 @@ With the following `terraformProviders` configuration, a `cdktf get` builds the 
 
 ### Build Modules
 
-With the following `terraformModules` configuration, a `cdktf get` builds the latest `terraform-aws-modules/vpc/aws` module from the Terraform Registry. The generated code will be saved into `.gen` by default. You can adjust this behavior with `codeMakerOutput`. Refer to the other examples on this page.
+With the following `terraformModules` configuration, a `cdktn get` builds the latest `terraform-aws-modules/vpc/aws` module from the Terraform Registry. The generated code will be saved into `.gen` by default. You can adjust this behavior with `codeMakerOutput`. Refer to the other examples on this page.
 
 ```json
 {
@@ -144,7 +144,7 @@ With the following `terraformModules` configuration, a `cdktf get` builds the la
 
 ### Build Providers & Modules
 
-With the following example configuration, a `cdktf get` builds both the AWS provider and the latest `terraform-aws-modules/vpc/aws` module from the Terraform Registry.
+With the following example configuration, a `cdktn get` builds both the AWS provider and the latest `terraform-aws-modules/vpc/aws` module from the Terraform Registry.
 
 ```json
 {
@@ -191,7 +191,7 @@ The following configuration generates the `aws` provider bindings in the folder 
 
 ### Enable Crash Reporting for the CLI
 
-You can enable or disable crash reporting by setting the `sendCrashReports` property to `true` or `false`. Sending crash reports helps our team improve the CLI faster. Refer to [Telemetry](/terraform/cdktf/telemetry#crash-reporting) for more information about what we track.
+You can enable or disable crash reporting by setting the `sendCrashReports` property to `true` or `false`. Sending crash reports helps our team improve the CLI faster. Refer to [Telemetry](/docs/telemetry#crash-reporting) for more information about what we track.
 
 ```json
 {
