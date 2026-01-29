@@ -8,7 +8,7 @@ description: >-
 
 A [provider](/terraform/language/providers) is a plugin that lets Terraform manage an external API. In your CDK Terrain (CDKTN) application, you use your preferred programming language to define the [resources](/docs/concepts/resources) you want Terraform to manage on one or more providers.
 
-You can install pre-built providers packaged with the required code bindings for your language or add providers to the [`cdktf.json`](/docs/create-and-deploy/configuration-file) file and generate code bindings manually. To use providers in your application, you can import them from the Terraform Registry or from your local machine.
+You can install pre-built providers packaged with the required code bindings for your language or add providers to the [`cdktf.json`](/docs/create-and-deploy/configuration-file) file and generate code bindings manually. To use providers in your application, you can import them from the Terraform Registry or the [OpenTofu Registry](https://search.opentofu.org/), or from your local machine.
 
 ## What Are Providers?
 
@@ -16,7 +16,7 @@ Provider plugins like the [AWS provider](https://registry.terraform.io/providers
 
 ![diagram: How Terraform uses plugins](/images/terraform-plugin-overview.png)
 
-Terraform uses providers to provision [resources](/terraform/language/resources), which describe one or more infrastructure objects like virtual networks and compute instances. Each provider on the [Terraform Registry](https://registry.terraform.io/) has documentation detailing available resources and their configuration options.
+Terraform uses providers to provision [resources](/terraform/language/resources), which describe one or more infrastructure objects like virtual networks and compute instances. Each provider on the [Terraform Registry](https://registry.terraform.io/) (also available on the [OpenTofu Registry](https://search.opentofu.org/)) has documentation detailing available resources and their configuration options.
 
 ## Install Pre-Built Providers
 

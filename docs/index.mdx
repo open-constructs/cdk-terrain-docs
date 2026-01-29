@@ -5,7 +5,7 @@ description: >-
   provision infrastructure.
 ---
 
-CDK Terrain (CDKTN) allows you to use familiar programming languages to define and provision infrastructure. This gives you access to the entire Terraform ecosystem without learning HashiCorp Configuration Language (HCL) and lets you leverage the power of your existing toolchain for testing, dependency management, etc.
+CDK Terrain (CDKTN) allows you to use familiar programming languages to define and provision infrastructure. CDKTN works with both Terraform and [OpenTofu](https://opentofu.org/). This gives you access to the entire Terraform ecosystem without learning HashiCorp Configuration Language (HCL) and lets you leverage the power of your existing toolchain for testing, dependency management, etc.
 
 We support TypeScript, Python, Java, C#, and Go.
 
@@ -19,9 +19,9 @@ At a high level, you will:
 
 1. **Create an Application:** Use either a built-in or a custom template to scaffold a project in your chosen language.
 1. **Define Infrastructure:** Use your chosen language to define the infrastructure you want to provision on one or more providers. CDKTN automatically extracts the schema from Terraform providers and modules to generate the necessary classes for your application.
-1. **Deploy**: Use `cdktn` CLI commands to provision infrastructure with Terraform or synthesize your code into a JSON configuration file that others can use with Terraform directly.
+1. **Deploy**: Use `cdktn` CLI commands to provision infrastructure with Terraform or OpenTofu, or synthesize your code into a JSON configuration file that others can use with Terraform directly.
 
-You can use every Terraform provider and module available on the [Terraform Registry](https://registry.terraform.io/), and you can use CDKTN with [HCP Terraform](https://cloud.hashicorp.com/products/terraform), [Terraform Enterprise](/terraform/enterprise), and HashiCorp's policy as code framework, [Sentinel](https://www.hashicorp.com/sentinel).
+You can use every Terraform provider and module available on the [Terraform Registry](https://registry.terraform.io/) or the [OpenTofu Registry](https://search.opentofu.org/), and you can use CDKTN with [HCP Terraform](https://cloud.hashicorp.com/products/terraform), [Terraform Enterprise](/terraform/enterprise), and HashiCorp's policy as code framework, [Sentinel](https://www.hashicorp.com/sentinel).
 
 ## When to use CDK Terrain
 

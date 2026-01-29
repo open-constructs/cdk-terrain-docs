@@ -10,7 +10,7 @@ description: >-
 
 ## When to Use Data Sources
 
-Use data sources when you need to reference dynamic data that is not known until after Terraform applies a configuration. For example, instance IDs that cloud providers assign on creation.
+Use data sources when you need to reference dynamic data that is not known until after Terraform (or OpenTofu) applies a configuration. For example, instance IDs that cloud providers assign on creation.
 
 When data is static or you know the values before [synthesizing your code](/docs/cli-reference/commands#synth), we recommend creating static references in your preferred programming language or using [Terraform variables](/docs/concepts/variables-and-outputs).
 

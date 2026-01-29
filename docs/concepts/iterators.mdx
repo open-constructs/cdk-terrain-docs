@@ -9,7 +9,7 @@ Iterators let you loop over a collection of values. You can use them to create m
 
 ## When to Use Iterators
 
-Use iterators when you need to reference dynamic data that is not known until after Terraform applies a configuration. For example, instance IDs that cloud providers assign on creation.
+Use iterators when you need to reference dynamic data that is not known until after Terraform (or OpenTofu) applies a configuration. For example, instance IDs that cloud providers assign on creation.
 
 When data is static or you know the values before [synthesizing your code](/docs/cli-reference/commands#synth), we recommend using loops in your preferred programming language.
 

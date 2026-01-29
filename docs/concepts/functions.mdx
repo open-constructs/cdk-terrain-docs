@@ -10,7 +10,7 @@ Functions can handle normal and [token](/docs/concepts/tokens) values and will r
 
 ## When to Use Terraform Functions
 
-Use Terraform functions when you need to calculate new values based on runtime values that are unknown before Terraform applies a configuration. For example, instance IDs that cloud providers assign on creation.
+Use Terraform functions when you need to calculate new values based on runtime values that are unknown before Terraform (or OpenTofu) applies a configuration. For example, instance IDs that cloud providers assign on creation.
 
 When inputs are available before [synthesizing your code](/docs/cli-reference/commands#synth) (e.g. local files), we recommend transforming the values with your preferred programming language.
 

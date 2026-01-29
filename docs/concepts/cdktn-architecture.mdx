@@ -18,11 +18,11 @@ CDKTN shares core concepts and components with the [Amazon Web Services Cloud De
 
 The [`jsii` tool](https://aws.github.io/jsii/) enables publishing polyglot libraries in all supported languages from a single Typescript code base. CDKTN uses Typescript types to generate an assembly file that `jsii` uses to generate the code bindings for the other supported languages.
 
-### Terraform
+### Terraform / OpenTofu
 
-CDKTN [synthesizes](/docs/cli-reference/commands#synth) infrastructure that you define in a supported programming language into [JSON configuration files](/terraform/language/syntax/json) that Terraform can use to manage infrastructure.
+CDKTN [synthesizes](/docs/cli-reference/commands#synth) infrastructure that you define in a supported programming language into [JSON configuration files](/terraform/language/syntax/json) that Terraform or OpenTofu can use to manage infrastructure.
 
-The following diagram shows how synthesizing a CDKTN application produces a series of artifacts in a designated output folder. You can then either use the JSON file with Terraform directly or provision your infrastructure using CDKTN CLI commands. All CDKTN CLI operations like `diff`, `deploy`, and `destroy` communicate with Terraform for execution.
+The following diagram shows how synthesizing a CDKTN application produces a series of artifacts in a designated output folder. You can then either use the JSON file with Terraform directly or provision your infrastructure using CDKTN CLI commands. All CDKTN CLI operations like `diff`, `deploy`, and `destroy` communicate with Terraform (or OpenTofu) for execution.
 
 ![cdktn-terraform](/images/cdktn-terraform-workflow.png)
 
@@ -36,7 +36,7 @@ CDKTN has two major components that allow you to define and provision infrastruc
 
 - **Lib:** This is the `cdktn` package that is the foundation for each CDKTN project. It contains all of the core libraries that allow you to leverage the Terraform ecosystem and synthesize your application into Terraform configuration files.
 
-- **CLI:** The [`cdktn` CLI](/docs/cli-reference/cli-configuration) allows you to initialize a new CDKTN project, adjust project settings, synthesize your infrastructure into Terraform configuration files, deploy your CDKTN application, and more. Refer to the [CLI commands documentation](/docs/cli-reference/commands) for more details. You can also use some Terraform CLI commands like `terraform apply` and `terraform destroy` directly, but we recommend using the available `cdktn cli` commands where possible.
+- **CLI:** The [`cdktn` CLI](/docs/cli-reference/cli-configuration) allows you to initialize a new CDKTN project, adjust project settings, synthesize your infrastructure into Terraform configuration files, deploy your CDKTN application, and more. Refer to the [CLI commands documentation](/docs/cli-reference/commands) for more details. You can also use some Terraform CLI commands like `terraform apply` and `terraform destroy` directly, but we recommend using the available `cdktn cli` commands where possible. If you use OpenTofu, set `TERRAFORM_BINARY_NAME=tofu` — refer to [Environment Variables](/docs/create-and-deploy/environment-variables) for details.
 
 ## Application Architecture
 

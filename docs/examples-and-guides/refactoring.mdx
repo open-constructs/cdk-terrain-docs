@@ -53,7 +53,7 @@ refactoring-example    # aws_s3_bucket.new-bucket (new-bucket) will be created
                        + resource "aws_s3_bucket" "new-bucket" {
 ```
 
-Terraform plans to destroy the old bucket and create a new one to replace it. The replacement can be harmful if there is already state in the resource, such as files in the bucket or data in the database.
+Terraform (or OpenTofu) plans to destroy the old bucket and create a new one to replace it. The replacement can be harmful if there is already state in the resource, such as files in the bucket or data in the database.
 
 To avoid this recreation behavior, use one of the move instance functions (`moveTo`, `moveToId`, `moveFromId`) available on the resource.
 

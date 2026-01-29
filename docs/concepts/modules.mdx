@@ -14,7 +14,7 @@ You can specify any existing public or private module in your `cdktf.json` file,
 
 ## Install Modules
 
-You can use modules from the [Terraform Registry](https://registry.terraform.io/) and other sources like GitHub in your application. For example, the following TypeScript project has a `main.ts` file that defines AWS resources and uses the [AWS VPC module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest).
+You can use modules from the [Terraform Registry](https://registry.terraform.io/) (or [OpenTofu Registry](https://search.opentofu.org/)) and other sources like GitHub in your application. For example, the following TypeScript project has a `main.ts` file that defines AWS resources and uses the [AWS VPC module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest).
 
 
 <CodeGroup>
@@ -229,7 +229,7 @@ For module inputs that use the `map` type, like `map(string)` or `list(map(strin
 
 ## Work with Module Outputs
 
-Modules often return data that you can use as inputs to other modules or resources. When this data is only available after Terraform applies the configuration, you must use [Terraform Outputs](/docs/concepts/variables-and-outputs#output-values).
+Modules often return data that you can use as inputs to other modules or resources. When this data is only available after Terraform (or OpenTofu) applies the configuration, you must use [Terraform Outputs](/docs/concepts/variables-and-outputs#output-values).
 
 ### Examples
 

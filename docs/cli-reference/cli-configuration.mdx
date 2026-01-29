@@ -6,6 +6,8 @@ description: Install and configure the CDKTN Command Line Interface.
 
 The CDK Terrain (CDKTN) CLI allows you to initialize a new CDKTN project, adjust project settings, synthesize your infrastructure into Terraform configuration files, deploy your CDKTN application, and more. You can also use some Terraform CLI commands like `terraform apply` and `terraform destroy` directly, but we recommend using the available [`cdktn cli` commands](/docs/cli-reference/commands) where possible.
 
+<Tip>CDKTN works with both Terraform and OpenTofu. To use OpenTofu, set the `TERRAFORM_BINARY_NAME=tofu` environment variable. Refer to [Environment Variables](/docs/create-and-deploy/environment-variables) for details.</Tip>
+
 ## Install
 
 ```bash
