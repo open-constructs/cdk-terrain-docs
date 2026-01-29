@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "aspen",
   "name": "CDK Terrain (CDKTN)",
   "colors": {
     "primary": "#16A34A",
@@ -19,88 +19,94 @@
               "docs/index"
             ]
           },
-          {
-            "group": "Concepts",
+          { "group": "Overview",
             "pages": [
-              "docs/concepts/cdktf-architecture",
-              "docs/concepts/hcl-interoperability",
-              "docs/concepts/constructs",
-              "docs/concepts/providers",
-              "docs/concepts/resources",
-              "docs/concepts/modules",
-              "docs/concepts/data-sources",
-              "docs/concepts/variables-and-outputs",
-              "docs/concepts/functions",
-              "docs/concepts/iterators",
-              "docs/concepts/remote-backends",
-              "docs/concepts/aspects",
-              "docs/concepts/assets",
-              "docs/concepts/tokens",
-              "docs/concepts/stacks"
-            ]
-          },
-          {
-            "group": "Examples and Guides",
-            "pages": [
-              "docs/examples-and-guides/examples",
-              "docs/examples-and-guides/refactoring"
-            ]
-          },
-          {
-            "group": "Create and Deploy",
-            "pages": [
-              "docs/create-and-deploy/project-setup",
-              "docs/create-and-deploy/configuration-file",
-              "docs/create-and-deploy/best-practices",
-              "docs/create-and-deploy/environment-variables",
-              "docs/create-and-deploy/hcp-terraform",
-              "docs/create-and-deploy/deployment-patterns",
-              "docs/create-and-deploy/performance",
-              "docs/create-and-deploy/remote-templates",
-              "docs/create-and-deploy/aws-adapter"
-            ]
-          },
-          {
-            "group": "Custom Constructs",
-            "pages": [
-              "docs/develop-custom-constructs/construct-design",
-              "docs/develop-custom-constructs/publishing-and-distribution"
-            ]
-          },
-          {
-            "group": "Test and Debug",
-            "pages": [
-              "docs/test/unit-tests",
-              "docs/test/debugging"
-            ]
-          },
-          {
-            "group": "CLI Reference",
-            "pages": [
-              "docs/cli-reference/cli-configuration",
-              "docs/cli-reference/commands"
-            ]
-          },
-          {
-            "group": "Release",
-            "pages": [
-              "docs/release/index",
-              "docs/release/upgrade-guide-v0-19",
-              "docs/release/upgrade-guide-v0-18",
-              "docs/release/upgrade-guide-v0-17",
-              "docs/release/upgrade-guide-v0-15",
-              "docs/release/upgrade-guide-v0-13",
-              "docs/release/upgrade-guide-v0-12",
-              "docs/release/upgrade-guide-v0-11",
-              "docs/release/upgrade-guide-v0-10",
-              "docs/release/upgrade-guide-v0-9",
-              "docs/release/upgrade-guide-v0-7",
-              "docs/release/upgrade-guide-v0-6"
-            ]
-          },
-          {
-            "group": "Community & Telemetry",
-            "pages": [
+              {
+                "group": "Concepts",
+                "expanded": false,
+                "pages": [
+                  "docs/concepts/cdktf-architecture",
+                  "docs/concepts/hcl-interoperability",
+                  "docs/concepts/constructs",
+                  "docs/concepts/providers",
+                  "docs/concepts/resources",
+                  "docs/concepts/modules",
+                  "docs/concepts/data-sources",
+                  "docs/concepts/variables-and-outputs",
+                  "docs/concepts/functions",
+                  "docs/concepts/iterators",
+                  "docs/concepts/remote-backends",
+                  "docs/concepts/aspects",
+                  "docs/concepts/assets",
+                  "docs/concepts/tokens",
+                  "docs/concepts/stacks"
+                ]
+              },
+              {
+                "group": "Examples and Guides",
+                "expanded": false,
+                "pages": [
+                  "docs/examples-and-guides/examples",
+                  "docs/examples-and-guides/refactoring"
+                ]
+              },
+              {
+                "group": "Create and Deploy",
+                "expanded": false,
+                "pages": [
+                  "docs/create-and-deploy/project-setup",
+                  "docs/create-and-deploy/configuration-file",
+                  "docs/create-and-deploy/best-practices",
+                  "docs/create-and-deploy/environment-variables",
+                  "docs/create-and-deploy/hcp-terraform",
+                  "docs/create-and-deploy/deployment-patterns",
+                  "docs/create-and-deploy/performance",
+                  "docs/create-and-deploy/remote-templates",
+                  "docs/create-and-deploy/aws-adapter"
+                ]
+              },
+              {
+                "group": "Custom Constructs",
+                "expanded": false,
+                "pages": [
+                  "docs/develop-custom-constructs/construct-design",
+                  "docs/develop-custom-constructs/publishing-and-distribution"
+                ]
+              },
+              {
+                "group": "Test and Debug",
+                "expanded": false,
+                "pages": [
+                  "docs/test/unit-tests",
+                  "docs/test/debugging"
+                ]
+              },
+              {
+                "group": "CLI Reference",
+                "expanded": false,
+                "pages": [
+                  "docs/cli-reference/cli-configuration",
+                  "docs/cli-reference/commands"
+                ]
+              },
+              {
+                "group": "Release",
+                "expanded": false,
+                "pages": [
+                  "docs/release/index",
+                  "docs/release/upgrade-guide-v0-19",
+                  "docs/release/upgrade-guide-v0-18",
+                  "docs/release/upgrade-guide-v0-17",
+                  "docs/release/upgrade-guide-v0-15",
+                  "docs/release/upgrade-guide-v0-13",
+                  "docs/release/upgrade-guide-v0-12",
+                  "docs/release/upgrade-guide-v0-11",
+                  "docs/release/upgrade-guide-v0-10",
+                  "docs/release/upgrade-guide-v0-9",
+                  "docs/release/upgrade-guide-v0-7",
+                  "docs/release/upgrade-guide-v0-6"
+                ]
+              },
               "docs/community",
               "docs/telemetry"
             ]
