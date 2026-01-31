@@ -7,13 +7,13 @@ description: >-
 
 Resources are the most important element when defining infrastructure in CDKTN applications. Each resource describes one or more infrastructure objects, such as virtual networks, compute instances, or higher-level components such as DNS records.
 
-In your CDK Terrain (CDKTN) application, you will use your preferred programming language to define the resources you want Terraform to manage on one or more [providers](/docs/concepts/providers). This page explains how to use resources in your application and how to use [escape hatches](#escape-hatch) to change resource behavior when necessary.
+In your CDK Terrain (CDKTN) application, you will use your preferred programming language to define the resources you want Terraform to manage on one or more [providers](/concepts/providers). This page explains how to use resources in your application and how to use [escape hatches](#escape-hatch) to change resource behavior when necessary.
 
 ## Define Resources
 
 Resource definitions and properties vary depending on the type of resource and the provider. Consult your provider's documentation for a full list of available resources and their configuration options.
 
-The following example defines a [DynamoDB table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table) resource on the AWS provider.
+The following example defines a [DynamoDB table](https://registry.terraform.io/providers/hashicorp/aws/latest/resources/dynamodb_table) resource on the AWS provider.
 
 
 <CodeGroup>
@@ -156,13 +156,13 @@ func NewResourcesStack(scope constructs.Construct, name string) cdktn.TerraformS
 
 </CodeGroup>
 
-The [examples page](/docs/examples-and-guides/examples) contains multiple example projects for every supported programming language.
+The [examples page](/examples-and-guides/examples) contains multiple example projects for every supported programming language.
 
 ## Scope
 
 You can instantiate the same resource multiple times throughout your infrastructure. For example, you may want to create multiple S3 Buckets with different configurations. Instances that share the same parent element are considered to be part of the same scope. You must set a different `name` property for each instance to avoid naming conflicts.
 
-Refer to the [constructs documentation](/docs/concepts/constructs#scope) for more details and an example.
+Refer to the [constructs documentation](/concepts/constructs#scope) for more details and an example.
 
 ## References
 
@@ -373,7 +373,7 @@ new S3Bucket(this, "test-bucket-move-from", {
 }).moveTo("move-s3");
 ```
 
-Refer to our [Refactoring Guide](/docs/examples-and-guides/refactoring#moving-renaming-resources-within-a-stack) for more information
+Refer to our [Refactoring Guide](/examples-and-guides/refactoring#moving-renaming-resources-within-a-stack) for more information
 
 ## Provisioners
 

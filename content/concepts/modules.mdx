@@ -179,7 +179,7 @@ func NewModulesStack(scope constructs.Construct, name string) cdktn.TerraformSta
 
 ### Add Module to `cdktf.json`
 
-To use a module in your application, you must first add it to the `terraformModules` array in the [`cdktf.json` configuration file](/docs/create-and-deploy/configuration-file).
+To use a module in your application, you must first add it to the `terraformModules` array in the [`cdktf.json` configuration file](/create-and-deploy/configuration-file).
 
 To add a module from the Terraform Registry or a private registry, provide a fully qualified name: `registry-namespace/module-name`.
 
@@ -223,13 +223,13 @@ Go to the working directory and run `cdktn get`. CDKTN automatically creates the
 
 ## Configure Modules
 
-You can configure modules in the same way as [resources](/docs/concepts/resources), with one exception.
+You can configure modules in the same way as [resources](/concepts/resources), with one exception.
 
 For module inputs that use the `map` type, like `map(string)` or `list(map(string))`, you must specify the map values as strings. You must also ensure that the keys follow the required format listed in the module's documentation. For example, the module may specify that the keys must be in snake case.
 
 ## Work with Module Outputs
 
-Modules often return data that you can use as inputs to other modules or resources. When this data is only available after Terraform (or OpenTofu) applies the configuration, you must use [Terraform Outputs](/docs/concepts/variables-and-outputs#output-values).
+Modules often return data that you can use as inputs to other modules or resources. When this data is only available after Terraform (or OpenTofu) applies the configuration, you must use [Terraform Outputs](/concepts/variables-and-outputs#output-values).
 
 ### Examples
 

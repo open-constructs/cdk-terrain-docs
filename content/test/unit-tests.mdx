@@ -12,7 +12,7 @@ We generate all files necessary to start testing when you run `cdktn init` so th
 
 If you would like to add testing to an existing project, refer the following resources according to your chosen language:
 
-- **TypeScript:** Follow TypeScript's [Getting Started guide](https://jestjs.io/docs/getting-started) for testing with Jest. Then, add these lines in a [setup file](https://jestjs.io/docs/configuration#setupfiles-array):
+- **TypeScript:** Follow TypeScript's [Getting Started guide](https://jestjs.io/getting-started) for testing with Jest. Then, add these lines in a [setup file](https://jestjs.io/configuration#setupfiles-array):
 
   ```js
   const cdktn = require("cdktn");
@@ -21,7 +21,7 @@ If you would like to add testing to an existing project, refer the following res
 
 - **Python:** Follow the [Get Started guide](https://docs.pytest.org/en/7.1.x/getting-started.html) for pytest. The assertions for CDKTN are available in the `cdktn` package under `Testing`.
 - **Java:** Follow the [Using JUnit documentation](https://docs.gradle.org/current/userguide/java_testing.html). The assertions for CDKTN specific are available in the `cdktn` package under `Testing`.
-- **C#:** Follow the [Getting Started with xUnit.net guide](https://xunit.net/docs/getting-started/netcore/cmdline). The assertions for CDKTN are available in the `cdktn` package under `Testing`.
+- **C#:** Follow the [Getting Started with xUnit.net guide](https://xunit.net/getting-started/netcore/cmdline). The assertions for CDKTN are available in the `cdktn` package under `Testing`.
 - **Go:** Follow the [Add a Test guide](https://go.dev/doc/tutorial/add-a-test) in the Go documentation. The assertions for CDKTN specific are available in the `cdktn` package under `Testing`.
 
 ### Write Assertions
@@ -191,7 +191,7 @@ func TestShouldUseUbuntuImage(t *testing.T){
 
 ### Snapshot Testing
 
-Snapshot tests are useful when you want to make sure your infrastructure does not change unexpectedly. Snapshot Testing is only supported in Typescript with Jest. Refer to the [Jest docs](https://jestjs.io/docs/snapshot-testing) for details.
+Snapshot tests are useful when you want to make sure your infrastructure does not change unexpectedly. Snapshot Testing is only supported in Typescript with Jest. Refer to the [Jest docs](https://jestjs.io/snapshot-testing) for details.
 
 ```typescript
 import { Testing } from "cdktn";
@@ -213,7 +213,7 @@ describe("Unit testing using snapshots", () => {
 
 ### Integration with Terraform
 
-You can produce invalid Terraform configuration if you are using escape hatches in your CDK Terrain application. You may use an escape hatch when setting up a [remote backend](/docs/concepts/remote-backends) or when [overriding resource attributes](/docs/concepts/resources#escape-hatch)
+You can produce invalid Terraform configuration if you are using escape hatches in your CDK Terrain application. You may use an escape hatch when setting up a [remote backend](/concepts/remote-backends) or when [overriding resource attributes](/concepts/resources#escape-hatch)
 
 To test this, you can assert that [`terraform validate`](/terraform/cli/commands/validate) or [`terraform plan`](/terraform/cli/commands/plan) run successfully on all or part of your application before running `cdktn plan` or `cdktn deploy`.
 

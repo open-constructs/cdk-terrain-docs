@@ -6,7 +6,7 @@ description: >-
   providers and modules to use with your application.
 ---
 
-The `cdktf.json` file is where you can supply custom configuration settings for your application and define the [providers](/docs/concepts/providers) and [modules](/docs/concepts/modules) that you want to use. When you initialize a new CDK Terrain project with a [built-in template](/docs/create-and-deploy/project-setup), the template generates a basic `cdktf.json` file in your root directory that you can customize for your application. Refer to the [Project Setup documentation](/docs/create-and-deploy/project-setup) for more information about initializing a new project.
+The `cdktf.json` file is where you can supply custom configuration settings for your application and define the [providers](/concepts/providers) and [modules](/concepts/modules) that you want to use. When you initialize a new CDK Terrain project with a [built-in template](/create-and-deploy/project-setup), the template generates a basic `cdktf.json` file in your root directory that you can customize for your application. Refer to the [Project Setup documentation](/create-and-deploy/project-setup) for more information about initializing a new project.
 
 ## Specification
 
@@ -22,7 +22,7 @@ export enum Language {
 export interface TerraformDependencyConstraint {
   readonly name: string; // name of the module / provider
   readonly source?: string; // path / url / registry identifier for the module / provider
-  readonly version?: string; // version constraint (https://www.terraform.io/docs/language/providers/requirements.html#version-constraints)
+  readonly version?: string; // version constraint (https://www.terraform.io/language/providers/requirements.html#version-constraints)
 }
 type RequirementDefinition = string | TerraformDependencyConstraint;
 
@@ -40,7 +40,7 @@ export interface Config {
 
 ## Minimal Configuration
 
-The most basic configuration only defines `app`. This is useful when you plan to use [pre-built providers](/docs/concepts/providers#install-pre-built-providers) and you don't need to generate any provider or module bindings.
+The most basic configuration only defines `app`. This is useful when you plan to use [pre-built providers](/concepts/providers#install-pre-built-providers) and you don't need to generate any provider or module bindings.
 
 ```json
 {
@@ -50,7 +50,7 @@ The most basic configuration only defines `app`. This is useful when you plan to
 
 ## Declare Providers and Modules
 
-You must declare all of the providers and modules that require code bindings in your `cdktf.json` file. CDKTN generates these code bindings from `cdktf.json` when you run `cdktn get`. We have a selection of pre-built [providers](/docs/concepts/providers#install-pre-built-providers) available, but you may occasionally want to re-generate the code bindings for those providers yourself. For example, you may need a different version of that provider than the pre-built package. We do not provide pre-built modules, so you must always declare them in your `cdktf.json` file.
+You must declare all of the providers and modules that require code bindings in your `cdktf.json` file. CDKTN generates these code bindings from `cdktf.json` when you run `cdktn get`. We have a selection of pre-built [providers](/concepts/providers#install-pre-built-providers) available, but you may occasionally want to re-generate the code bindings for those providers yourself. For example, you may need a different version of that provider than the pre-built package. We do not provide pre-built modules, so you must always declare them in your `cdktf.json` file.
 
 The [schema](/terraform/language/providers/requirements#source-addresses) for both providers and modules in CDK Terrain consists of a name, a [source](/terraform/language/providers/requirements#source-addresses), and a [version constraint](/terraform/language/providers/requirements#version-constraints).
 
@@ -191,7 +191,7 @@ The following configuration generates the `aws` provider bindings in the folder 
 
 ### Enable Crash Reporting for the CLI
 
-You can enable or disable crash reporting by setting the `sendCrashReports` property to `true` or `false`. Sending crash reports helps our team improve the CLI faster. Refer to [Telemetry](/docs/telemetry#crash-reporting) for more information about what we track.
+You can enable or disable crash reporting by setting the `sendCrashReports` property to `true` or `false`. Sending crash reports helps our team improve the CLI faster. Refer to [Telemetry](/telemetry#crash-reporting) for more information about what we track.
 
 ```json
 {

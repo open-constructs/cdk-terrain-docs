@@ -6,7 +6,7 @@ description: >-
   configure storage for Terraform state.
 ---
 
-There are several ways to create a new CDK Terrain (CDKTN) project. You can create a new application from a pre-built or a custom template, and you can also convert an existing HCL project. When you create a new project, you can store Terraform state locally or use a [remote backend](/docs/concepts/remote-backends). This page discusses these setup options in more detail.
+There are several ways to create a new CDK Terrain (CDKTN) project. You can create a new application from a pre-built or a custom template, and you can also convert an existing HCL project. When you create a new project, you can store Terraform state locally or use a [remote backend](/concepts/remote-backends). This page discusses these setup options in more detail.
 
 <Tip>Try the [CDK Terrain Quick Start Demo](/tutorials/install) and language-specific [Get Started tutorials](/tutorials/install).</Tip>
 
@@ -15,7 +15,7 @@ There are several ways to create a new CDK Terrain (CDKTN) project. You can crea
 Use `init` with a project template to automatically create and scaffold a new CDKTN project for your chosen programming language.
 Templates generate a new application with the necessary file structure for you to start defining infrastructure.
 
-You can use a `cdktn-cli` pre-built template or a custom-built [remote template](/docs/create-and-deploy/remote-templates) when you initialize a new project.
+You can use a `cdktn-cli` pre-built template or a custom-built [remote template](/create-and-deploy/remote-templates) when you initialize a new project.
 
 ```bash
 $ cdktn init --template="templateName"
@@ -29,7 +29,7 @@ Use these template names for the available pre-built templates:
 - `java`
 - `go`
 
-Note: Even though the CDKTN Java template sets up the Gradle build system for performance reasons, you can still use Maven to build your project. For more information refer to the Java examples which also include Maven examples: [Java Examples](/docs/examples-and-guides/examples#java).
+Note: Even though the CDKTN Java template sets up the Gradle build system for performance reasons, you can still use Maven to build your project. For more information refer to the Java examples which also include Maven examples: [Java Examples](/examples-and-guides/examples#java).
 
 ### Use a Local Backend
 
@@ -41,7 +41,7 @@ $ cdktn init --template="typescript" --local
 
 ### Use HCP Terraform as a Remote Backend
 
-When you run `cdktn init` without the `--local` flag, CDKTN defaults to using HCP Terraform as a remote backend. This lets you store state and run Terraform operations remotely in HCP Terraform. Refer to [Set Up CDKTN With HCP Terraform](/docs/create-and-deploy/hcp-terraform#set-up-cdktn-with-hcp-terraform) for details.
+When you run `cdktn init` without the `--local` flag, CDKTN defaults to using HCP Terraform as a remote backend. This lets you store state and run Terraform operations remotely in HCP Terraform. Refer to [Set Up CDKTN With HCP Terraform](/create-and-deploy/hcp-terraform#set-up-cdktn-with-hcp-terraform) for details.
 
 ## Project Configuration
 
@@ -49,7 +49,7 @@ Initializing your project with a template generates a basic project in your pref
 
 ### `cdktf.json` Configuration File
 
-The `cdktf.json` configuration file is where you can define the [providers](/docs/concepts/providers) and [modules](/docs/concepts/modules) that should be added to the project and supply custom configuration settings for the application. Refer to the [cdktf.json documentation](/docs/create-and-deploy/configuration-file) for more detail.
+The `cdktf.json` configuration file is where you can define the [providers](/concepts/providers) and [modules](/concepts/modules) that should be added to the project and supply custom configuration settings for the application. Refer to the [cdktf.json documentation](/create-and-deploy/configuration-file) for more detail.
 
 ### Application Context
 
@@ -104,9 +104,9 @@ app.synth();
 
 ## Generate Terraform Configuration
 
-Run [`cdktn synth`](/docs/cli-reference/commands#synth) to synthesize your application into JSON configuration files that Terraform can use to manage infrastructure. You can then either use the JSON file with Terraform directly or provision your infrastructure using CDKTN CLI commands.
+Run [`cdktn synth`](/cli-reference/commands#synth) to synthesize your application into JSON configuration files that Terraform can use to manage infrastructure. You can then either use the JSON file with Terraform directly or provision your infrastructure using CDKTN CLI commands.
 
-Refer to [Deployment Patterns](/docs/create-and-deploy/deployment-patterns#example-workflows) for example workflows, including connecting your CDKTN application to a Continuous Integration pipeline.
+Refer to [Deployment Patterns](/create-and-deploy/deployment-patterns#example-workflows) for example workflows, including connecting your CDKTN application to a Continuous Integration pipeline.
 
 ## Convert an HCL Project to a CDKTN TypeScript Project
 
@@ -189,4 +189,4 @@ app.synth();
 
 ## Convert HCL Files to CDKTN Format
 
-Use the `cdktn convert` command to convert individual HCL files to CDKTN-compatible files in your preferred programming language. Refer to the [`cdktn convert` command documentation](/docs/cli-reference/commands#convert) for more information.
+Use the `cdktn convert` command to convert individual HCL files to CDKTN-compatible files in your preferred programming language. Refer to the [`cdktn convert` command documentation](/cli-reference/commands#convert) for more information.

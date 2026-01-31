@@ -15,7 +15,7 @@ A stack represents a collection of infrastructure that CDK Terrain (CDKTN) synth
 
 You can instantiate the same resource multiple times throughout your infrastructure. For example, you may want to create multiple S3 Buckets with different configurations. Instances that share the same `stack` parent element are considered to be part of the same scope. You must set a different `name` property for each instance to avoid naming conflicts.
 
-Refer to the [constructs documentation](/docs/concepts/constructs#scope) for more details and an example.
+Refer to the [constructs documentation](/concepts/constructs#scope) for more details and an example.
 
 ## Single Stack
 
@@ -469,7 +469,7 @@ multiple-stacks-production-eu   cdktf.out/stacks/multiple-stacks-production-eu
 
 To deploy and destroy multiple stacks at once, either specify multiple stacks in the `cdktn deploy` and `cdktn destroy` command or use a wild card glob (e.g., `cdktn deploy '*-production'`).
 
-Refer to [Best Practices](/docs/create-and-deploy/best-practices#separate-business-units-with-stacks) for more details about when to create multiple stacks and how to structure them.
+Refer to [Best Practices](/create-and-deploy/best-practices#separate-business-units-with-stacks) for more details about when to create multiple stacks and how to structure them.
 
 ### Cross-Stack References
 
@@ -839,7 +839,7 @@ If you e.g. write `this.allResources = Fn.concat([resourceFromStackA.items, reso
 
 To make the dependency explicit, run`stackD.addDependency(stackC)`.
 
-If you want to keep the result of the function attached to one stack and save its state, create a [Terraform Local value](/docs/concepts/variables-and-outputs#local-values) and expose it. The following example creates a `TerraformLocal`.
+If you want to keep the result of the function attached to one stack and save its state, create a [Terraform Local value](/concepts/variables-and-outputs#local-values) and expose it. The following example creates a `TerraformLocal`.
 
 
 <CodeGroup>

@@ -26,7 +26,7 @@ You will:
 - `kubectl`
 - `kind`
 
-<Tip>CDKTN works with both Terraform and OpenTofu. To run OpenTofu, set `TERRAFORM_BINARY_NAME=tofu` before using the CLI. Refer to [Environment Variables](/docs/create-and-deploy/environment-variables) for details.</Tip>
+<Tip>CDKTN works with both Terraform and OpenTofu. To run OpenTofu, set `TERRAFORM_BINARY_NAME=tofu` before using the CLI. Refer to [Environment Variables](/create-and-deploy/environment-variables) for details.</Tip>
 
 ## Clone example repository
 
@@ -51,7 +51,7 @@ docker run -d --restart always -p "127.0.0.1:5000:5000" --name local-registry re
 Create the cluster.
 
 ```shell-session Shell
-kind create cluster --name=cdktf-app --config kind-config.yaml Creating cluster "cdktf-app" ... ✓ Ensuring node image (kindest/node:v1.25.0) 🖼 ✓ Preparing nodes 📦 ✓ Writing configuration 📜 ✓ Starting control-plane 🕹️ ✓ Installing CNI 🔌 ✓ Installing StorageClass 💾 Set kubectl context to "kind-cdktf-app" You can now use your cluster with: kubectl cluster-info --context kind-cdktf-app Not sure what to do next? 😅 Check out https://kind.sigs.k8s.io/docs/user/quick-start/
+kind create cluster --name=cdktf-app --config kind-config.yaml Creating cluster "cdktf-app" ... ✓ Ensuring node image (kindest/node:v1.25.0) 🖼 ✓ Preparing nodes 📦 ✓ Writing configuration 📜 ✓ Starting control-plane 🕹️ ✓ Installing CNI 🔌 ✓ Installing StorageClass 💾 Set kubectl context to "kind-cdktf-app" You can now use your cluster with: kubectl cluster-info --context kind-cdktf-app Not sure what to do next? 😅 Check out https://kind.sigs.k8s.io/user/quick-start/
 ```
 
 Verify the cluster.
@@ -751,5 +751,5 @@ docker rm local-registry local-registry
 
 ## Next steps
 
-- Review how to structure CDKTN code with [Constructs](/docs/concepts/constructs) and [Stacks](/docs/concepts/stacks).
+- Review how to structure CDKTN code with [Constructs](/concepts/constructs) and [Stacks](/concepts/stacks).
 - If you want a smaller starting point, begin with the [Install tutorial](/tutorials/install) or [Build AWS infrastructure](/tutorials/build-aws).

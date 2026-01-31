@@ -11,7 +11,7 @@ Starting from version 0.20, CDKTN can also generate Terraform HCL as output by s
 
 CDKTN may not be the right choice for every team and project within your organization. For example, some teams may already be very familiar with Terraform and have created HCL modules, providers, etc. To provide flexibility, CDKTN applications are interoperable with Terraform projects written in HCL. Specifically:
 
-- CDKTN applications can use all existing Terraform [providers](/docs/concepts/providers) and HCL [modules](/docs/concepts/modules).
+- CDKTN applications can use all existing Terraform [providers](/concepts/providers) and HCL [modules](/concepts/modules).
 - CDKTN can generate modules that HCL Terraform projects can use in their configurations.
 
 This page shows how you can interoperate HCL and CDK Terrain configuration.
@@ -224,6 +224,6 @@ output "name" {
 
 HCL can be used with Terraform CDK in two ways. Converting HCL code directly to a CDKTN language, and using Terraform modules directly within CDKTN projects.
 
-- In order to convert HCL to a CDKTN language, the [`cdktn convert`](/docs/cli-reference/commands#convert) command can be used. It automatically translates HCL into a preferred CDKTN language. This is useful when working with an existing codebase that needs to be converted to CDKTN.
+- In order to convert HCL to a CDKTN language, the [`cdktn convert`](/cli-reference/commands#convert) command can be used. It automatically translates HCL into a preferred CDKTN language. This is useful when working with an existing codebase that needs to be converted to CDKTN.
 
-- While CDKTN has the ability to import HCL modules through `cdktn get` when referenced within the `cdktf.json` file, Terraform modules can also be referenced without generating language specific bindings. The [modules documentation](/docs/concepts/modules) shows how to use existing Terraform modules in CDK Terrain projects.
+- While CDKTN has the ability to import HCL modules through `cdktn get` when referenced within the `cdktf.json` file, Terraform modules can also be referenced without generating language specific bindings. The [modules documentation](/concepts/modules) shows how to use existing Terraform modules in CDK Terrain projects.

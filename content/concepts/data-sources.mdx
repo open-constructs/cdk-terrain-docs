@@ -12,11 +12,11 @@ description: >-
 
 Use data sources when you need to reference dynamic data that is not known until after Terraform (or OpenTofu) applies a configuration. For example, instance IDs that cloud providers assign on creation.
 
-When data is static or you know the values before [synthesizing your code](/docs/cli-reference/commands#synth), we recommend creating static references in your preferred programming language or using [Terraform variables](/docs/concepts/variables-and-outputs).
+When data is static or you know the values before [synthesizing your code](/cli-reference/commands#synth), we recommend creating static references in your preferred programming language or using [Terraform variables](/concepts/variables-and-outputs).
 
 ## Define Data Sources
 
-Data Sources are part of a [Terraform provider](/docs/concepts/providers). All classes representing Data Sources are prefixed with `Data`.
+Data Sources are part of a [Terraform provider](/concepts/providers). All classes representing Data Sources are prefixed with `Data`.
 
 In the following TypeScript example, a Terraform data source fetches the AWS region `DataAwsRegion` from the AWS provider.
 
@@ -144,7 +144,7 @@ func NewDatasourcesStack(scope constructs.Construct, name string) cdktn.Terrafor
 
 ## Remote State Data Source
 
-The [`terraform_remote_state` data source](/terraform/language/state/remote-state-data) retrieves state data from a remote [Terraform backend](/terraform/language/backend). This allows you to use the root-level outputs of one or more Terraform configurations as input data for another configuration. For example, a core infrastructure team can handle building the core machines, networking, etc. and then expose some information to other teams that allows them to run their own infrastructure. Refer to the [Remote Backends page](/docs/concepts/remote-backends) for more details.
+The [`terraform_remote_state` data source](/terraform/language/state/remote-state-data) retrieves state data from a remote [Terraform backend](/terraform/language/backend). This allows you to use the root-level outputs of one or more Terraform configurations as input data for another configuration. For example, a core infrastructure team can handle building the core machines, networking, etc. and then expose some information to other teams that allows them to run their own infrastructure. Refer to the [Remote Backends page](/concepts/remote-backends) for more details.
 
 The following example uses the global `DataTerraformRemoteState` to reference a Terraform Output of another Terraform configuration.
 

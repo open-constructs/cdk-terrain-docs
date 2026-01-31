@@ -8,7 +8,7 @@ description: "[technical preview] Use AWS CDK (v2) constructs in CDK Terrain pro
 
 The `AwsTerraformAdapter` is included in the [`@cdktn/aws-cdk`](https://github.com/hashicorp/cdktn-aws-cdk) package and allows you to use Amazon Web Services Cloud Development Kit (AWS CDK) constructs in your CDK Terrain (CDKTN) projects.
 
-The `AwsTerraformAdapter` uses the [`aws_cloudcontrolapi_resource`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudcontrolapi_resource) Terraform resource to communicate with the [AWS Cloud Control API](https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/what-is-cloudcontrolapi.html). Reference this [list of supported resources](https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/supported-resources.html) for the Cloud Control API.
+The `AwsTerraformAdapter` uses the [`aws_cloudcontrolapi_resource`](https://registry.terraform.io/providers/hashicorp/aws/latest/resources/cloudcontrolapi_resource) Terraform resource to communicate with the [AWS Cloud Control API](https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/what-is-cloudcontrolapi.html). Reference this [list of supported resources](https://docs.aws.amazon.com/cloudcontrolapi/latest/userguide/supported-resources.html) for the Cloud Control API.
 
 You need to [manually map](#write-manual-mappings) resources that the AWS Cloud Control API does not yet support to specific Terraform resources because attribute names and resource types differ between CloudFormation and Terraform. Some manual mappings are [included in the adapter](https://github.com/hashicorp/cdktn-aws-cdk/tree/main/src/mapping/aws), and we are happy to accept PRs that add manual mappings for currently unsupported resources!
 
@@ -24,7 +24,7 @@ The `AwsTerraformAdapter` currently only supports TypeScript projects:
 
 To install the `AwsTerraformAdapter`:
 
-1. Set up a CDKTN TypeScript project. Refer to [Project Setup](/docs/create-and-deploy/project-setup) for details.
+1. Set up a CDKTN TypeScript project. Refer to [Project Setup](/create-and-deploy/project-setup) for details.
 
 1. Install the required packages via yarn or npm.
 
@@ -172,7 +172,7 @@ These attributes are the properties you would find in the rendered CloudFormatio
 
 ### Create Mappings
 
-Write code that maps all attributes to a format that matches the Terraform resource for an AWS DynamoDBTable. For the target schema, you can either look at the [docs on the Terraform Registry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table) or at the code of the `DynamoDB.DynamodbTableConfig` you will supply to the resource upon creation.
+Write code that maps all attributes to a format that matches the Terraform resource for an AWS DynamoDBTable. For the target schema, you can either look at the [docs on the Terraform Registry](https://registry.terraform.io/providers/hashicorp/aws/latest/resources/dynamodb_table) or at the code of the `DynamoDB.DynamodbTableConfig` you will supply to the resource upon creation.
 
 The logged `props` show that you need to support at least setting these attributes and that you need to make sure they appear in the resulting CDKTN resources.
 

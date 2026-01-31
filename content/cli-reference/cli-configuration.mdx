@@ -4,9 +4,9 @@ sidebarTitle: CLI Configuration
 description: Install and configure the CDKTN Command Line Interface.
 ---
 
-The CDK Terrain (CDKTN) CLI allows you to initialize a new CDKTN project, adjust project settings, synthesize your infrastructure into Terraform configuration files, deploy your CDKTN application, and more. You can also use some Terraform CLI commands like `terraform apply` and `terraform destroy` directly, but we recommend using the available [`cdktn cli` commands](/docs/cli-reference/commands) where possible.
+The CDK Terrain (CDKTN) CLI allows you to initialize a new CDKTN project, adjust project settings, synthesize your infrastructure into Terraform configuration files, deploy your CDKTN application, and more. You can also use some Terraform CLI commands like `terraform apply` and `terraform destroy` directly, but we recommend using the available [`cdktn cli` commands](/cli-reference/commands) where possible.
 
-<Tip>CDKTN works with both Terraform and OpenTofu. To use OpenTofu, set the `TERRAFORM_BINARY_NAME=tofu` environment variable. Refer to [Environment Variables](/docs/create-and-deploy/environment-variables) for details.</Tip>
+<Tip>CDKTN works with both Terraform and OpenTofu. To use OpenTofu, set the `TERRAFORM_BINARY_NAME=tofu` environment variable. Refer to [Environment Variables](/create-and-deploy/environment-variables) for details.</Tip>
 
 ## Install
 
@@ -54,14 +54,14 @@ If you are running the CLI in an automated environment, you can force the dynami
 
 ## Configuration File
 
-You can configure the behavior of the Terraform CDK CLI by modifying the `cdktf.json` file in your project root directory. Refer to the [cdktf.json documentation](/docs/create-and-deploy/configuration-file) for more detail on how you can supply custom configuration settings for your application.
+You can configure the behavior of the Terraform CDK CLI by modifying the `cdktf.json` file in your project root directory. Refer to the [cdktf.json documentation](/create-and-deploy/configuration-file) for more detail on how you can supply custom configuration settings for your application.
 
 ## Telemetry
 
 The CDKTN CLI ([cdktn-cli](https://github.com/open-constructs/cdk-terrain/tree/main/packages/cdktn-cli) interacts with a HashiCorp service called [Checkpoint](https://checkpoint.hashicorp.com)
 to report project metrics such as cdktn version, project language, provider name, platform name, and other details that help guide the project maintainers with feature and roadmap decisions. The [code that interacts with Checkpoint](https://github.com/open-constructs/cdk-terrain/blob/main/packages/%40cdktf/commons/src/checkpoint.ts) is part of the CDK Terrain CLI.
 
-The use of Checkpoint is completely optional. Refer to the [telemetry documentation](/docs/telemetry) for more information about Checkpoint and you can disable it if desired.
+The use of Checkpoint is completely optional. Refer to the [telemetry documentation](/telemetry) for more information about Checkpoint and you can disable it if desired.
 
 ## `node-gyp` errors
 

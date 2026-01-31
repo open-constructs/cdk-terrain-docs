@@ -8,23 +8,23 @@ description: >-
 
 The CDK Terrain CLI has the following commands:
 
-<Tip>CDKTN works with both Terraform and OpenTofu. To use OpenTofu, set the `TERRAFORM_BINARY_NAME=tofu` environment variable. Refer to [Environment Variables](/docs/create-and-deploy/environment-variables) for details.</Tip>
+<Tip>CDKTN works with both Terraform and OpenTofu. To use OpenTofu, set the `TERRAFORM_BINARY_NAME=tofu` environment variable. Refer to [Environment Variables](/create-and-deploy/environment-variables) for details.</Tip>
 
-- [completion](/docs/cli-reference/commands#completion)
-- [convert](/docs/cli-reference/commands#convert)
-- [debug](/docs/cli-reference/commands#debug)
-- [deploy](/docs/cli-reference/commands#deploy)
-- [destroy](/docs/cli-reference/commands#destroy)
-- [diff](/docs/cli-reference/commands#diff)
-- [get](/docs/cli-reference/commands#get)
-- [init](/docs/cli-reference/commands#init)
-- [login](/docs/cli-reference/commands#login)
-- [output](/docs/cli-reference/commands#output)
-- [provider add](/docs/cli-reference/commands#provider-add)
-- [provider upgrade](/docs/cli-reference/commands#provider-upgrade)
-- [provider list](/docs/cli-reference/commands#provider-list)
-- [synth](/docs/cli-reference/commands#synth)
-- [watch](/docs/cli-reference/commands#watch)
+- [completion](/cli-reference/commands#completion)
+- [convert](/cli-reference/commands#convert)
+- [debug](/cli-reference/commands#debug)
+- [deploy](/cli-reference/commands#deploy)
+- [destroy](/cli-reference/commands#destroy)
+- [diff](/cli-reference/commands#diff)
+- [get](/cli-reference/commands#get)
+- [init](/cli-reference/commands#init)
+- [login](/cli-reference/commands#login)
+- [output](/cli-reference/commands#output)
+- [provider add](/cli-reference/commands#provider-add)
+- [provider upgrade](/cli-reference/commands#provider-upgrade)
+- [provider list](/cli-reference/commands#provider-list)
+- [synth](/cli-reference/commands#synth)
+- [watch](/cli-reference/commands#watch)
 
 ## completion
 
@@ -221,7 +221,7 @@ $ cdktn deploy '*-production'
 
 If the stacks have dependencies (through cross stack references or by calling `myStack.addDependency(otherStack)`) deploy will figure out the right order to run.
 
-For more info on the `--outputs-file` option, refer to the [`output` command](/docs/cli-reference/commands#output).
+For more info on the `--outputs-file` option, refer to the [`output` command](/cli-reference/commands#output).
 
 ## destroy
 
@@ -749,7 +749,7 @@ io.cdktn.cdktn-provider-ad (PREBUILT)
 
 ## provider add
 
-This command facilitates adding Terraform providers to a CDKTN project. If a [pre-built provider](/docs/concepts/providers#install-pre-built-providers) is available for the CDKTN version you are using and the Terraform provider version you requested (if any), it will be installed using e.g. `npm install` or `dotnet add` depending on the language you are using. Otherwise, the provider will be added to the `cdktf.json` config and `cdktn get` will be automatically invoked to generate [local provider bindings](/docs/concepts/providers#add-provider-to-cdktn-json).
+This command facilitates adding Terraform providers to a CDKTN project. If a [pre-built provider](/concepts/providers#install-pre-built-providers) is available for the CDKTN version you are using and the Terraform provider version you requested (if any), it will be installed using e.g. `npm install` or `dotnet add` depending on the language you are using. Otherwise, the provider will be added to the `cdktf.json` config and `cdktn get` will be automatically invoked to generate [local provider bindings](/concepts/providers#add-provider-to-cdktn-json).
 
 ```sh
 $ cdktn provider add --help
@@ -808,7 +808,7 @@ $ cdktn provider add registry.example.com/acme/my-provider
 
 This command lets you upgrade Terraform providers in a CDKTN project to the newest version compatible with your `cdktn` version. You can also optionally add a version constraint.
 
-If your project has the associated [pre-built provider](/docs/concepts/providers#install-pre-built-providers) already installed, CDKTN updates the pre-built provider. Otherwise, CDKTN adds the provider to the `cdktf.json` configuration file and invokes `cdktn get` to generate [local provider bindings](/docs/concepts/providers#add-provider-to-cdktn-json).
+If your project has the associated [pre-built provider](/concepts/providers#install-pre-built-providers) already installed, CDKTN updates the pre-built provider. Otherwise, CDKTN adds the provider to the `cdktf.json` configuration file and invokes `cdktn get` to generate [local provider bindings](/concepts/providers#add-provider-to-cdktn-json).
 
 ```sh
 $ cdktn provider upgrade --help

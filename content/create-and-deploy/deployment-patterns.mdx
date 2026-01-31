@@ -13,11 +13,11 @@ You can provision your infrastructure using either CDKTN CLI commands (e.g., `cd
 
 ### Run CDKTN CLI Commands
 
-We recommend using [CDKTN CLI commands](/docs/cli-reference/commands) in the following use cases:
+We recommend using [CDKTN CLI commands](/cli-reference/commands) in the following use cases:
 
 - **Your application performs additional tasks** For example, your application may build a Docker image or start a build pipeline locally through synchronous APIs. You might also be using the null provider to execute these actions when a resource is created (e.g., after the Docker registry has been created). Running `cdktn deploy` triggers all of these actions at runtime in addition to using Terraform to provision your infrastructure.
 
-- **Your application contains stacks with complex dependencies.** Each [stack](/docs/concepts/stacks) in a CDKTN application is like a separate Terraform working directory. Terraform respects complex dependencies within the same configuration, but it is not designed to manage complex dependencies between multiple working directories. For example, if you define a stack A that depends on data from stack B and stack C, Terraform runs will fail. This is because Terraform will not understand that it must wait to build stack A until both stack B and stack C are completed.
+- **Your application contains stacks with complex dependencies.** Each [stack](/concepts/stacks) in a CDKTN application is like a separate Terraform working directory. Terraform respects complex dependencies within the same configuration, but it is not designed to manage complex dependencies between multiple working directories. For example, if you define a stack A that depends on data from stack B and stack C, Terraform runs will fail. This is because Terraform will not understand that it must wait to build stack A until both stack B and stack C are completed.
 
 ### Run `cdktn synth` and Use Terraform Directly
 
@@ -27,11 +27,11 @@ We recommend synthesizing your CDKTN application and using Terraform directly wh
 
 HCP Terraform lets you review the current state of your infrastructure and run progress in the HCP Terraform UI. You can also use HCP Terraform as the source of secrets.
 
-Refer to [Set Up CDKTN With HCP Terraform](/docs/create-and-deploy/hcp-terraform#set-up-cdktn-with-hcp-terraform) for details. Refer to [Example Workflows](#example-workflows) for several examples of connecting your CDKTN application to HCP Terraform and using HCP Terraform in a Continuous Integration pipeline.
+Refer to [Set Up CDKTN With HCP Terraform](/create-and-deploy/hcp-terraform#set-up-cdktn-with-hcp-terraform) for details. Refer to [Example Workflows](#example-workflows) for several examples of connecting your CDKTN application to HCP Terraform and using HCP Terraform in a Continuous Integration pipeline.
 
 ## Managing Secrets and Sensitive Data
 
-You should [read secrets with Terraform Variables](/docs/create-and-deploy/best-practices#read-secrets-with-terraform-variables) so that they do not appear in your synthesized CDKTN code.
+You should [read secrets with Terraform Variables](/create-and-deploy/best-practices#read-secrets-with-terraform-variables) so that they do not appear in your synthesized CDKTN code.
 
 ## Example Workflows
 

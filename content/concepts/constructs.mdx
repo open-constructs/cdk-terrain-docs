@@ -320,15 +320,15 @@ describe("Construct is of correct composition and plans successfully", () => {
 
 ### Interoperability
 
-You can use the [`cdktn convert`](/docs/cli-reference/commands#convert) command to translate existing projects written in HashiCorp Configuration Language (HCL) into CDKTN-compatible projects. You could then use the output as a starting point to create custom constructs.
+You can use the [`cdktn convert`](/cli-reference/commands#convert) command to translate existing projects written in HashiCorp Configuration Language (HCL) into CDKTN-compatible projects. You could then use the output as a starting point to create custom constructs.
 
-You can use the [`cdktn get`](/docs/cli-reference/commands#get) command to download Terraform modules and use them as constructs in your CDKTN project. You can also [publish these generated constructs](/docs/develop-custom-constructs/publishing-and-distribution#translate-constructs-to-terraform-modules) representing a module to your registry of choice.
+You can use the [`cdktn get`](/cli-reference/commands#get) command to download Terraform modules and use them as constructs in your CDKTN project. You can also [publish these generated constructs](/develop-custom-constructs/publishing-and-distribution#translate-constructs-to-terraform-modules) representing a module to your registry of choice.
 
-You cannot create a Terraform module directly from an existing CDKTN construct, but you can use the synthesized output of a CDKTN project as a Terraform Module. Refer to the [HCL interoperability](/docs/concepts/hcl-interoperability) page for more details.
+You cannot create a Terraform module directly from an existing CDKTN construct, but you can use the synthesized output of a CDKTN project as a Terraform Module. Refer to the [HCL interoperability](/concepts/hcl-interoperability) page for more details.
 
 ## Constructs vs. Stacks
 
-[Stacks](/docs/concepts/stacks) represent a collection of infrastructure that CDK Terrain (CDKTN) synthesizes as a dedicated Terraform configuration. Stacks allow you to separate the state management for multiple environments within an application. For example, you may want to have one stack that describes the infrastructure for development and another with slightly different inputs for testing.
+[Stacks](/concepts/stacks) represent a collection of infrastructure that CDK Terrain (CDKTN) synthesizes as a dedicated Terraform configuration. Stacks allow you to separate the state management for multiple environments within an application. For example, you may want to have one stack that describes the infrastructure for development and another with slightly different inputs for testing.
 
 Constructs also provide a way to logically structure a set of resources, but you can only use them as part of a stack. A single stack may contain multiple constructs that act as building blocks to create the full infrastructure configuration. For example, you could use one construct to define a Kubernetes deployment and a different construct to define an AWS DynamoDB table.
 
@@ -759,14 +759,14 @@ func main() {
 
 ### Aspects
 
-`Aspects` allow you to implement a visitor pattern, dynamically add or remove constructs, and automatically change attributes of existing constructs when you synthesize your CDTKF application. For example, you could use an aspect to help tag resources based on dynamic conditions. Refer to the [aspects documentation](/docs/concepts/aspects) for more details.
+`Aspects` allow you to implement a visitor pattern, dynamically add or remove constructs, and automatically change attributes of existing constructs when you synthesize your CDTKF application. For example, you could use an aspect to help tag resources based on dynamic conditions. Refer to the [aspects documentation](/concepts/aspects) for more details.
 
 ### Available Constructs
 
-You can search the Amazon Web Services (AWS) [Construct Hub](https://constructs.dev/search?q=&cdk=cdktn&offset=0) for existing CDKTN-compatible constructs. We are also building the [AWS Adapter](/docs/create-and-deploy/aws-adapter), which lets you use AWS Constructs in your CDKTN projects.
+You can search the Amazon Web Services (AWS) [Construct Hub](https://constructs.dev/search?q=&cdk=cdktn&offset=0) for existing CDKTN-compatible constructs. We are also building the [AWS Adapter](/create-and-deploy/aws-adapter), which lets you use AWS Constructs in your CDKTN projects.
 
 <Note>The AWS Adapter is in tech preview.</Note>
 
 ## Write and Publish Constructs
 
-You can write construct classes in any language and distribute them to other users. Refer to [Construct Design](/docs/develop-custom-constructs/construct-design) and [Construct Publishing and Distribution](/docs/develop-custom-constructs/publishing-and-distribution) for details.
+You can write construct classes in any language and distribute them to other users. Refer to [Construct Design](/develop-custom-constructs/construct-design) and [Construct Publishing and Distribution](/develop-custom-constructs/publishing-and-distribution) for details.
