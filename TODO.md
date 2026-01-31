@@ -1,0 +1,4 @@
+- [~] Add tutorials (these were in Hashicorp private repo)
+  - [x] ~~Option 1: Request a copy from private repo from Hashicorp team~~
+  - [~] Option 2: Scrape through internet archive
+- [ ] Add API Reference (auto-generated from JSII manifest, see v0.21.x/docs/cdktf/api-reference)

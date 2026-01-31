@@ -1,0 +1,22 @@
+{
+  "title": "Deploy an application with CDK for Terraform",
+  "url": "https://developer.hashicorp.com/terraform/tutorials/cdktf/cdktf-applications",
+  "waybackUrl": "https://web.archive.org/web/20251112223320/https://developer.hashicorp.com/terraform/tutorials/cdktf/cdktf-applications",
+  "scrapedAt": "2026-01-31",
+  "sections": [
+    "Deploy an application with CDK for Terraform",
+    "Prerequisites",
+    "Clone example repository",
+    "Initialize your CDKTF application",
+    "Create a Kubernetes Deployment",
+    "Refactor your deployment",
+    "Add a NodePort Service",
+    "Add a NodePortService to your application",
+    "Refactor your application",
+    "Run the tests",
+    "Use the SimpleKubernetesWebApp construct",
+    "Deploy a custom image"
+  ],
+  "tabs": [],
+  "images": []
+}

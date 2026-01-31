@@ -35,7 +35,7 @@ Full schema at [mintlify.com/docs.json](https://mintlify.com/docs.json).
 
 ### Required files
 
-* `docs.json` - Site configuration (navigation, theme, integrations, etc.). See [global settings](https://mintlify.com/docs/settings/global) for all options.
+* `docs.json` - Site configuration (navigation, theme, integrations, etc.). See [global settings](https://www.mintlify.com/docs/organize/settings) for all options.
 * `*.mdx` files - Documentation pages with YAML frontmatter
 
 ### Example file structure

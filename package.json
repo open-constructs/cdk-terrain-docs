@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "mint dev"
+    "dev": "cd contents && mint dev",
+    "update": "pnpm install mint@latest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.18.0",
   "dependencies": {
-    "mint": "^4.2.305"
+    "mint": "^4.2.312"
   }
 }

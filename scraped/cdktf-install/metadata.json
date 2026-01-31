@@ -1,0 +1,55 @@
+{
+  "title": "Install CDK for Terraform and run a quick start demo",
+  "url": "https://developer.hashicorp.com/terraform/tutorials/cdktf/cdktf-install",
+  "waybackUrl": "https://web.archive.org/web/20251115095039/https://developer.hashicorp.com/terraform/tutorials/cdktf/cdktf-install",
+  "scrapedAt": "2026-01-31",
+  "sections": [
+    "Prerequisites",
+    "Install CDKTF",
+    "Verify the installation",
+    "Quick start tutorial",
+    "Create and initialize the project",
+    "Edit the code",
+    "Deploy container",
+    "Destroy the container",
+    "Next steps"
+  ],
+  "tabs": [
+    {
+      "group": "language",
+      "options": ["typescript", "python", "go", "csharp", "java"],
+      "default": "typescript",
+      "type": "navigation",
+      "files": {
+        "typescript": "snapshot-default.txt",
+        "python": "tabs/lang-python.txt",
+        "go": "tabs/lang-go.txt",
+        "csharp": "tabs/lang-csharp.txt",
+        "java": "tabs/lang-java.txt"
+      }
+    },
+    {
+      "group": "install-method",
+      "options": ["npm-stable", "npm-dev", "homebrew"],
+      "default": "npm-stable",
+      "type": "tab",
+      "files": {
+        "npm-stable": "snapshot-default.txt",
+        "npm-dev": "tabs/install-npm-dev.txt",
+        "homebrew": "tabs/install-homebrew.txt"
+      }
+    }
+  ],
+  "images": [
+    {
+      "id": "img-1",
+      "alt": "Terraform as Platform",
+      "src": "https://content.hashicorp.com/api/assets?product=tutorials&version=main&asset=public%2Fimg%2Fterraform%2Fcdktf%2Fterraform-as-platform.png&width=1776&height=1317"
+    },
+    {
+      "id": "img-2",
+      "alt": "NGINX running in Docker via Terraform",
+      "src": "https://content.hashicorp.com/api/assets?product=tutorials&version=main&asset=public%2Fimg%2Fterraform%2Fgetting-started%2Fterraform-docker-nginx.png&width=2048&height=510"
+    }
+  ]
+}

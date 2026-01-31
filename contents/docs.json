@@ -1,0 +1,144 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "aspen",
+  "name": "CDK Terrain (CDKTN)",
+  "colors": {
+    "primary": "#16A34A",
+    "light": "#07C983",
+    "dark": "#15803D"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index"
+            ]
+          },
+          { "group": "Overview",
+            "pages": [
+              {
+                "group": "Concepts",
+                "expanded": false,
+                "pages": [
+                  "concepts/cdktn-architecture",
+                  "concepts/hcl-interoperability",
+                  "concepts/constructs",
+                  "concepts/providers",
+                  "concepts/resources",
+                  "concepts/modules",
+                  "concepts/data-sources",
+                  "concepts/variables-and-outputs",
+                  "concepts/functions",
+                  "concepts/iterators",
+                  "concepts/remote-backends",
+                  "concepts/aspects",
+                  "concepts/assets",
+                  "concepts/tokens",
+                  "concepts/stacks"
+                ]
+              },
+              {
+                "group": "Examples and Guides",
+                "expanded": false,
+                "pages": [
+                  "examples-and-guides/examples",
+                  "examples-and-guides/refactoring"
+                ]
+              },
+              {
+                "group": "Create and Deploy",
+                "expanded": false,
+                "pages": [
+                  "create-and-deploy/project-setup",
+                  "create-and-deploy/configuration-file",
+                  "create-and-deploy/best-practices",
+                  "create-and-deploy/environment-variables",
+                  "create-and-deploy/hcp-terraform",
+                  "create-and-deploy/deployment-patterns",
+                  "create-and-deploy/performance",
+                  "create-and-deploy/remote-templates",
+                  "create-and-deploy/aws-adapter"
+                ]
+              },
+              {
+                "group": "Custom Constructs",
+                "expanded": false,
+                "pages": [
+                  "develop-custom-constructs/construct-design",
+                  "develop-custom-constructs/publishing-and-distribution"
+                ]
+              },
+              {
+                "group": "Test and Debug",
+                "expanded": false,
+                "pages": [
+                  "test/unit-tests",
+                  "test/debugging"
+                ]
+              },
+              {
+                "group": "CLI Reference",
+                "expanded": false,
+                "pages": [
+                  "cli-reference/cli-configuration",
+                  "cli-reference/commands"
+                ]
+              },
+              {
+                "group": "Release",
+                "expanded": false,
+                "pages": [
+                  "release/index",
+                  "release/upgrade-guide-v0-19",
+                  "release/upgrade-guide-v0-18",
+                  "release/upgrade-guide-v0-17",
+                  "release/upgrade-guide-v0-15",
+                  "release/upgrade-guide-v0-13",
+                  "release/upgrade-guide-v0-12",
+                  "release/upgrade-guide-v0-11",
+                  "release/upgrade-guide-v0-10",
+                  "release/upgrade-guide-v0-9",
+                  "release/upgrade-guide-v0-7",
+                  "release/upgrade-guide-v0-6"
+                ]
+              },
+              "community",
+              "telemetry"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/open-constructs/cdk-terrain",
+          "icon": "github"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/open-constructs/cdk-terrain"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/open-constructs/cdk-terrain"
+    }
+  }
+}

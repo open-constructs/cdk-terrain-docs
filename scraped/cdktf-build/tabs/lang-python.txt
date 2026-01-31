@@ -1,0 +1,1 @@
+uid=14_0 RootWebArea "Build AWS infrastructure with CDK for Terraform | Terraform | HashiCorp Developer" url="https://web.archive.org/web/20251206125735/https://developer.hashicorp.com/terraform/tutorials/cdktf/cdktf-build?variants=cdk-language%3Apython"

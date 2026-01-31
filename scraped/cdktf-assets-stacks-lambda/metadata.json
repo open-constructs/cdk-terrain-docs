@@ -1,0 +1,27 @@
+{
+  "title": "Deploy Lambda functions with TypeScript and CDK for Terraform",
+  "url": "https://developer.hashicorp.com/terraform/tutorials/cdktf/cdktf-assets-stacks-lambda",
+  "waybackUrl": "https://web.archive.org/web/20251112223320/https://developer.hashicorp.com/terraform/tutorials/cdktf/cdktf-assets-stacks-lambda",
+  "scrapedAt": "2026-01-31",
+  "sections": [
+    "Deploy Lambda functions with TypeScript and CDK for Terraform",
+    "Prerequisites",
+    "Explore CDKTF application",
+    "View application stacks",
+    "Deploy Hello World function",
+    "Deploy Hello Name function",
+    "Inspect synthesized stacks",
+    "Clean up resources",
+    "Next steps"
+  ],
+  "tabs": [
+    {
+      "group": "language",
+      "options": ["typescript"],
+      "default": "typescript",
+      "type": "content",
+      "note": "This tutorial only provides TypeScript code examples"
+    }
+  ],
+  "images": []
+}
