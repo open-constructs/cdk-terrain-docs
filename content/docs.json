@@ -132,9 +132,19 @@
     "global": {
       "anchors": [
         {
+          "anchor": "Project",
+          "href": "https://cdktn.io",
+          "icon": "code"
+        },
+        {
           "anchor": "GitHub",
           "href": "https://github.com/open-constructs/cdk-terrain",
           "icon": "github"
+        },
+        {
+          "anchor": "Providers",
+          "href": "https://github.com/cdktn-io",
+          "icon": "cube"
         }
       ]
     }
@@ -146,6 +156,10 @@
   "navbar": {
     "links": [
       {
+        "label": "Slack",
+        "href": "https://cdk.dev"
+      },
+      {
         "label": "GitHub",
         "href": "https://github.com/open-constructs/cdk-terrain"
       }
@@ -153,6 +167,7 @@
   },
   "footer": {
     "socials": {
+      "slack": "https://cdk.dev",
       "github": "https://github.com/open-constructs/cdk-terrain"
     }
   }
