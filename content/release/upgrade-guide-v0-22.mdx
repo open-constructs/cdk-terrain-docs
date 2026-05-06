@@ -35,7 +35,7 @@ The `cdktn` cli should be fully compatible with existing CDK for Terraform proje
   -   "cdktf": "^0.21.0",
   +   "cdktn": "^0.22.0",
   -   "@cdktf/provider-aws": "^19.0.0"
-  +   "@cdktn/provider-aws": "^22.0.0"
+  +   "@cdktn/provider-aws": "^23.0.0"
     },
     "devDependencies": {
   -   "cdktf-cli": "^0.21.0"
@@ -84,7 +84,7 @@ The `cdktn` cli should be fully compatible with existing CDK for Terraform proje
   + cdktn>=0.22.0
 
   - cdktf-cdktf-provider-aws>=19.0.0
-  + cdktn-provider-aws>=20.0.0
+  + cdktn-provider-aws>=23.0.0
   ```
 
   **2. Update imports:**
@@ -123,7 +123,7 @@ The `cdktn` cli should be fully compatible with existing CDK for Terraform proje
   - import "github.com/hashicorp/terraform-cdk-go/cdktf"
   + import "github.com/open-constructs/cdk-terrain-go/cdktn"
   - import "github.com/cdktf/cdktf-provider-aws-go/aws/v19/provider"
-  + import "github.com/cdktn-io/cdktn-provider-aws-go/aws/v20/provider"
+  + import "github.com/cdktn-io/cdktn-provider-aws-go/aws/v23/provider"
 
   // Update all cdktf.* references to cdktn.*
   - app := cdktf.NewApp(nil)
