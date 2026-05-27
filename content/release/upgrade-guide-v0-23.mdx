@@ -1,0 +1,176 @@
+---
+title: Upgrading to v0.23
+sidebarTitle: Upgrading to v0.23
+description: >-
+  Upgrade your CDK Terrain (cdktn) project to v0.23. This release drops support
+  for end-of-life language runtimes — Go 1.18–1.24, Python 3.8, and TypeScript
+  below 4.5 — and warns that Node.js 20.x support is ending.
+---
+
+0.23 contains **breaking changes** to the language runtimes CDK Terrain (`cdktn`) supports. The
+framework and CLI APIs are unchanged — you only need to make sure your toolchain is running a
+supported runtime version before upgrading.
+
+<Note>If your project already uses recent runtime versions, upgrading is as simple as bumping `cdktn` and `cdktn-cli` (and any `@cdktn/provider-*` packages) to `^0.23.2`.</Note>
+
+## Breaking Changes
+
+### Dropped runtime support
+
+| Language       | No longer supported | Minimum supported | Recommended         |
+| -------------- | ------------------- | ----------------- | ------------------- |
+| **Go**         | 1.18 – 1.24         | **1.25**          | 1.25+               |
+| **Python**     | 3.8                 | **3.9**           | 3.9+                |
+| **TypeScript** | < 4.5               | **4.5**           | Latest 5.x          |
+
+- **Go**: update your `go.mod` toolchain directive and CI to Go 1.25 or higher.
+- **Python**: update your environment / `pyproject.toml` / `requirements.txt` to Python 3.9 or higher.
+- **TypeScript**: provider generation now uses features from TypeScript 4.5. There is no official
+  minimum TypeScript version at this time, but using the latest 5.x release is recommended.
+
+<Warning>These are hard requirements for v0.23. Building or synthesizing on an unsupported runtime is no longer tested or supported.</Warning>
+
+## Upcoming Breaking Changes
+
+<Note>**Node.js 20.x is end-of-life.** Node.js 22.x will become the minimum supported version in an upcoming release. Plan to move your local and CI environments to Node 22.x soon.</Note>
+
+## Upgrade Process
+
+<Tabs>
+  <Tab title="TypeScript/JavaScript">
+
+  **1. Ensure TypeScript 4.5+ (latest 5.x recommended):**
+
+  ```bash
+  npm install --save-dev typescript@latest
+  ```
+
+  **2. Bump cdktn packages in package.json:**
+
+  ```diff
+  {
+    "dependencies": {
+  -   "cdktn": "^0.22.0",
+  +   "cdktn": "^0.23.2",
+  -   "@cdktn/provider-aws": "^20.0.0"
+  +   "@cdktn/provider-aws": "^20.0.0"
+    },
+    "devDependencies": {
+  -   "cdktn-cli": "^0.22.0"
+  +   "cdktn-cli": "^0.23.2"
+    }
+  }
+  ```
+
+  **3. Reinstall and verify:**
+
+  ```bash
+  npm install
+  npx tsc --noEmit
+  ```
+
+  </Tab>
+  <Tab title="Python">
+
+  **1. Ensure Python 3.9+:**
+
+  ```bash
+  python --version   # must be >= 3.9
+  ```
+
+  **2. Bump cdktn in requirements.txt or Pipfile:**
+
+  ```diff
+  - cdktn>=0.22.0
+  + cdktn>=0.23.2
+  ```
+
+  **3. Reinstall:**
+
+  ```bash
+  pip install -r requirements.txt --force-reinstall
+  ```
+
+  </Tab>
+  <Tab title="Go">
+
+  **1. Update your Go toolchain to 1.25+ in go.mod:**
+
+  ```diff
+  - go 1.23
+  + go 1.25
+  ```
+
+  **2. Bump the cdktn module:**
+
+  ```diff
+  require (
+  -   github.com/open-constructs/cdk-terrain-go/cdktn v0.22.0
+  +   github.com/open-constructs/cdk-terrain-go/cdktn v0.23.2
+  )
+  ```
+
+  **3. Tidy modules:**
+
+  ```bash
+  go mod tidy
+  ```
+
+  </Tab>
+  <Tab title="Java">
+
+  Bump the dependency to `0.23.2` and rebuild. No JDK change is required by this release.
+
+  ```diff
+  dependencies {
+  -   implementation "io.cdktn:cdktn:0.22.0"
+  +   implementation "io.cdktn:cdktn:0.23.2"
+  }
+  ```
+
+  ```bash
+  ./gradlew build
+  ```
+
+  </Tab>
+  <Tab title="C#">
+
+  Bump the package reference to `0.23.2` and restore. No .NET SDK change is required by this release.
+
+  ```diff
+  <ItemGroup>
+  -   <PackageReference Include="Io.Cdktn" Version="0.22.0" />
+  +   <PackageReference Include="Io.Cdktn" Version="0.23.2" />
+  </ItemGroup>
+  ```
+
+  ```bash
+  dotnet restore
+  ```
+
+  </Tab>
+</Tabs>
+
+## What Stays the Same
+
+The framework and CLI surface is unchanged from v0.22. Configuration (`cdktf.json`), the output
+directory (`cdktf.out/`), `CDKTF_*` environment variables, the `~/.cdktf` home directory, Terraform
+provider sources, and your Terraform state are all unaffected. See the
+[v0.22 migration guide](/release/upgrade-guide-v0-22) if you are still migrating from `cdktf`.
+
+## Verification
+
+After upgrading, confirm your project still synthesizes:
+
+```bash
+# Synthesize
+cdktn synth
+
+# Verify output
+ls cdktf.out/stacks/*/cdk.tf.json
+```
+
+## Getting Help
+
+- Ask a question in [the cdk.dev Slack](https://cdk.dev/)
+- GitHub Issues: https://github.com/open-constructs/cdk-terrain/issues
