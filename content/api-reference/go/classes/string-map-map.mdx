@@ -1,0 +1,123 @@
+---
+title: "Go: StringMapMap"
+sidebarTitle: StringMapMap
+description: CDKTN Core API Reference for StringMapMap in Go.
+---
+
+{/* This file is generated through yarn generate-docs */}
+
+- *Implements:* <a href="#cdktn.ITerraformAddressable">ITerraformAddressable</a>, <a href="#cdktn.IResolvable">IResolvable</a>
+
+## Initializers <a name="Initializers" id="cdktn.StringMapMap.Initializer"></a>
+
+```go
+import "github.com/open-constructs/cdk-terrain-go/cdktn"
+
+cdktn.NewStringMapMap(terraformResource IInterpolatingParent, terraformAttribute *string) StringMapMap
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdktn.StringMapMap.Initializer.parameter.terraformResource">terraformResource</a></code> | <code><a href="#cdktn.IInterpolatingParent">IInterpolatingParent</a></code> | *No description.* |
+| <code><a href="#cdktn.StringMapMap.Initializer.parameter.terraformAttribute">terraformAttribute</a></code> | <code>\*string</code> | *No description.* |
+
+***
+
+### `terraformResource`<sup>Required</sup> <a name="terraformResource" id="cdktn.StringMapMap.Initializer.parameter.terraformResource"></a>
+
+- *Type:* <a href="#cdktn.IInterpolatingParent">IInterpolatingParent</a>
+
+***
+
+### `terraformAttribute`<sup>Required</sup> <a name="terraformAttribute" id="cdktn.StringMapMap.Initializer.parameter.terraformAttribute"></a>
+
+- *Type:* \*string
+
+***
+
+## Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdktn.StringMapMap.computeFqn">ComputeFqn</a></code> | *No description.* |
+| <code><a href="#cdktn.StringMapMap.lookup">Lookup</a></code> | *No description.* |
+| <code><a href="#cdktn.StringMapMap.resolve">Resolve</a></code> | Produce the Token's value at resolution time. |
+| <code><a href="#cdktn.StringMapMap.toString">ToString</a></code> | Return a string representation of this resolvable object. |
+
+***
+
+### `ComputeFqn` <a name="ComputeFqn" id="cdktn.StringMapMap.computeFqn"></a>
+
+```go
+func ComputeFqn() *string
+```
+
+### `Lookup` <a name="Lookup" id="cdktn.StringMapMap.lookup"></a>
+
+```go
+func Lookup(key *string) StringMap
+```
+
+#### `key`<sup>Required</sup> <a name="key" id="cdktn.StringMapMap.lookup.parameter.key"></a>
+
+- *Type:* \*string
+
+***
+
+### `Resolve` <a name="Resolve" id="cdktn.StringMapMap.resolve"></a>
+
+```go
+func Resolve(_context IResolveContext) interface{}
+```
+
+Produce the Token's value at resolution time.
+
+#### `_context`<sup>Required</sup> <a name="_context" id="cdktn.StringMapMap.resolve.parameter._context"></a>
+
+- *Type:* <a href="#cdktn.IResolveContext">IResolveContext</a>
+
+***
+
+### `ToString` <a name="ToString" id="cdktn.StringMapMap.toString"></a>
+
+```go
+func ToString() *string
+```
+
+Return a string representation of this resolvable object.
+
+Returns a reversible string representation.
+
+## Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdktn.StringMapMap.property.creationStack">CreationStack</a></code> | <code>\*\[]\*string</code> | The creation stack of this resolvable which will be appended to errors thrown during resolution. |
+| <code><a href="#cdktn.StringMapMap.property.fqn">Fqn</a></code> | <code>\*string</code> | *No description.* |
+
+***
+
+### `CreationStack`<sup>Required</sup> <a name="CreationStack" id="cdktn.StringMapMap.property.creationStack"></a>
+
+```go
+func CreationStack() *[]*string
+```
+
+- *Type:* \*\[]\*string
+
+The creation stack of this resolvable which will be appended to errors thrown during resolution.
+
+If this returns an empty array the stack will not be attached.
+
+***
+
+### `Fqn`<sup>Required</sup> <a name="Fqn" id="cdktn.StringMapMap.property.fqn"></a>
+
+```go
+func Fqn() *string
+```
+
+- *Type:* \*string
+
+***
+
