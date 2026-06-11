@@ -1,0 +1,99 @@
+---
+title: "What's New: Function Availability Validation"
+sidebarTitle: "Function Availability"
+description: >-
+  CDK Terrain validates the Terraform functions you use against the installed
+  Terraform or OpenTofu version, and the Fn bindings now cover both products.
+---
+
+CDK Terrain's `Fn` bindings and the new `validateFunctionVersions` feature flag
+make function usage safe across Terraform **and** OpenTofu.
+
+## What changed
+
+### `Fn` covers Terraform and OpenTofu
+
+The function bindings are regenerated from current Terraform metadata and now
+also include OpenTofu-only functions. New on `Fn`:
+
+| Function          | Terraform | OpenTofu  |
+| ----------------- | --------- | --------- |
+| `issensitive`     | >= 1.8.0  | >= 1.7.0  |
+| `templatestring`  | >= 1.9.0  | >= 1.7.0  |
+| `ephemeralasnull` | >= 1.10.0 | >= 1.11.0 |
+| `convert`         | >= 1.15.0 | —         |
+| `base64gunzip`    | —         | >= 1.7.0  |
+| `cidrcontains`    | —         | >= 1.7.0  |
+| `urldecode`       | —         | >= 1.7.0  |
+
+`cdktn convert` understands these functions as well when converting existing
+HCL projects.
+
+### Refined return types for `format` and `formatlist`
+
+Regenerating the bindings from current Terraform metadata also picks up
+upstream return-type refinements: `Fn.format` now returns `string` (previously
+`any`) and `Fn.formatlist` returns `string[]` (previously `any`). The rendered
+Terraform expressions are unchanged, but typed languages (TypeScript, Go,
+Java, C#) see the more precise signatures — code that relied on the old `any`
+return type may need a cast.
+
+### Synth-time validation of function usage
+
+With the `validateFunctionVersions` feature flag enabled, every
+`TerraformStack` validates the functions used through `Fn` against the
+project's declared [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes)
+— the Terraform/OpenTofu ranges the project intends to support. Using a
+function that is not available across the entire declared range fails
+synthesis with a clear message:
+
+```
+Validation failed with the following errors:
+  [MyStack/resource] Terraform function "cidrcontains" is not supported by terraform, but the project targets terraform >=1.5.7. It is available in opentofu >=1.7.0.
+```
+
+Behavior details:
+
+- Functions that are available in every supported release (the vast majority)
+  are never checked; only functions with limited availability are validated.
+- The check is purely declarative — no Terraform or OpenTofu binary is
+  executed, so synth behaves identically in CI, package builds, and
+  environments without either installed. Verifying the locally installed
+  binary against the declared targets is a separate opt-in
+  (`"validateInstalledBinary": true`) applied by commands that execute the
+  CLI.
+- `skipValidation: true` on the `App` disables it along with all other
+  validations.
+
+## Enabling the flag
+
+Projects created with `cdktn init` get the flag (and an explicit default
+`targetVersions`) automatically. Existing projects can opt in via
+`cdktf.json`:
+
+```json
+{
+  "targetVersions": {
+    "terraform": ">=1.5.7",
+    "opentofu": ">=1.6.0"
+  },
+  "context": {
+    "validateFunctionVersions": "true"
+  }
+}
+```
+
+<Note>
+  Like all feature flags, this behavior becomes the default in the next major
+  release. See [Feature Flags](/release#feature-flags).
+</Note>
+
+## Limitations
+
+- Functions inside raw expression strings (overrides and other escape hatches)
+  are not tracked.
+- Provider-defined functions (`provider::<name>::<function>`) are not
+  validated; their availability depends on the provider, not the CLI.
+
+See the [Functions concept page](/concepts/functions#function-availability-across-terraform-and-opentofu)
+for full documentation.

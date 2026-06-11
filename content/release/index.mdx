@@ -6,6 +6,25 @@ description: >-
 
 We release CDK Terrain (CDKTN) regularly. The [CHANGELOG on Github](https://github.com/open-constructs/cdk-terrain/blob/main/CHANGELOG.md) contains details about bug fixes, new features, and deprecations.
 
+## What's New
+
+- [Function availability validation](/release/function-availability) — the `Fn`
+  bindings cover Terraform and OpenTofu, and synthesis validates function usage
+  against your installed CLI version.
+
+## Feature Flags
+
+Some new behaviors ship behind feature flags to preserve backwards
+compatibility for existing projects. Projects created with `cdktn init` get
+all current flags enabled in the `context` section of their `cdktf.json`;
+existing projects can opt in by adding the entries manually. In the next major
+release these behaviors become the default.
+
+| Flag                              | Behavior when enabled                                                                                                                     |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `failOnConstructsOutsideOfStacks` | Synthesis throws if constructs are scoped directly to the `App` instead of a `TerraformStack`.                                            |
+| `validateFunctionVersions`        | Functions used through `Fn` are validated against the installed Terraform/OpenTofu version. [Learn more](/release/function-availability). |
+
 ## Upgrade Guides
 
 CDKTN includes upgrade guides for releases that have breaking changes.

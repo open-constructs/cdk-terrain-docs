@@ -99,6 +99,7 @@
                 "expanded": false,
                 "pages": [
                   "release/index",
+                  "release/function-availability",
                   "release/upgrade-guide-v0-23",
                   "release/upgrade-guide-v0-22",
                   "release/upgrade-guide-v0-19",
