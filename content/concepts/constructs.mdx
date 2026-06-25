@@ -277,6 +277,8 @@ class S3Bucket extends Construct {
 }
 ```
 
+If your construct relies on a Terraform or OpenTofu feature that only exists from a certain version, you can also validate it declaratively against the project's [declared `targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes) rather than probing the installed binary. See [Validate Runtime Feature Availability](/develop-custom-constructs/construct-design#validate-runtime-feature-availability) for details.
+
 ### Constructs and Testing
 
 Since Constructs can contain logic and are not just a data structure, they can be tested. This allows you to test the composition of your constructs and the logic they contain. This can be done with snapshot testing or unit testing.

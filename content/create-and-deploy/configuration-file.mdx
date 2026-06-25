@@ -35,6 +35,8 @@ export interface Config {
   readonly sendCrashReports: boolean; // Default: false. Whether to send crash reports to the CDKTN team
   readonly terraformProviders?: RequirementDefinition[]; // Terraform Providers to build
   readonly terraformModules?: RequirementDefinition[]; // Terraform Modules to build
+  readonly targetVersions?: { terraform?: string; opentofu?: string }; // npm semver ranges per product the project supports. Default: { terraform: '>=1.5.7', opentofu: '>=1.6.0' }
+  readonly validateInstalledBinary?: boolean; // Default: false. When true, `diff`, `deploy`, and `destroy` verify the installed Terraform/OpenTofu binary satisfies `targetVersions` before running
 }
 ```
 
@@ -98,6 +100,47 @@ When you declare providers in JSON, add the constraint in the `version` property
   ],
 }
 ```
+
+## Declare Target Runtimes
+
+The optional `targetVersions` field declares the Terraform and OpenTofu version ranges your project intends to support. CDK Terrain validates your configuration against this declaration at synthesis time — for example, the [function availability validation](/concepts/functions#function-availability-across-terraform-and-opentofu) checks that the Terraform functions you use are available across every version you target — without ever executing a binary.
+
+Declare a range per product as an [npm semver range](https://github.com/npm/node-semver#ranges), keyed by `terraform` and/or `opentofu`:
+
+```json
+{
+  "app": "npm run --silent compile && node main.js",
+  "targetVersions": {
+    "terraform": ">=1.5.7",
+    "opentofu": ">=1.6.0"
+  }
+}
+```
+
+Omitting a product means your project does not target it. When you omit `targetVersions` entirely, CDK Terrain assumes the most portable interpretation — every supported release of both products: `{ "terraform": ">=1.5.7", "opentofu": ">=1.6.0" }`.
+
+<Warning>
+  Values must be npm semver ranges (for example `>=1.5.7` or `~1.5.7`), not Terraform's `~>` pessimistic constraint syntax. CDK Terrain validates `targetVersions` when it parses `cdktf.json` and fails with an error if a range is malformed or uses `~>`.
+</Warning>
+
+### Validate the Installed Binary
+
+The declarative checks above never run Terraform or OpenTofu, so they behave identically in CI, package builds, and environments without either installed. To additionally verify that the binary actually installed on a machine falls inside your declared `targetVersions`, opt in with `validateInstalledBinary`:
+
+```json
+{
+  "targetVersions": {
+    "terraform": ">=1.5.7"
+  },
+  "validateInstalledBinary": true
+}
+```
+
+When `validateInstalledBinary` is `true` (default `false`), the commands that execute the Terraform-compatible CLI — `diff`, `deploy`, and `destroy` — check the installed binary before running it. The command fails if:
+
+- the binary cannot be identified as Terraform or OpenTofu,
+- its product is not declared in `targetVersions`, or
+- its version falls outside the declared range.
 
 ## Configure Files to Watch
 

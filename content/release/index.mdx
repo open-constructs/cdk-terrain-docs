@@ -10,7 +10,7 @@ We release CDK Terrain (CDKTN) regularly. The [CHANGELOG on Github](https://gith
 
 - [Function availability validation](/release/function-availability) — the `Fn`
   bindings cover Terraform and OpenTofu, and synthesis validates function usage
-  against your installed CLI version.
+  against your project's declared `targetVersions`.
 
 ## Feature Flags
 
@@ -23,7 +23,7 @@ release these behaviors become the default.
 | Flag                              | Behavior when enabled                                                                                                                     |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `failOnConstructsOutsideOfStacks` | Synthesis throws if constructs are scoped directly to the `App` instead of a `TerraformStack`.                                            |
-| `validateFunctionVersions`        | Functions used through `Fn` are validated against the installed Terraform/OpenTofu version. [Learn more](/release/function-availability). |
+| `validateFunctionVersions`        | Functions used through `Fn` are validated at synth time against the project's declared `targetVersions`, without executing any binary. [Learn more](/release/function-availability). |
 
 ## Upgrade Guides
 

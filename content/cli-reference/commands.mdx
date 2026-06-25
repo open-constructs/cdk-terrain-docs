@@ -187,6 +187,8 @@ Options:
 
 <Note>The `parallelism` flag has a different behavior than the [terraform parallelism flag](/terraform/cli/commands/apply#parallelism-n). To set the custom terraform parallelism flag, please use the `--terraform-parallelism` flag instead.</Note>
 
+<Note>If your `cdktf.json` sets `validateInstalledBinary: true`, `deploy` verifies the installed Terraform or OpenTofu binary satisfies your declared [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes) before applying, and errors if it does not.</Note>
+
 **Examples**
 
 Deploy an application.
@@ -271,6 +273,8 @@ Options:
 
 <Note>The `parallelism` flag has a different behavior than the [terraform parallelism flag](/terraform/cli/commands/apply#parallelism-n). To set the custom terraform parallelism flag, please use the `--terraform-parallelism` flag instead.</Note>
 
+<Note>If your `cdktf.json` sets `validateInstalledBinary: true`, `destroy` verifies the installed Terraform or OpenTofu binary satisfies your declared [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes) before running, and errors if it does not.</Note>
+
 **Examples**
 
 Destroy an application.
@@ -350,6 +354,8 @@ Options:
 ```
 
 <Note>The `parallelism` flag has a different behavior than the [terraform parallelism flag](/terraform/cli/commands/plan#parallelism-n). To set the custom terraform parallelism flag, please use the `--terraform-parallelism` flag instead.</Note>
+
+<Note>If your `cdktf.json` sets `validateInstalledBinary: true`, `diff` verifies the installed Terraform or OpenTofu binary satisfies your declared [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes) before running the plan, and errors if it does not.</Note>
 
 Examples:
 

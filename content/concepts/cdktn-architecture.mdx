@@ -24,6 +24,8 @@ CDKTN [synthesizes](/cli-reference/commands#synth) infrastructure that you defin
 
 The following diagram shows how synthesizing a CDKTN application produces a series of artifacts in a designated output folder. You can then either use the JSON file with Terraform directly or provision your infrastructure using CDKTN CLI commands. All CDKTN CLI operations like `diff`, `deploy`, and `destroy` communicate with Terraform (or OpenTofu) for execution.
 
+A project declares the Terraform and OpenTofu version ranges it supports through the [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes) field in `cdktf.json`. These declared targets drive synth-time validations — for example [function availability](/concepts/functions#function-availability-across-terraform-and-opentofu) — without executing a binary. To additionally verify that the binary actually installed on a machine falls inside the declared range before `diff`, `deploy`, or `destroy` run it, opt in with [`validateInstalledBinary`](/create-and-deploy/configuration-file#validate-the-installed-binary).
+
 import { WorkflowDiagram } from '/snippets/WorkflowDiagram.jsx';
 
 <WorkflowDiagram />

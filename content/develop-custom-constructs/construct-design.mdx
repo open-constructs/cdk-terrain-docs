@@ -150,3 +150,7 @@ class MethodBasedKubernetesCluster extends Construct {
   addAmdNode(name: string, size: AmdlNodeSize) {}
 }
 ```
+
+### Validate Runtime Feature Availability
+
+CDK Terrain works with both Terraform and OpenTofu, which add features at different versions. If your construct relies on a runtime feature that is not available in every release, validate it declaratively against the consuming project's [declared `targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes) rather than probing the installed binary. The check compares the feature's supported version range per product against the project's targets at synth time and fails with an actionable error when the project targets a range where the feature is unavailable. Because it never executes a binary, synthesis behaves identically in CI and on machines without Terraform or OpenTofu installed. CDK Terrain's own [function availability validation](/concepts/functions#function-availability-across-terraform-and-opentofu) is a worked example of this model.
