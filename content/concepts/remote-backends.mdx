@@ -533,6 +533,26 @@ func NewS3BackendStack(scope constructs.Construct, name string) cdktn.TerraformS
 
 The identity that runs `cdktn` operations needs `s3:GetObject`, `s3:PutObject`, and `s3:DeleteObject` permissions on the lock file path so Terraform can create and release the lock.
 
+<Note>
+  S3-native locking requires Terraform 1.10 or OpenTofu 1.10 (or later).
+  Declare the runtime versions your project supports in the
+  [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes)
+  field of `cdktf.json` so that synthesis validates native locking against the
+  versions you target — the default targets (`terraform >=1.5.7`,
+  `opentofu >=1.6.0`) predate it. This is the same declarative,
+  binary-free check CDK Terrain applies to
+  [function usage at synth time](/concepts/functions#validating-function-usage-at-synth-time).
+
+  ```json
+  {
+    "targetVersions": {
+      "terraform": ">=1.10.0",
+      "opentofu": ">=1.10.0"
+    }
+  }
+  ```
+</Note>
+
 ### Migrate from DynamoDB to S3-Native Locking
 
 If you already lock state with a DynamoDB table, you can move to S3-native locking without a window where state is unprotected by enabling both mechanisms for a single run, then removing the DynamoDB table.
