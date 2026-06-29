@@ -99,6 +99,7 @@
                 "expanded": false,
                 "pages": [
                   "release/index",
+                  "release/s3-native-locking",
                   "release/upgrade-guide-v0-23",
                   "release/upgrade-guide-v0-22",
                   "release/upgrade-guide-v0-19",
