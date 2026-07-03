@@ -1,0 +1,63 @@
+---
+title: "What's New: S3-Native State Locking"
+sidebarTitle: "S3-Native Locking"
+description: >-
+  The S3 backend can now lock state with a native lock file via the useLockfile
+  field, removing the need for a separate DynamoDB table.
+---
+
+The `S3Backend` now supports [S3-native state locking](/concepts/remote-backends#state-locking-with-the-s3-backend)
+through a new `useLockfile` field, so you no longer need a DynamoDB table to
+lock Terraform state stored in S3.
+
+## What changed
+
+### New `useLockfile` field
+
+Set `useLockfile: true` on the `S3Backend` configuration to enable
+S3-native locking. Terraform (or OpenTofu) writes a lock file next to your
+state object — at `<key>.tflock` — for the duration of each operation and
+removes it when the operation finishes. No additional infrastructure is
+required.
+
+```ts
+new S3Backend(this, {
+  bucket: "my-terraform-state",
+  key: "my-app/terraform.tfstate",
+  region: "us-east-1",
+  encrypt: true,
+  useLockfile: true,
+});
+```
+
+S3-native locking is available in Terraform 1.10 and later and OpenTofu 1.10
+and later. The identity that runs `cdktn` operations needs `s3:GetObject`,
+`s3:PutObject`, and `s3:DeleteObject` permissions on the lock file path.
+
+<Note>
+  Declare the runtime versions your project supports in the
+  [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes)
+  field of `cdktf.json` so that synthesis validates native locking against the
+  versions you target. The default targets predate `useLockfile`, so raise the
+  floor to `">=1.10.0"` for each product you support.
+</Note>
+
+### `dynamodbTable` is deprecated
+
+The `dynamodbTable` field — which points the S3 backend at a DynamoDB table
+for locking — is now deprecated in favor of `useLockfile`. It still works for
+backwards compatibility, but Terraform deprecated the underlying
+`dynamodb_table` argument starting with v1.11 and may remove DynamoDB-based
+locking in a future release.
+
+## Migrating existing projects
+
+You can move from DynamoDB to S3-native locking without leaving state
+unprotected by enabling both for a single run:
+
+1. Add `useLockfile: true` while keeping `dynamodbTable`.
+2. Run `cdktn deploy` (or `cdktn diff`) once to reconfigure the backend.
+3. Remove `dynamodbTable`, then delete the DynamoDB table.
+
+See [State Locking with the S3 Backend](/concepts/remote-backends#state-locking-with-the-s3-backend)
+for full documentation and per-language examples.

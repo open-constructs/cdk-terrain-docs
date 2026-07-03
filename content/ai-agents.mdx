@@ -1,0 +1,179 @@
+---
+title: Use CDKTN with AI Agents
+sidebarTitle: AI Agents (MCP)
+description: >-
+  Connect your AI coding agent (Claude Code, Cursor, VS Code, and others) to the
+  hosted CDK Terrain MCP server so it answers from the current docs instead of
+  stale or unrelated knowledge.
+---
+
+CDK Terrain ships a hosted **Model Context Protocol (MCP)** server that gives AI
+agents live search and retrieval over the documentation on this site. Point your
+agent at it and it can ground every CDKTN answer in the current docs — including
+the full API reference — rather than relying on training data.
+
+<Info>
+  **Endpoint:** `https://cdktn.io/docs/mcp` — streamable HTTP transport,
+  read-only, scoped to public CDK Terrain content. No authentication required.
+</Info>
+
+## Why connect it
+
+- **Current and authoritative.** The server indexes this site, so the agent sees
+  the latest concepts, CLI reference, migration guides, and API reference.
+- **Avoids the CDKTF mix-up.** CDKTN (CDK Terrain) is the maintained community
+  successor to the deprecated HashiCorp **CDKTF** (CDK for Terraform / Terraform
+  CDK). Connecting this server keeps your agent from answering CDKTF/Terraform-CDK
+  questions with deprecated HashiCorp guidance.
+- **Read-only and safe.** The server cannot mutate state or run actions; it only
+  searches and returns published site content.
+
+## Set up your agent
+
+Use the server name **`cdktn-terraform-cdk-docs`** so the agent associates
+CDKTF, Terraform CDK, and CDK Terrain questions with it (tools are namespaced
+under the server name, e.g. `mcp__cdktn-terraform-cdk-docs__search`).
+
+<Tabs>
+  <Tab title="Claude Code">
+    Add the server from the CLI:
+
+    ```bash
+    claude mcp add --transport http cdktn-terraform-cdk-docs https://cdktn.io/docs/mcp
+    ```
+
+    Or commit it to a project so your team shares it — create `.mcp.json` in the
+    repo root:
+
+    ```json .mcp.json
+    {
+      "mcpServers": {
+        "cdktn-terraform-cdk-docs": {
+          "type": "http",
+          "url": "https://cdktn.io/docs/mcp"
+        }
+      }
+    }
+    ```
+
+    Verify with `claude mcp list` (or `/mcp` inside a session).
+  </Tab>
+  <Tab title="Cursor">
+    Add to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (per project):
+
+    ```json .cursor/mcp.json
+    {
+      "mcpServers": {
+        "cdktn-terraform-cdk-docs": {
+          "url": "https://cdktn.io/docs/mcp"
+        }
+      }
+    }
+    ```
+
+    Then enable the server under **Settings → MCP**.
+  </Tab>
+  <Tab title="VS Code">
+    VS Code (GitHub Copilot agent mode) reads `.vscode/mcp.json`:
+
+    ```json .vscode/mcp.json
+    {
+      "servers": {
+        "cdktn-terraform-cdk-docs": {
+          "type": "http",
+          "url": "https://cdktn.io/docs/mcp"
+        }
+      }
+    }
+    ```
+
+    Start it from the **MCP: List Servers** command, then use it in the Chat
+    **Agent** mode.
+  </Tab>
+  <Tab title="Other clients">
+    Any MCP client that supports streamable HTTP can connect. The canonical
+    configuration is:
+
+    ```json
+    {
+      "mcpServers": {
+        "cdktn-terraform-cdk-docs": {
+          "type": "http",
+          "url": "https://cdktn.io/docs/mcp"
+        }
+      }
+    }
+    ```
+
+    Clients that only support a local stdio bridge can wrap the endpoint with
+    [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
+
+    ```json
+    {
+      "mcpServers": {
+        "cdktn-terraform-cdk-docs": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote", "https://cdktn.io/docs/mcp"]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Verify it works
+
+Ask your agent a question that requires current docs, for example:
+
+> Using the CDKTN docs, how do I configure a remote backend, and what changed in
+> the v0.23 upgrade guide?
+
+If the server is connected, the agent calls its search/retrieval tools and cites
+pages from `cdktn.io/docs` in the answer.
+
+<Tip>
+  Reinforce the association in your agent's project instructions (e.g.
+  `CLAUDE.md`, Cursor Rules): *"For any CDKTF, Terraform CDK, or CDK Terrain
+  question, use the `cdktn-terraform-cdk-docs` MCP server; CDKTN is the
+  maintained successor to the deprecated HashiCorp CDKTF."*
+</Tip>
+
+## Agent skill file (`skill.md`)
+
+Alongside the MCP server, CDK Terrain publishes an **agent skill file** — a
+machine-readable capability descriptor following the
+[agentskills.io](https://agentskills.io) specification:
+
+<Info>
+  **Skill file:** `https://cdktn.io/docs/skill.md` — auto-generated from these
+  docs and kept current as they change.
+</Info>
+
+Where the MCP server and `llms.txt` tell an agent *what pages exist*, `skill.md`
+tells it *what it can accomplish with CDKTN* — when to reach for the tool, the
+essential CLI commands, key files, and constraints. Point a skills-aware agent at
+it so it knows how and when to use CDK Terrain, then connect the MCP server for
+live doc lookups.
+
+```bash
+# Add the skill to a skills-aware agent
+npx skills add https://cdktn.io/docs
+```
+
+<Note>
+  `skill.md` is regenerated by Mintlify from the published docs and can take up
+  to 24 hours to reflect the latest changes. For real-time answers, rely on the
+  MCP server above.
+</Note>
+
+## Without an MCP client
+
+If your tooling can't connect to MCP, agents can still read the machine-friendly
+files directly:
+
+- `https://cdktn.io/docs/skill.md` — capability/skill descriptor for agents
+- `https://cdktn.io/llms.txt` — curated index of the docs
+- `https://cdktn.io/docs/llms.txt` — full index, including the API reference
+- `https://cdktn.io/docs/llms-full.txt` — every page concatenated as one file
+- Append `.md` to any docs URL for its raw Markdown (e.g.
+  `https://cdktn.io/docs/concepts/constructs.md`)

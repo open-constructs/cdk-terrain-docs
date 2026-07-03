@@ -11,6 +11,9 @@ We release CDK Terrain (CDKTN) regularly. The [CHANGELOG on Github](https://gith
 - [Function availability validation](/release/function-availability) — the `Fn`
   bindings cover Terraform and OpenTofu, and synthesis validates function usage
   against your project's declared `targetVersions`.
+- [S3-native state locking](/release/s3-native-locking) — the `S3Backend` can now
+  lock state with a native lock file via the `useLockfile` field, removing the
+  need for a separate DynamoDB table.
 
 ## Feature Flags
 

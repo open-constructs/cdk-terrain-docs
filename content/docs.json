@@ -20,7 +20,8 @@
           {
             "group": "Getting Started",
             "pages": [
-              "index"
+              "index",
+              "ai-agents"
             ]
           },
           {
@@ -100,6 +101,7 @@
                 "pages": [
                   "release/index",
                   "release/function-availability",
+                  "release/s3-native-locking",
                   "release/upgrade-guide-v0-23",
                   "release/upgrade-guide-v0-22",
                   "release/upgrade-guide-v0-19",
