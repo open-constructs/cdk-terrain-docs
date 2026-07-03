@@ -84,6 +84,14 @@ export class EnableVersioning implements IMixin {
 }
 ```
 
+<Note>
+  The inline `versioning` block on `aws_s3_bucket` (used here and in the next
+  example) is deprecated by the AWS provider in favor of the separate
+  `aws_s3_bucket_versioning` resource — a real `terraform plan` prints a
+  deprecation warning. It is kept here only to make the mixin self-contained;
+  the mixin technique is identical whichever resource you target.
+</Note>
+
 ### Example: DataRecovery (multiple resource types)
 
 One mixin can support more than one resource type and apply the right change to each — a single "data recovery" feature that enables S3 versioning and DynamoDB point-in-time recovery. It is still applied per-construct with `with()`.
@@ -165,6 +173,8 @@ new Instance(this, "web", { ami: "ami-123", instanceType: "t3.micro" }).with(
 // ...and validate everything, including instances you didn't create yourself.
 Aspects.of(this).add(new ValidateImdsv2());
 ```
+
+Because `ValidateImdsv2` calls `Annotations.of(node).addError(...)`, this is a hard gate, not just an annotation: any `Instance` that reaches synthesis without IMDSv2 makes `app.synth()` **fail** — the error names the offending construct's path — rather than merely warning. That is what makes the aspect an enforcement backstop for resources nobody remembered to `.with(new RequireImdsv2())`. Use `addWarning` instead of `addError` if you want a nudge rather than a gate.
 
 <Note>
   These examples are shown in TypeScript. The `construct.with(...)` primitive is available in every CDKTN language through the inherited `constructs.Construct` method — note the language-specific names: Python exposes it as `with_` and Go/C# as `With`. See the [API reference](/api-reference/typescript/constructs/terraform-resource) for the signature in each language.
