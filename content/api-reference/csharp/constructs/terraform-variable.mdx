@@ -4,7 +4,7 @@ sidebarTitle: TerraformVariable
 description: CDKTN Core API Reference for TerraformVariable in CSharp.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 - *Implements:* <a href="#cdktn.ITerraformAddressable">ITerraformAddressable</a>
 
@@ -47,6 +47,7 @@ new TerraformVariable(Construct Scope, string Id, TerraformVariableConfig Config
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.TerraformVariable.toString">ToString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.TerraformVariable.with">With</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#cdktn.TerraformVariable.addOverride">AddOverride</a></code> | *No description.* |
 | <code><a href="#cdktn.TerraformVariable.overrideLogicalId">OverrideLogicalId</a></code> | Overrides the auto-generated logical ID with a specific ID. |
 | <code><a href="#cdktn.TerraformVariable.resetOverrideLogicalId">ResetOverrideLogicalId</a></code> | Resets a previously passed logical Id to use the auto-generated logical id again. |
@@ -66,6 +67,27 @@ private string ToString()
 ```
 
 Returns a string representation of this construct.
+
+### `With` <a name="With" id="cdktn.TerraformVariable.with"></a>
+
+```csharp
+private IConstruct With(params IMixin[] Mixins)
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `Mixins`<sup>Required</sup> <a name="Mixins" id="cdktn.TerraformVariable.with.parameter.mixins"></a>
+
+- *Type:* params Constructs.IMixin\[]
+
+The mixins to apply.
+
+***
 
 ### `AddOverride` <a name="AddOverride" id="cdktn.TerraformVariable.addOverride"></a>
 

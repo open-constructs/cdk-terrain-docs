@@ -4,7 +4,7 @@ sidebarTitle: CloudBackend
 description: CDKTN Core API Reference for CloudBackend in Go.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 The Cloud Backend synthesizes a [cloud block](https://developer.hashicorp.com/terraform/cli/cloud/settings#the-cloud-block). The cloud block is a nested block within the top-level terraform settings block. It specifies which Terraform Cloud workspaces to use for the current working directory. The cloud block only affects Terraform CLI's behavior. When Terraform Cloud uses a configuration that contains a cloud block - for example, when a workspace is configured to use a VCS provider directly - it ignores the block and behaves according to its own workspace settings.
 
@@ -40,6 +40,7 @@ cdktn.NewCloudBackend(scope Construct, props CloudBackendConfig) CloudBackend
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.CloudBackend.toString">ToString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.CloudBackend.with">With</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#cdktn.CloudBackend.addOverride">AddOverride</a></code> | *No description.* |
 | <code><a href="#cdktn.CloudBackend.overrideLogicalId">OverrideLogicalId</a></code> | Overrides the auto-generated logical ID with a specific ID. |
 | <code><a href="#cdktn.CloudBackend.resetOverrideLogicalId">ResetOverrideLogicalId</a></code> | Resets a previously passed logical Id to use the auto-generated logical id again. |
@@ -57,6 +58,27 @@ func ToString() *string
 ```
 
 Returns a string representation of this construct.
+
+### `With` <a name="With" id="cdktn.CloudBackend.with"></a>
+
+```go
+func With(mixins ...IMixin) IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `mixins`<sup>Required</sup> <a name="mixins" id="cdktn.CloudBackend.with.parameter.mixins"></a>
+
+- *Type:* ...github.com/aws/constructs-go/constructs/v10.IMixin
+
+The mixins to apply.
+
+***
 
 ### `AddOverride` <a name="AddOverride" id="cdktn.CloudBackend.addOverride"></a>
 

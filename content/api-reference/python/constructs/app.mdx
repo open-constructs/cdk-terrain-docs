@@ -4,7 +4,7 @@ sidebarTitle: App
 description: CDKTN Core API Reference for App in Python.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 Represents a cdktn application.
 
@@ -101,6 +101,7 @@ Whether to skip all validations during synthesis of the app.
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.App.toString">to\_string</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.App.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#cdktn.App.crossStackReference">cross\_stack\_reference</a></code> | Creates a reference from one stack to another, invoked on prepareStack since it creates extra resources. |
 | <code><a href="#cdktn.App.synth">synth</a></code> | Synthesizes all resources to the output directory. |
 
@@ -113,6 +114,29 @@ def to_string() -> str
 ```
 
 Returns a string representation of this construct.
+
+### `with` <a name="with" id="cdktn.App.with"></a>
+
+```python
+def with(
+  mixins: *IMixin
+) -> IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `mixins`<sup>Required</sup> <a name="mixins" id="cdktn.App.with.parameter.mixins"></a>
+
+- *Type:* \*constructs.IMixin
+
+The mixins to apply.
+
+***
 
 ### `cross_stack_reference` <a name="cross_stack_reference" id="cdktn.App.crossStackReference"></a>
 

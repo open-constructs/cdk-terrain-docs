@@ -4,7 +4,7 @@ sidebarTitle: Fn
 description: CDKTN Core API Reference for Fn in Typescript.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 ## Initializers <a name="Initializers" id="cdktn.Fn.Initializer"></a>
 
@@ -29,6 +29,7 @@ new Fn()
 | <code><a href="#cdktn.Fn.anytrue">anytrue</a></code> | [anytrue](https://developer.hashicorp.com/terraform/language/functions/anytrue) returns `true` if any element in a given collection is `true` or `"true"`. It also returns `false` if the collection is empty. |
 | <code><a href="#cdktn.Fn.base64decode">base64decode</a></code> | [base64decode](https://developer.hashicorp.com/terraform/language/functions/base64decode) takes a string containing a Base64 character sequence and returns the original string. |
 | <code><a href="#cdktn.Fn.base64encode">base64encode</a></code> | [base64encode](https://developer.hashicorp.com/terraform/language/functions/base64encode) applies Base64 encoding to a string. |
+| <code><a href="#cdktn.Fn.base64gunzip">base64gunzip</a></code> | [base64gunzip](https://opentofu.org/docs/language/functions/base64gunzip) decodes a Base64-encoded string and uncompresses the result with gzip. |
 | <code><a href="#cdktn.Fn.base64gzip">base64gzip</a></code> | [base64gzip](https://developer.hashicorp.com/terraform/language/functions/base64gzip) compresses a string with gzip and then encodes the result in Base64 encoding. |
 | <code><a href="#cdktn.Fn.base64sha256">base64sha256</a></code> | [base64sha256](https://developer.hashicorp.com/terraform/language/functions/base64sha256) computes the SHA256 hash of a given string and encodes it with Base64. This is not equivalent to `base64encode(sha256("test"))` since `sha256()` returns hexadecimal representation. |
 | <code><a href="#cdktn.Fn.base64sha512">base64sha512</a></code> | [base64sha512](https://developer.hashicorp.com/terraform/language/functions/base64sha512) computes the SHA512 hash of a given string and encodes it with Base64. This is not equivalent to `base64encode(sha512("test"))` since `sha512()` returns hexadecimal representation. |
@@ -37,6 +38,7 @@ new Fn()
 | <code><a href="#cdktn.Fn.ceil">ceil</a></code> | [ceil](https://developer.hashicorp.com/terraform/language/functions/ceil) returns the closest whole number that is greater than or equal to the given value, which may be a fraction. |
 | <code><a href="#cdktn.Fn.chomp">chomp</a></code> | [chomp](https://developer.hashicorp.com/terraform/language/functions/chomp) removes newline characters at the end of a string. |
 | <code><a href="#cdktn.Fn.chunklist">chunklist</a></code> | [chunklist](https://developer.hashicorp.com/terraform/language/functions/chunklist) splits a single list into fixed-size chunks, returning a list of lists. |
+| <code><a href="#cdktn.Fn.cidrcontains">cidrcontains</a></code> | [cidrcontains](https://opentofu.org/docs/language/functions/cidrcontains) determines whether a given IP address or an address prefix given in CIDR notation is within a given IP network address prefix. |
 | <code><a href="#cdktn.Fn.cidrhost">cidrhost</a></code> | [cidrhost](https://developer.hashicorp.com/terraform/language/functions/cidrhost) calculates a full host IP address for a given host number within a given IP network address prefix. |
 | <code><a href="#cdktn.Fn.cidrnetmask">cidrnetmask</a></code> | [cidrnetmask](https://developer.hashicorp.com/terraform/language/functions/cidrnetmask) converts an IPv4 address prefix given in CIDR notation into a subnet mask address. |
 | <code><a href="#cdktn.Fn.cidrsubnet">cidrsubnet</a></code> | [cidrsubnet](https://developer.hashicorp.com/terraform/language/functions/cidrsubnet) calculates a subnet address within given IP network address prefix. |
@@ -46,11 +48,13 @@ new Fn()
 | <code><a href="#cdktn.Fn.compact">compact</a></code> | [compact](https://developer.hashicorp.com/terraform/language/functions/compact) takes a list of strings and returns a new list with any empty string elements removed. |
 | <code><a href="#cdktn.Fn.concat">concat</a></code> | [concat](https://developer.hashicorp.com/terraform/language/functions/concat) takes two or more lists and combines them into a single list. |
 | <code><a href="#cdktn.Fn.contains">contains</a></code> | [contains](https://developer.hashicorp.com/terraform/language/functions/contains) determines whether a given list or set contains a given single value as one of its elements. |
+| <code><a href="#cdktn.Fn.convert">convert</a></code> | [convert](https://developer.hashicorp.com/terraform/language/functions/convert) converts a value to the given type constraint. |
 | <code><a href="#cdktn.Fn.csvdecode">csvdecode</a></code> | [csvdecode](https://developer.hashicorp.com/terraform/language/functions/csvdecode) decodes a string containing CSV-formatted data and produces a list of maps representing that data. |
 | <code><a href="#cdktn.Fn.dirname">dirname</a></code> | [dirname](https://developer.hashicorp.com/terraform/language/functions/dirname) takes a string containing a filesystem path and removes the last portion from it. |
 | <code><a href="#cdktn.Fn.distinct">distinct</a></code> | [distinct](https://developer.hashicorp.com/terraform/language/functions/distinct) takes a list and returns a new list with any duplicate elements removed. |
 | <code><a href="#cdktn.Fn.element">element</a></code> | [element](https://developer.hashicorp.com/terraform/language/functions/element) retrieves a single element from a list. |
 | <code><a href="#cdktn.Fn.endswith">endswith</a></code> | [endswith](https://developer.hashicorp.com/terraform/language/functions/endswith) takes two values: a string to check and a suffix string. The function returns true if the first string ends with that exact suffix. |
+| <code><a href="#cdktn.Fn.ephemeralasnull">ephemeralasnull</a></code> | [ephemeralasnull](https://developer.hashicorp.com/terraform/language/functions/ephemeralasnull) takes a value of any type and returns a similar value of the same type with any ephemeral values replaced with non-ephemeral null values and all non-ephemeral values preserved. |
 | <code><a href="#cdktn.Fn.file">file</a></code> | [file](https://developer.hashicorp.com/terraform/language/functions/file) reads the contents of a file at the given path and returns them as a string. |
 | <code><a href="#cdktn.Fn.filebase64">filebase64</a></code> | [filebase64](https://developer.hashicorp.com/terraform/language/functions/filebase64) reads the contents of a file at the given path and returns them as a base64-encoded string. |
 | <code><a href="#cdktn.Fn.filebase64sha256">filebase64sha256</a></code> | [filebase64sha256](https://developer.hashicorp.com/terraform/language/functions/filebase64sha256) is a variant of `base64sha256` that hashes the contents of a given file rather than a literal string. |
@@ -68,6 +72,7 @@ new Fn()
 | <code><a href="#cdktn.Fn.formatlist">formatlist</a></code> | [formatlist](https://developer.hashicorp.com/terraform/language/functions/formatlist) produces a list of strings by formatting a number of other values according to a specification string. |
 | <code><a href="#cdktn.Fn.indent">indent</a></code> | [indent](https://developer.hashicorp.com/terraform/language/functions/indent) adds a given number of spaces to the beginnings of all but the first line in a given multi-line string. |
 | <code><a href="#cdktn.Fn.index">index</a></code> | [index](https://developer.hashicorp.com/terraform/language/functions/index) finds the element index for a given value in a list. |
+| <code><a href="#cdktn.Fn.issensitive">issensitive</a></code> | [issensitive](https://developer.hashicorp.com/terraform/language/functions/issensitive) takes a value and returns a boolean indicating if the value is sensitive. |
 | <code><a href="#cdktn.Fn.jsondecode">jsondecode</a></code> | [jsondecode](https://developer.hashicorp.com/terraform/language/functions/jsondecode) interprets a given string as JSON, returning a representation of the result of decoding that string. |
 | <code><a href="#cdktn.Fn.jsonencode">jsonencode</a></code> | [jsonencode](https://developer.hashicorp.com/terraform/language/functions/jsonencode) encodes a given value to a string using JSON syntax. |
 | <code><a href="#cdktn.Fn.keys">keys</a></code> | [keys](https://developer.hashicorp.com/terraform/language/functions/keys) takes a map and returns a list containing the keys from that map. |
@@ -108,6 +113,7 @@ new Fn()
 | <code><a href="#cdktn.Fn.substr">substr</a></code> | [substr](https://developer.hashicorp.com/terraform/language/functions/substr) extracts a substring from a given string by offset and (maximum) length. |
 | <code><a href="#cdktn.Fn.sum">sum</a></code> | [sum](https://developer.hashicorp.com/terraform/language/functions/sum) takes a list or set of numbers and returns the sum of those numbers. |
 | <code><a href="#cdktn.Fn.templatefile">templatefile</a></code> | [templatefile](https://developer.hashicorp.com/terraform/language/functions/templatefile) reads the file at the given path and renders its content as a template using a supplied set of template variables. |
+| <code><a href="#cdktn.Fn.templatestring">templatestring</a></code> | [templatestring](https://developer.hashicorp.com/terraform/language/functions/templatestring) takes a string from elsewhere in the module and renders its content as a template using a supplied set of template variables. |
 | <code><a href="#cdktn.Fn.textdecodebase64">textdecodebase64</a></code> | [textdecodebase64](https://developer.hashicorp.com/terraform/language/functions/textdecodebase64) function decodes a string that was previously Base64-encoded, and then interprets the result as characters in a specified character encoding. |
 | <code><a href="#cdktn.Fn.textencodebase64">textencodebase64</a></code> | [textencodebase64](https://developer.hashicorp.com/terraform/language/functions/textencodebase64) encodes the unicode characters in a given string using a specified character encoding, returning the result base64 encoded because Terraform language strings are always sequences of unicode characters. |
 | <code><a href="#cdktn.Fn.timeadd">timeadd</a></code> | [timeadd](https://developer.hashicorp.com/terraform/language/functions/timeadd) adds a duration to a timestamp, returning a new timestamp. |
@@ -127,6 +133,7 @@ new Fn()
 | <code><a href="#cdktn.Fn.trimsuffix">trimsuffix</a></code> | [trimsuffix](https://developer.hashicorp.com/terraform/language/functions/trimsuffix) removes the specified suffix from the end of the given string. |
 | <code><a href="#cdktn.Fn.try">try</a></code> | [try](https://developer.hashicorp.com/terraform/language/functions/try) evaluates all of its argument expressions in turn and returns the result of the first one that does not produce any errors. |
 | <code><a href="#cdktn.Fn.upper">upper</a></code> | [upper](https://developer.hashicorp.com/terraform/language/functions/upper) converts all cased letters in the given string to uppercase. |
+| <code><a href="#cdktn.Fn.urldecode">urldecode</a></code> | [urldecode](https://opentofu.org/docs/language/functions/urldecode) applies URL decoding to a given encoded string. |
 | <code><a href="#cdktn.Fn.urlencode">urlencode</a></code> | [urlencode](https://developer.hashicorp.com/terraform/language/functions/urlencode) applies URL encoding to a given string. |
 | <code><a href="#cdktn.Fn.uuid">uuid</a></code> | [uuid](https://developer.hashicorp.com/terraform/language/functions/uuid) generates a unique identifier string. |
 | <code><a href="#cdktn.Fn.uuidv5">uuidv5</a></code> | [uuidv5](https://developer.hashicorp.com/terraform/language/functions/uuidv5) generates a *name-based* UUID, as described in [RFC 4122 section 4.3](https://tools.ietf.org/html/rfc4122#section-4.3), also known as a "version 5" UUID. |
@@ -235,6 +242,22 @@ Fn.base64encode(str: string)
 [base64encode](https://developer.hashicorp.com/terraform/language/functions/base64encode) applies Base64 encoding to a string.
 
 #### `str`<sup>Required</sup> <a name="str" id="cdktn.Fn.base64encode.parameter.str"></a>
+
+- *Type:* string
+
+***
+
+### `base64gunzip` <a name="base64gunzip" id="cdktn.Fn.base64gunzip"></a>
+
+```typescript
+import { Fn } from 'cdktn'
+
+Fn.base64gunzip(str: string)
+```
+
+[base64gunzip](https://opentofu.org/docs/language/functions/base64gunzip) decodes a Base64-encoded string and uncompresses the result with gzip.
+
+#### `str`<sup>Required</sup> <a name="str" id="cdktn.Fn.base64gunzip.parameter.str"></a>
 
 - *Type:* string
 
@@ -371,6 +394,28 @@ Fn.chunklist(list: any[], size: number)
 #### `size`<sup>Required</sup> <a name="size" id="cdktn.Fn.chunklist.parameter.size"></a>
 
 - *Type:* number
+
+***
+
+### `cidrcontains` <a name="cidrcontains" id="cdktn.Fn.cidrcontains"></a>
+
+```typescript
+import { Fn } from 'cdktn'
+
+Fn.cidrcontains(containing_prefix: string, contained_ip_or_prefix: string)
+```
+
+[cidrcontains](https://opentofu.org/docs/language/functions/cidrcontains) determines whether a given IP address or an address prefix given in CIDR notation is within a given IP network address prefix.
+
+#### `containing_prefix`<sup>Required</sup> <a name="containing_prefix" id="cdktn.Fn.cidrcontains.parameter.containing_prefix"></a>
+
+- *Type:* string
+
+***
+
+#### `contained_ip_or_prefix`<sup>Required</sup> <a name="contained_ip_or_prefix" id="cdktn.Fn.cidrcontains.parameter.contained_ip_or_prefix"></a>
+
+- *Type:* string
 
 ***
 
@@ -548,6 +593,28 @@ Fn.contains(list: any, value: any)
 
 ***
 
+### `convert` <a name="convert" id="cdktn.Fn.convert"></a>
+
+```typescript
+import { Fn } from 'cdktn'
+
+Fn.convert(value: any, type: any)
+```
+
+[convert](https://developer.hashicorp.com/terraform/language/functions/convert) converts a value to the given type constraint.
+
+#### `value`<sup>Required</sup> <a name="value" id="cdktn.Fn.convert.parameter.value"></a>
+
+- *Type:* any
+
+***
+
+#### `type`<sup>Required</sup> <a name="type" id="cdktn.Fn.convert.parameter.type"></a>
+
+- *Type:* any
+
+***
+
 ### `csvdecode` <a name="csvdecode" id="cdktn.Fn.csvdecode"></a>
 
 ```typescript
@@ -637,6 +704,22 @@ Fn.endswith(str: string, suffix: string)
 #### `suffix`<sup>Required</sup> <a name="suffix" id="cdktn.Fn.endswith.parameter.suffix"></a>
 
 - *Type:* string
+
+***
+
+### `ephemeralasnull` <a name="ephemeralasnull" id="cdktn.Fn.ephemeralasnull"></a>
+
+```typescript
+import { Fn } from 'cdktn'
+
+Fn.ephemeralasnull(value: any)
+```
+
+[ephemeralasnull](https://developer.hashicorp.com/terraform/language/functions/ephemeralasnull) takes a value of any type and returns a similar value of the same type with any ephemeral values replaced with non-ephemeral null values and all non-ephemeral values preserved.
+
+#### `value`<sup>Required</sup> <a name="value" id="cdktn.Fn.ephemeralasnull.parameter.value"></a>
+
+- *Type:* any
 
 ***
 
@@ -943,6 +1026,22 @@ Fn.index(list: any, value: any)
 ***
 
 #### `value`<sup>Required</sup> <a name="value" id="cdktn.Fn.index.parameter.value"></a>
+
+- *Type:* any
+
+***
+
+### `issensitive` <a name="issensitive" id="cdktn.Fn.issensitive"></a>
+
+```typescript
+import { Fn } from 'cdktn'
+
+Fn.issensitive(value: any)
+```
+
+[issensitive](https://developer.hashicorp.com/terraform/language/functions/issensitive) takes a value and returns a boolean indicating if the value is sensitive.
+
+#### `value`<sup>Required</sup> <a name="value" id="cdktn.Fn.issensitive.parameter.value"></a>
 
 - *Type:* any
 
@@ -1708,6 +1807,28 @@ Fn.templatefile(path: string, vars: any)
 
 ***
 
+### `templatestring` <a name="templatestring" id="cdktn.Fn.templatestring"></a>
+
+```typescript
+import { Fn } from 'cdktn'
+
+Fn.templatestring(template: string, vars: any)
+```
+
+[templatestring](https://developer.hashicorp.com/terraform/language/functions/templatestring) takes a string from elsewhere in the module and renders its content as a template using a supplied set of template variables.
+
+#### `template`<sup>Required</sup> <a name="template" id="cdktn.Fn.templatestring.parameter.template"></a>
+
+- *Type:* string
+
+***
+
+#### `vars`<sup>Required</sup> <a name="vars" id="cdktn.Fn.templatestring.parameter.vars"></a>
+
+- *Type:* any
+
+***
+
 ### `textdecodebase64` <a name="textdecodebase64" id="cdktn.Fn.textdecodebase64"></a>
 
 ```typescript
@@ -2043,6 +2164,22 @@ Fn.upper(str: string)
 [upper](https://developer.hashicorp.com/terraform/language/functions/upper) converts all cased letters in the given string to uppercase.
 
 #### `str`<sup>Required</sup> <a name="str" id="cdktn.Fn.upper.parameter.str"></a>
+
+- *Type:* string
+
+***
+
+### `urldecode` <a name="urldecode" id="cdktn.Fn.urldecode"></a>
+
+```typescript
+import { Fn } from 'cdktn'
+
+Fn.urldecode(str: string)
+```
+
+[urldecode](https://opentofu.org/docs/language/functions/urldecode) applies URL decoding to a given encoded string.
+
+#### `str`<sup>Required</sup> <a name="str" id="cdktn.Fn.urldecode.parameter.str"></a>
 
 - *Type:* string
 

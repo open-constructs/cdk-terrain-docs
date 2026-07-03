@@ -4,7 +4,7 @@ sidebarTitle: TerraformStack
 description: CDKTN Core API Reference for TerraformStack in Go.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 ## Initializers <a name="Initializers" id="cdktn.TerraformStack.Initializer"></a>
 
@@ -38,6 +38,7 @@ cdktn.NewTerraformStack(scope Construct, id *string) TerraformStack
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.TerraformStack.toString">ToString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.TerraformStack.with">With</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#cdktn.TerraformStack.addDependency">AddDependency</a></code> | *No description.* |
 | <code><a href="#cdktn.TerraformStack.addOverride">AddOverride</a></code> | *No description.* |
 | <code><a href="#cdktn.TerraformStack.allProviders">AllProviders</a></code> | *No description.* |
@@ -61,6 +62,27 @@ func ToString() *string
 ```
 
 Returns a string representation of this construct.
+
+### `With` <a name="With" id="cdktn.TerraformStack.with"></a>
+
+```go
+func With(mixins ...IMixin) IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `mixins`<sup>Required</sup> <a name="mixins" id="cdktn.TerraformStack.with.parameter.mixins"></a>
+
+- *Type:* ...github.com/aws/constructs-go/constructs/v10.IMixin
+
+The mixins to apply.
+
+***
 
 ### `AddDependency` <a name="AddDependency" id="cdktn.TerraformStack.addDependency"></a>
 

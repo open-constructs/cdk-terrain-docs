@@ -4,7 +4,7 @@ sidebarTitle: TerraformAsset
 description: CDKTN Core API Reference for TerraformAsset in Go.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 ## Initializers <a name="Initializers" id="cdktn.TerraformAsset.Initializer"></a>
 
@@ -45,6 +45,7 @@ cdktn.NewTerraformAsset(scope Construct, id *string, config TerraformAssetConfig
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.TerraformAsset.toString">ToString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.TerraformAsset.with">With</a></code> | Applies one or more mixins to this construct. |
 
 ***
 
@@ -55,6 +56,27 @@ func ToString() *string
 ```
 
 Returns a string representation of this construct.
+
+### `With` <a name="With" id="cdktn.TerraformAsset.with"></a>
+
+```go
+func With(mixins ...IMixin) IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `mixins`<sup>Required</sup> <a name="mixins" id="cdktn.TerraformAsset.with.parameter.mixins"></a>
+
+- *Type:* ...github.com/aws/constructs-go/constructs/v10.IMixin
+
+The mixins to apply.
+
+***
 
 ## Static Functions <a name="Static Functions" id="Static Functions"></a>
 

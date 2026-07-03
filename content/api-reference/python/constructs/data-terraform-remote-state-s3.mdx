@@ -4,7 +4,7 @@ sidebarTitle: DataTerraformRemoteStateS3
 description: CDKTN Core API Reference for DataTerraformRemoteStateS3 in Python.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 ## Initializers <a name="Initializers" id="cdktn.DataTerraformRemoteStateS3.Initializer"></a>
 
@@ -64,6 +64,7 @@ cdktn.DataTerraformRemoteStateS3(
   sts_region: str = None,
   token: str = None,
   use_legacy_workflow: bool = None,
+  use_lockfile: bool = None,
   use_path_style: bool = None,
   workspace_key_prefix: str = None
 )
@@ -123,6 +124,7 @@ cdktn.DataTerraformRemoteStateS3(
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.Initializer.parameter.stsRegion">sts\_region</a></code> | <code>str</code> | (Optional) AWS region for STS. |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.Initializer.parameter.token">token</a></code> | <code>str</code> | (Optional) Multi-Factor Authentication (MFA) token. |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.Initializer.parameter.useLegacyWorkflow">use\_legacy\_workflow</a></code> | <code>bool</code> | (Optional) Use the legacy authentication workflow, preferring environment variables over backend configuration. |
+| <code><a href="#cdktn.DataTerraformRemoteStateS3.Initializer.parameter.useLockfile">use\_lockfile</a></code> | <code>bool</code> | (Optional) Whether to use a lockfile for locking the state file. |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.Initializer.parameter.usePathStyle">use\_path\_style</a></code> | <code>bool</code> | (Optional) Enable path-style S3 URLs (https://&lt; HOST >/&lt; BUCKET > instead of https://&lt; BUCKET >.&lt; HOST >). |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.Initializer.parameter.workspaceKeyPrefix">workspace\_key\_prefix</a></code> | <code>str</code> | (Optional) Prefix applied to the state path inside the bucket. |
 
@@ -283,7 +285,9 @@ This can also be sourced from the AWS\_DYNAMODB\_ENDPOINT environment variable.
 
 ***
 
-### `dynamodb_table`<sup>Optional</sup> <a name="dynamodb_table" id="cdktn.DataTerraformRemoteStateS3.Initializer.parameter.dynamodbTable"></a>
+### ~~`dynamodb_table`~~<sup>Optional</sup> <a name="dynamodb_table" id="cdktn.DataTerraformRemoteStateS3.Initializer.parameter.dynamodbTable"></a>
+
+- *Deprecated:* Use useLockfile instead, which uses S3 for locking
 
 - *Type:* str
 
@@ -647,6 +651,21 @@ This behavior does not align with the authentication flow of the AWS CLI or SDK'
 
 ***
 
+### `use_lockfile`<sup>Optional</sup> <a name="use_lockfile" id="cdktn.DataTerraformRemoteStateS3.Initializer.parameter.useLockfile"></a>
+
+- *Type:* bool
+
+(Optional) Whether to use a lockfile for locking the state file.
+
+Defaults to false.
+State locking is an opt-in feature of the S3 backend.
+Locking can be enabled via S3 or DynamoDB (see dynamodbTable). However, DynamoDB-based locking
+is deprecated and will be removed in a future minor version. To support migration from older
+versions of Terraform that only support DynamoDB-based locking, the S3 (useLockfile) and DynamoDB
+(dynamodbTable) arguments can be configured simultaneously.
+
+***
+
 ### `use_path_style`<sup>Optional</sup> <a name="use_path_style" id="cdktn.DataTerraformRemoteStateS3.Initializer.parameter.usePathStyle"></a>
 
 - *Type:* bool
@@ -670,6 +689,7 @@ This is only relevant when using a non-default workspace. Defaults to env:
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.toString">to\_string</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.DataTerraformRemoteStateS3.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.addOverride">add\_override</a></code> | *No description.* |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.overrideLogicalId">override\_logical\_id</a></code> | Overrides the auto-generated logical ID with a specific ID. |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3.resetOverrideLogicalId">reset\_override\_logical\_id</a></code> | Resets a previously passed logical Id to use the auto-generated logical id again. |
@@ -691,6 +711,29 @@ def to_string() -> str
 ```
 
 Returns a string representation of this construct.
+
+### `with` <a name="with" id="cdktn.DataTerraformRemoteStateS3.with"></a>
+
+```python
+def with(
+  mixins: *IMixin
+) -> IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `mixins`<sup>Required</sup> <a name="mixins" id="cdktn.DataTerraformRemoteStateS3.with.parameter.mixins"></a>
+
+- *Type:* \*constructs.IMixin
+
+The mixins to apply.
+
+***
 
 ### `add_override` <a name="add_override" id="cdktn.DataTerraformRemoteStateS3.addOverride"></a>
 

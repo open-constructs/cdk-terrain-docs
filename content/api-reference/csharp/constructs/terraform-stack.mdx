@@ -4,7 +4,7 @@ sidebarTitle: TerraformStack
 description: CDKTN Core API Reference for TerraformStack in CSharp.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 ## Initializers <a name="Initializers" id="cdktn.TerraformStack.Initializer"></a>
 
@@ -38,6 +38,7 @@ new TerraformStack(Construct Scope, string Id);
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.TerraformStack.toString">ToString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.TerraformStack.with">With</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#cdktn.TerraformStack.addDependency">AddDependency</a></code> | *No description.* |
 | <code><a href="#cdktn.TerraformStack.addOverride">AddOverride</a></code> | *No description.* |
 | <code><a href="#cdktn.TerraformStack.allProviders">AllProviders</a></code> | *No description.* |
@@ -61,6 +62,27 @@ private string ToString()
 ```
 
 Returns a string representation of this construct.
+
+### `With` <a name="With" id="cdktn.TerraformStack.with"></a>
+
+```csharp
+private IConstruct With(params IMixin[] Mixins)
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `Mixins`<sup>Required</sup> <a name="Mixins" id="cdktn.TerraformStack.with.parameter.mixins"></a>
+
+- *Type:* params Constructs.IMixin\[]
+
+The mixins to apply.
+
+***
 
 ### `AddDependency` <a name="AddDependency" id="cdktn.TerraformStack.addDependency"></a>
 

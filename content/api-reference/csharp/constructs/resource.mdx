@@ -4,7 +4,7 @@ sidebarTitle: Resource
 description: CDKTN Core API Reference for Resource in CSharp.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 - *Implements:* <a href="#cdktn.IResource">IResource</a>
 
@@ -42,6 +42,7 @@ new Resource(Construct Scope, string Id);
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.Resource.toString">ToString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.Resource.with">With</a></code> | Applies one or more mixins to this construct. |
 
 ***
 
@@ -52,6 +53,27 @@ private string ToString()
 ```
 
 Returns a string representation of this construct.
+
+### ~~`With`~~ <a name="With" id="cdktn.Resource.with"></a>
+
+```csharp
+private IConstruct With(params IMixin[] Mixins)
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `Mixins`<sup>Required</sup> <a name="Mixins" id="cdktn.Resource.with.parameter.mixins"></a>
+
+- *Type:* params Constructs.IMixin\[]
+
+The mixins to apply.
+
+***
 
 ## Static Functions <a name="Static Functions" id="Static Functions"></a>
 
