@@ -407,6 +407,174 @@ In addition to HCP Terraform, Terraform and CDKTN support the following backends
 
 <Note>CDK Terrain v0.14 deprecated the artifactory, etcd, etcdv3, manta, and swift backends, and removed them in v0.20. Terraform removed these backends in v1.3. For migration paths from these removed backends, refer to [Upgrading to Terraform v1.3](https://developer.hashicorp.com/terraform/language/v1.3.x/upgrade-guides).</Note>
 
+## State Locking with the S3 Backend
+
+When several people or automated pipelines run against the same state, Terraform (or OpenTofu) uses [state locking](https://developer.hashicorp.com/terraform/language/state/locking) to prevent concurrent runs from corrupting the state file.
+
+The S3 backend supports two locking mechanisms:
+
+- **S3-native locking** (recommended) via the `useLockfile` property. Terraform writes a lock file alongside your state object in the same bucket — at `<key>.tflock` — and removes it when the operation completes. No additional infrastructure is required. S3-native locking is available in Terraform 1.10 and later and OpenTofu 1.10 and later.
+- **DynamoDB locking** via the `dynamodbTable` property, which points the backend at a DynamoDB table whose partition key is `LockID`. This is the legacy mechanism and is now deprecated in favor of `useLockfile`.
+
+If you set neither property, state locking is disabled.
+
+### Enable S3-Native Locking
+
+Set `useLockfile` to `true` on the `S3Backend` configuration.
+
+
+<CodeGroup>
+
+```ts TypeScript
+import { Construct } from "constructs";
+import { S3Backend, TerraformStack } from "cdktn";
+
+export class S3BackendStack extends TerraformStack {
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+
+    new S3Backend(this, {
+      bucket: "my-terraform-state",
+      key: "my-app/terraform.tfstate",
+      region: "us-east-1",
+      encrypt: true,
+      useLockfile: true,
+    });
+  }
+}
+```
+
+```java Java
+import software.constructs.Construct;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.S3Backend;
+import io.cdktn.cdktn.S3BackendConfig;
+
+public class MainS3Backend extends TerraformStack {
+
+    public MainS3Backend(Construct scope, String id) {
+        super(scope, id);
+
+        new S3Backend(this, S3BackendConfig.builder()
+                .bucket("my-terraform-state")
+                .key("my-app/terraform.tfstate")
+                .region("us-east-1")
+                .encrypt(true)
+                .useLockfile(true)
+                .build()
+        );
+    }
+}
+```
+
+```python Python
+from constructs import Construct
+from cdktn import S3Backend, TerraformStack
+
+class S3BackendStack(TerraformStack):
+    def __init__(self, scope: Construct, id: str):
+        super().__init__(scope, id)
+
+        S3Backend(self,
+            bucket = "my-terraform-state",
+            key = "my-app/terraform.tfstate",
+            region = "us-east-1",
+            encrypt = True,
+            use_lockfile = True
+        )
+```
+
+```csharp C#
+using Constructs;
+using Io.Cdktn;
+
+namespace Examples
+{
+    class S3BackendStack : TerraformStack
+    {
+        public S3BackendStack(Construct scope, string name) : base(scope, name)
+        {
+            new S3Backend(this, new S3BackendConfig
+            {
+                Bucket = "my-terraform-state",
+                Key = "my-app/terraform.tfstate",
+                Region = "us-east-1",
+                Encrypt = true,
+                UseLockfile = true
+            });
+        }
+    }
+}
+```
+
+```go Go
+import (
+	"github.com/aws/constructs-go/constructs/v10"
+	"github.com/aws/jsii-runtime-go"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+)
+
+func NewS3BackendStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
+
+	cdktn.NewS3Backend(stack, &cdktn.S3BackendConfig{
+		Bucket:      jsii.String("my-terraform-state"),
+		Key:         jsii.String("my-app/terraform.tfstate"),
+		Region:      jsii.String("us-east-1"),
+		Encrypt:     jsii.Bool(true),
+		UseLockfile: jsii.Bool(true),
+	})
+
+	return stack
+}
+```
+
+</CodeGroup>
+
+The identity that runs `cdktn` operations needs `s3:GetObject`, `s3:PutObject`, and `s3:DeleteObject` permissions on the lock file path so Terraform can create and release the lock.
+
+<Note>
+  S3-native locking requires Terraform 1.10 or OpenTofu 1.10 (or later).
+  Declare the runtime versions your project supports in the
+  [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes)
+  field of `cdktf.json` so that synthesis validates native locking against the
+  versions you target — the default targets (`terraform >=1.5.7`,
+  `opentofu >=1.6.0`) predate it. This is the same declarative,
+  binary-free check CDK Terrain applies to
+  [function usage at synth time](/concepts/functions#validating-function-usage-at-synth-time).
+
+  ```json
+  {
+    "targetVersions": {
+      "terraform": ">=1.10.0",
+      "opentofu": ">=1.10.0"
+    }
+  }
+  ```
+</Note>
+
+### Migrate from DynamoDB to S3-Native Locking
+
+If you already lock state with a DynamoDB table, you can move to S3-native locking without a window where state is unprotected by enabling both mechanisms for a single run, then removing the DynamoDB table.
+
+1. Keep `dynamodbTable` and add `useLockfile: true` to your `S3Backend` configuration. With both set, Terraform acquires both locks.
+
+   ```ts
+   new S3Backend(this, {
+     bucket: "my-terraform-state",
+     key: "my-app/terraform.tfstate",
+     region: "us-east-1",
+     dynamodbTable: "my-lock-table",
+     useLockfile: true,
+   });
+   ```
+
+2. Run `cdktn deploy` (or `cdktn diff`) once so the change takes effect and the backend is reconfigured.
+
+3. Remove `dynamodbTable`, leaving only `useLockfile: true`. After your next run no longer references the table, you can delete the DynamoDB table.
+
+<Note>`dynamodbTable` remains available for backwards compatibility, but it is deprecated. Terraform deprecated the `dynamodb_table` argument in the S3 backend starting with v1.11 and may remove DynamoDB-based locking in a future release. Prefer `useLockfile` for new projects.</Note>
+
 ## Escape Hatches
 
 Escape hatches can add to or override existing resources, and you can use them for backends or backend constructs that CDKTN does not natively support. Escape hatch methods have an `Override` suffix (e.g., `addOverride`).
