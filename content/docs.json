@@ -43,6 +43,7 @@
                   "concepts/iterators",
                   "concepts/remote-backends",
                   "concepts/aspects",
+                  "concepts/mixins",
                   "concepts/assets",
                   "concepts/tokens",
                   "concepts/stacks"

@@ -1,0 +1,178 @@
+---
+title: Mixins - CDK Terrain
+sidebarTitle: Mixins
+description: >-
+  Mixins apply a reusable feature to a specific construct with construct.with().
+  Use them to configure individual resources; use Aspects for scope-wide sweeps.
+---
+
+A mixin is a reusable piece of functionality that you apply to a **specific construct** to add behavior, properties, or modify existing configuration — without subclassing. You apply mixins imperatively with the `construct.with(...)` method, and each mixin decides which constructs it supports.
+
+Mixins are the per-construct counterpart to [Aspects](/concepts/aspects): a mixin is applied **immediately** to the one construct you hand it, while an aspect sweeps **every** construct in a scope during synthesis. See [Mixins vs. Aspects](#mixins-vs-aspects) below for how to choose.
+
+<Note>
+  The mixin primitive — the `IMixin` interface and `construct.with(...mixins)` — ships in CDK Terrain (CDKTN) 0.23.4, inherited from the underlying [`constructs`](https://github.com/aws/constructs) 10.6 library. **CDKTN does not yet bundle any ready-made mixins in core.** You write your own today (this page shows how). Future core releases may ship common mixins based on community use cases, requests, and contributions — the direction is being discussed in [RFC-05 in the planning repo](https://github.com/open-constructs/cdktn-planning/blob/main/RFCS/05-mixins/PROPOSAL.md); comments and use cases are welcome there.
+</Note>
+
+## Define a mixin
+
+A mixin is a class that implements the `IMixin` interface, which has two methods:
+
+- `supports(construct)` — return `true` if this mixin can be applied to the given construct. Use it as a type guard so `applyTo` only runs on compatible resources.
+- `applyTo(construct)` — apply the change. This runs immediately when `with()` is called.
+
+CDKTN gives you two building blocks for `applyTo`:
+
+- **`TerraformResource.isTerraformResource(x)`** — a provider-agnostic guard for `supports`.
+- **`element.addOverride(path, value)`** — a provider-agnostic escape hatch to set any argument, plus typed setters on `TerraformResource` such as `lifecycle`, `provider`, `dependsOn`, `count`, and `forEach`.
+
+### Example: PreventDestroy (provider-agnostic)
+
+This mixin works on any Terraform resource, from any provider. It sets the resource's [`lifecycle.prevent_destroy`](/concepts/resources) so Terraform refuses to destroy it.
+
+```ts TypeScript
+import { IConstruct, IMixin } from "constructs";
+import { TerraformResource } from "cdktn";
+
+export class PreventDestroy implements IMixin {
+  supports(construct: IConstruct): boolean {
+    return TerraformResource.isTerraformResource(construct);
+  }
+
+  applyTo(construct: IConstruct): void {
+    const resource = construct as TerraformResource;
+    resource.lifecycle = { ...resource.lifecycle, preventDestroy: true };
+  }
+}
+```
+
+Apply it to a single construct with `with()`, which returns the same construct so you can keep a reference:
+
+```ts TypeScript
+import { S3Bucket } from "./.gen/providers/aws/s3-bucket";
+
+const bucket = new S3Bucket(this, "data", { bucket: "my-data" }).with(
+  new PreventDestroy(),
+);
+```
+
+You can apply several mixins at once; they run in order:
+
+```ts TypeScript
+new S3Bucket(this, "data", { bucket: "my-data" }).with(
+  new PreventDestroy(),
+  new EnableVersioning(),
+);
+```
+
+### Example: EnableVersioning (provider-specific)
+
+A mixin can narrow `supports` to a specific resource type and configure it. Here `addOverride` sets the versioning block without depending on a particular provider version's typed API.
+
+```ts TypeScript
+import { IConstruct, IMixin } from "constructs";
+import { S3Bucket } from "./.gen/providers/aws/s3-bucket";
+
+export class EnableVersioning implements IMixin {
+  supports(construct: IConstruct): boolean {
+    return construct instanceof S3Bucket;
+  }
+
+  applyTo(construct: IConstruct): void {
+    (construct as S3Bucket).addOverride("versioning", { enabled: true });
+  }
+}
+```
+
+### Example: DataRecovery (multiple resource types)
+
+One mixin can support more than one resource type and apply the right change to each — a single "data recovery" feature that enables S3 versioning and DynamoDB point-in-time recovery. It is still applied per-construct with `with()`.
+
+```ts TypeScript
+import { IConstruct, IMixin } from "constructs";
+import { S3Bucket } from "./.gen/providers/aws/s3-bucket";
+import { DynamodbTable } from "./.gen/providers/aws/dynamodb-table";
+
+export class DataRecovery implements IMixin {
+  supports(construct: IConstruct): boolean {
+    return construct instanceof S3Bucket || construct instanceof DynamodbTable;
+  }
+
+  applyTo(construct: IConstruct): void {
+    if (construct instanceof S3Bucket) {
+      construct.putVersioning({ enabled: true });
+    }
+    if (construct instanceof DynamodbTable) {
+      construct.putPointInTimeRecovery({ enabled: true });
+    }
+  }
+}
+```
+
+## Mixins vs. Aspects
+
+Mixins and [Aspects](/concepts/aspects) are complementary. The choice is about **where** the effect applies and **when** — not whether it mutates configuration.
+
+| | Mixin | Aspect |
+| --- | --- | --- |
+| Applied to | one construct you hold | every construct in a scope |
+| When | immediately, at `with()` | deferred, during synthesis |
+| Reaches constructs you don't hold (nested, from a library, added later)? | No | Yes |
+| Good for | opting a specific resource into a feature | blanket sweeps — tagging, dependency propagation, and validation |
+
+Use a **mixin** when you have the construct instance and want to opt it in explicitly, with a type-safe `supports` check. Use an **aspect** when you want to cover a whole subtree regardless of what is in it.
+
+<Tip>
+  Mutation is not exclusive to mixins. Tagging every resource in a stack is a classic **mutating aspect** — you don't hold each resource, and you want new and nested resources covered too. Don't rewrite a scope-wide tagging or dependency-propagation aspect as a mixin; keep it an aspect.
+</Tip>
+
+### The complementary pattern: configure with a mixin, validate with an aspect
+
+A common pairing is a mixin that **configures** a resource and an aspect that **validates** the whole app meets a policy — including resources created by third-party libraries that you never call `with()` on. This example enforces IMDSv2 on EC2 instances:
+
+```ts TypeScript
+import { IConstruct, IMixin } from "constructs";
+import { Aspects, IAspect, Annotations } from "cdktn";
+import { Instance } from "./.gen/providers/aws/instance";
+
+// Mixin — opt a specific instance in (imperative, immediate)
+export class RequireImdsv2 implements IMixin {
+  supports(construct: IConstruct): boolean {
+    return construct instanceof Instance;
+  }
+  applyTo(construct: IConstruct): void {
+    (construct as Instance).putMetadataOptions({ httpTokens: "required" });
+  }
+}
+
+// Aspect — govern the whole app (deferred, validating)
+export class ValidateImdsv2 implements IAspect {
+  visit(node: IConstruct): void {
+    if (
+      node instanceof Instance &&
+      node.metadataOptionsInput?.httpTokens !== "required"
+    ) {
+      Annotations.of(node).addError("EC2 instances must require IMDSv2 (httpTokens: required).");
+    }
+  }
+}
+
+// Configure the instances you create...
+new Instance(this, "web", { ami: "ami-123", instanceType: "t3.micro" }).with(
+  new RequireImdsv2(),
+);
+
+// ...and validate everything, including instances you didn't create yourself.
+Aspects.of(this).add(new ValidateImdsv2());
+```
+
+<Note>
+  These examples are shown in TypeScript. The `construct.with(...)` primitive is available in every CDKTN language through the inherited `constructs.Construct` method — note the language-specific names: Python exposes it as `with_` and Go/C# as `With`. See the [API reference](/api-reference/typescript/constructs/terraform-resource) for the signature in each language.
+</Note>
+
+## Related resources
+
+- [Aspects](/concepts/aspects) — apply an operation to every construct in a scope.
+- [Resources](/concepts/resources) — the `lifecycle` block, escape hatches, and `addOverride`.
+- [RFC-05: Mixins](https://github.com/open-constructs/cdktn-planning/blob/main/RFCS/05-mixins/PROPOSAL.md) — the design discussion and the mixin-vs-aspect analysis behind this page.
+- [Announcing AWS CDK Mixins](https://aws.amazon.com/blogs/devops/announcing-aws-cdk-mixins-composable-abstractions-for-aws-resources/) — the AWS CDK feature this primitive mirrors (CDKTN inherits it from the shared `constructs` library).
