@@ -4,7 +4,7 @@ sidebarTitle: S3Backend
 description: CDKTN Core API Reference for S3Backend in Java.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 ## Initializers <a name="Initializers" id="cdktn.S3Backend.Initializer"></a>
 
@@ -60,6 +60,7 @@ S3Backend.Builder.create(Construct scope)
 //  .stsRegion(java.lang.String)
 //  .token(java.lang.String)
 //  .useLegacyWorkflow(java.lang.Boolean)
+//  .useLockfile(java.lang.Boolean)
 //  .usePathStyle(java.lang.Boolean)
 //  .workspaceKeyPrefix(java.lang.String)
     .build();
@@ -116,6 +117,7 @@ S3Backend.Builder.create(Construct scope)
 | <code><a href="#cdktn.S3Backend.Initializer.parameter.stsRegion">stsRegion</a></code> | <code>java.lang.String</code> | (Optional) AWS region for STS. |
 | <code><a href="#cdktn.S3Backend.Initializer.parameter.token">token</a></code> | <code>java.lang.String</code> | (Optional) Multi-Factor Authentication (MFA) token. |
 | <code><a href="#cdktn.S3Backend.Initializer.parameter.useLegacyWorkflow">useLegacyWorkflow</a></code> | <code>java.lang.Boolean</code> | (Optional) Use the legacy authentication workflow, preferring environment variables over backend configuration. |
+| <code><a href="#cdktn.S3Backend.Initializer.parameter.useLockfile">useLockfile</a></code> | <code>java.lang.Boolean</code> | (Optional) Whether to use a lockfile for locking the state file. |
 | <code><a href="#cdktn.S3Backend.Initializer.parameter.usePathStyle">usePathStyle</a></code> | <code>java.lang.Boolean</code> | (Optional) Enable path-style S3 URLs (https://&lt; HOST >/&lt; BUCKET > instead of https://&lt; BUCKET >.&lt; HOST >). |
 | <code><a href="#cdktn.S3Backend.Initializer.parameter.workspaceKeyPrefix">workspaceKeyPrefix</a></code> | <code>java.lang.String</code> | (Optional) Prefix applied to the state path inside the bucket. |
 
@@ -258,7 +260,9 @@ This can also be sourced from the AWS\_DYNAMODB\_ENDPOINT environment variable.
 
 ***
 
-### `dynamodbTable`<sup>Optional</sup> <a name="dynamodbTable" id="cdktn.S3Backend.Initializer.parameter.dynamodbTable"></a>
+### ~~`dynamodbTable`~~<sup>Optional</sup> <a name="dynamodbTable" id="cdktn.S3Backend.Initializer.parameter.dynamodbTable"></a>
+
+- *Deprecated:* Use useLockfile instead, which uses S3 for locking
 
 - *Type:* java.lang.String
 
@@ -622,6 +626,21 @@ This behavior does not align with the authentication flow of the AWS CLI or SDK'
 
 ***
 
+### `useLockfile`<sup>Optional</sup> <a name="useLockfile" id="cdktn.S3Backend.Initializer.parameter.useLockfile"></a>
+
+- *Type:* java.lang.Boolean
+
+(Optional) Whether to use a lockfile for locking the state file.
+
+Defaults to false.
+State locking is an opt-in feature of the S3 backend.
+Locking can be enabled via S3 or DynamoDB (see dynamodbTable). However, DynamoDB-based locking
+is deprecated and will be removed in a future minor version. To support migration from older
+versions of Terraform that only support DynamoDB-based locking, the S3 (useLockfile) and DynamoDB
+(dynamodbTable) arguments can be configured simultaneously.
+
+***
+
 ### `usePathStyle`<sup>Optional</sup> <a name="usePathStyle" id="cdktn.S3Backend.Initializer.parameter.usePathStyle"></a>
 
 - *Type:* java.lang.Boolean
@@ -645,6 +664,7 @@ This is only relevant when using a non-default workspace. Defaults to env:
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.S3Backend.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.S3Backend.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#cdktn.S3Backend.addOverride">addOverride</a></code> | *No description.* |
 | <code><a href="#cdktn.S3Backend.overrideLogicalId">overrideLogicalId</a></code> | Overrides the auto-generated logical ID with a specific ID. |
 | <code><a href="#cdktn.S3Backend.resetOverrideLogicalId">resetOverrideLogicalId</a></code> | Resets a previously passed logical Id to use the auto-generated logical id again. |
@@ -662,6 +682,27 @@ public java.lang.String toString()
 ```
 
 Returns a string representation of this construct.
+
+### `with` <a name="with" id="cdktn.S3Backend.with"></a>
+
+```java
+public IConstruct with(IMixin... mixins)
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `mixins`<sup>Required</sup> <a name="mixins" id="cdktn.S3Backend.with.parameter.mixins"></a>
+
+- *Type:* software.constructs.IMixin...
+
+The mixins to apply.
+
+***
 
 ### `addOverride` <a name="addOverride" id="cdktn.S3Backend.addOverride"></a>
 

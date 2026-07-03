@@ -4,7 +4,7 @@ sidebarTitle: CloudBackend
 description: CDKTN Core API Reference for CloudBackend in Python.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 The Cloud Backend synthesizes a [cloud block](https://developer.hashicorp.com/terraform/cli/cloud/settings#the-cloud-block). The cloud block is a nested block within the top-level terraform settings block. It specifies which Terraform Cloud workspaces to use for the current working directory. The cloud block only affects Terraform CLI's behavior. When Terraform Cloud uses a configuration that contains a cloud block - for example, when a workspace is configured to use a VCS provider directly - it ignores the block and behaves according to its own workspace settings.
 
@@ -80,6 +80,7 @@ We recommend omitting the token from the configuration, and instead using terraf
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdktn.CloudBackend.toString">to\_string</a></code> | Returns a string representation of this construct. |
+| <code><a href="#cdktn.CloudBackend.with">with</a></code> | Applies one or more mixins to this construct. |
 | <code><a href="#cdktn.CloudBackend.addOverride">add\_override</a></code> | *No description.* |
 | <code><a href="#cdktn.CloudBackend.overrideLogicalId">override\_logical\_id</a></code> | Overrides the auto-generated logical ID with a specific ID. |
 | <code><a href="#cdktn.CloudBackend.resetOverrideLogicalId">reset\_override\_logical\_id</a></code> | Resets a previously passed logical Id to use the auto-generated logical id again. |
@@ -97,6 +98,29 @@ def to_string() -> str
 ```
 
 Returns a string representation of this construct.
+
+### `with` <a name="with" id="cdktn.CloudBackend.with"></a>
+
+```python
+def with(
+  mixins: *IMixin
+) -> IConstruct
+```
+
+Applies one or more mixins to this construct.
+
+Mixins are applied in order. The list of constructs is captured at the
+start of the call, so constructs added by a mixin will not be visited.
+Use multiple `with()` calls if subsequent mixins should apply to added
+constructs.
+
+#### `mixins`<sup>Required</sup> <a name="mixins" id="cdktn.CloudBackend.with.parameter.mixins"></a>
+
+- *Type:* \*constructs.IMixin
+
+The mixins to apply.
+
+***
 
 ### `add_override` <a name="add_override" id="cdktn.CloudBackend.addOverride"></a>
 

@@ -4,7 +4,7 @@ sidebarTitle: DataTerraformRemoteStateS3Config
 description: CDKTN Core API Reference for DataTerraformRemoteStateS3Config in Go.
 ---
 
-{/* This file is generated through yarn generate-docs */}
+{/* This file is generated through pnpm generate-docs */}
 
 ## Initializer <a name="Initializer" id="cdktn.DataTerraformRemoteStateS3Config.Initializer"></a>
 
@@ -62,6 +62,7 @@ import "github.com/open-constructs/cdk-terrain-go/cdktn"
 	StsRegion: *string,
 	Token: *string,
 	UseLegacyWorkflow: *bool,
+	UseLockfile: *bool,
 	UsePathStyle: *bool,
 	WorkspaceKeyPrefix: *string,
 }
@@ -121,6 +122,7 @@ import "github.com/open-constructs/cdk-terrain-go/cdktn"
 | <code><a href="#cdktn.DataTerraformRemoteStateS3Config.property.stsRegion">StsRegion</a></code> | <code>\*string</code> | (Optional) AWS region for STS. |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3Config.property.token">Token</a></code> | <code>\*string</code> | (Optional) Multi-Factor Authentication (MFA) token. |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3Config.property.useLegacyWorkflow">UseLegacyWorkflow</a></code> | <code>\*bool</code> | (Optional) Use the legacy authentication workflow, preferring environment variables over backend configuration. |
+| <code><a href="#cdktn.DataTerraformRemoteStateS3Config.property.useLockfile">UseLockfile</a></code> | <code>\*bool</code> | (Optional) Whether to use a lockfile for locking the state file. |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3Config.property.usePathStyle">UsePathStyle</a></code> | <code>\*bool</code> | (Optional) Enable path-style S3 URLs (https://&lt; HOST >/&lt; BUCKET > instead of https://&lt; BUCKET >.&lt; HOST >). |
 | <code><a href="#cdktn.DataTerraformRemoteStateS3Config.property.workspaceKeyPrefix">WorkspaceKeyPrefix</a></code> | <code>\*string</code> | (Optional) Prefix applied to the state path inside the bucket. |
 
@@ -329,7 +331,9 @@ This can also be sourced from the AWS\_DYNAMODB\_ENDPOINT environment variable.
 
 ***
 
-### `DynamodbTable`<sup>Optional</sup> <a name="DynamodbTable" id="cdktn.DataTerraformRemoteStateS3Config.property.dynamodbTable"></a>
+### ~~`DynamodbTable`~~<sup>Optional</sup> <a name="DynamodbTable" id="cdktn.DataTerraformRemoteStateS3Config.property.dynamodbTable"></a>
+
+- *Deprecated:* Use useLockfile instead, which uses S3 for locking
 
 ```go
 DynamodbTable *string
@@ -830,6 +834,25 @@ UseLegacyWorkflow *bool
 
 Defaults to true.
 This behavior does not align with the authentication flow of the AWS CLI or SDK's, and will be removed in the future.
+
+***
+
+### `UseLockfile`<sup>Optional</sup> <a name="UseLockfile" id="cdktn.DataTerraformRemoteStateS3Config.property.useLockfile"></a>
+
+```go
+UseLockfile *bool
+```
+
+- *Type:* \*bool
+
+(Optional) Whether to use a lockfile for locking the state file.
+
+Defaults to false.
+State locking is an opt-in feature of the S3 backend.
+Locking can be enabled via S3 or DynamoDB (see dynamodbTable). However, DynamoDB-based locking
+is deprecated and will be removed in a future minor version. To support migration from older
+versions of Terraform that only support DynamoDB-based locking, the S3 (useLockfile) and DynamoDB
+(dynamodbTable) arguments can be configured simultaneously.
 
 ***
 
