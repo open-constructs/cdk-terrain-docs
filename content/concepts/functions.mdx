@@ -20,7 +20,6 @@ The following example uses a Data Source from the AWS Provider to fetch the Avai
 
 The `element` function gets the first element from the list of Availability Zone names.
 
-
 <CodeGroup>
 
 ```ts TypeScript
@@ -154,7 +153,6 @@ func NewFunctionsStack(scope constructs.Construct, name string) cdktn.TerraformS
 
 To access nested properties from untyped objects or other datasources that return a dynamic datatype, use the Terraform function `lookup` or, for nested access, the function "Fn.lookupNested()" which is a function offered by CDKTN that allows to avoid nesting `Fn.lookup` calls.
 
-
 ```ts
 const v = new TerraformVariable(this, "complex_object", {
   type: "object({users: list(object({name: string}))})",
@@ -220,7 +218,6 @@ cdktn.NewTerraformOutput(stack, jsii.String("first-user-name"), &cdktn.Terraform
 
 Another helper function offered by CDKTN is `Fn.rawString` which can be used to escape raw strings that contain characters that CDKTN or Terraform would try to interpret otherwise.
 
-
 ```ts
 new TerraformOutput(this, "quotes", {
   value: Fn.rawString(`"b"`),
@@ -271,7 +268,6 @@ cdktn.NewTerraformOutput(stack, jsii.String("template"), &cdktn.TerraformOutputC
 ## Operators
 
 Use the `Op` object to include operators like `!`, `+`, and `-`.
-
 
 <CodeGroup>
 
@@ -331,7 +327,6 @@ import (
 
 It is also possible to use all built-in Terraform functions without using CDKTN's `Fn.*` functions described above. To write Terraform built-in functions the same as you would in HCL, simply wrap the desired string within the HCL `${` and `}` syntax. **Note:** CDKTN doesn't do any further processing within the escaped syntax (`${` and `}`), and thus is unable to handle nested escape syntaxes yet.
 
-
 <CodeGroup>
 
 ```ts TypeScript
@@ -389,3 +384,81 @@ import (
 ```
 
 </CodeGroup>
+
+## Function Availability Across Terraform and OpenTofu
+
+CDK Terrain works with both Terraform and OpenTofu, but the two products do not
+support the exact same set of built-in functions. The `Fn` class covers the
+union of both: most functions are available everywhere, while a few exist in
+only one product or were introduced in a later release.
+
+The bindings are generated from the function metadata of every stable
+Terraform release since 1.5.7 and every stable OpenTofu release since 1.6.0.
+Functions that are not universally available are listed below.
+
+| Function          | Terraform | OpenTofu  |
+| ----------------- | --------- | --------- |
+| `issensitive`     | >= 1.8.0  | >= 1.7.0  |
+| `templatestring`  | >= 1.9.0  | >= 1.7.0  |
+| `ephemeralasnull` | >= 1.10.0 | >= 1.11.0 |
+| `convert`         | >= 1.15.0 | —         |
+| `base64gunzip`    | —         | >= 1.7.0  |
+| `cidrcontains`    | —         | >= 1.7.0  |
+| `urldecode`       | —         | >= 1.7.0  |
+
+All other functions exposed on `Fn` are available in every supported release
+of both products.
+
+### Validating Function Usage at Synth Time
+
+With the `validateFunctionVersions` [feature flag](/release#feature-flags)
+enabled, CDK Terrain checks every function you use through `Fn` against the
+project's [declared `targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes)
+— the Terraform/OpenTofu version ranges your project intends to support.
+Projects created with `cdktn init` have the flag enabled by default; existing
+projects can opt in via `cdktf.json`:
+
+```json
+{
+  "targetVersions": {
+    "terraform": ">=1.5.7",
+    "opentofu": ">=1.6.0"
+  },
+  "context": {
+    "validateFunctionVersions": "true"
+  }
+}
+```
+
+A function must be available across the *entire* declared range of every
+targeted product. If it is not, synthesis fails with an actionable error
+instead of letting `terraform plan` fail later:
+
+```
+Validation failed with the following errors:
+  [MyStack/resource] Terraform function "templatestring" requires terraform >=1.9.0, but the project targets terraform >=1.5.7. It is available in terraform >=1.9.0 and opentofu >=1.7.0.
+```
+
+Raise the declared floor (e.g. `"terraform": ">=1.9.0"`) — or drop the
+product you don't support — to use the function.
+
+<Note>
+  The validation is purely declarative: it never executes a Terraform or
+  OpenTofu binary, so synth behaves identically in CI, package builds, and
+  environments without either installed. To explicitly verify the binary
+  installed on a machine against the declared targets, opt in with
+  `"validateInstalledBinary": true`, which applies to commands that execute
+  the CLI (`diff`, `deploy`, `destroy`).
+</Note>
+
+To disable all synth-time validations, pass `skipValidation: true` to your
+`App` configuration.
+
+### Limitations
+
+- Functions written inside raw expression strings (escape hatches such as
+  overrides or hand-built `${...}` interpolations) are not tracked and
+  therefore not validated.
+- [Provider-defined functions](https://developer.hashicorp.com/terraform/plugin/framework/functions)
+  (`provider::<name>::<function>`) are out of scope; availability depends on
+  the provider, not the CLI version.

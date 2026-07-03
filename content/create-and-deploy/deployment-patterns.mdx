@@ -161,6 +161,8 @@ If you have a general purpose CI like GitHub Actions or CircleCI configured, use
 
 <Warning>Auto-approved deployments skip the option to review planned changes to your infrastructure before Terraform applies them. Minimize risk of unpredictable infrastructure changes and configuration drift by making sure that no one can change your infrastructure outside of your automated build pipeline. Refer to [Non-Interactive Workflows](/terraform/cloud-docs/run/cli#non-interactive-workflows) for details.</Warning>
 
+<Note>To ensure your CI runner's Terraform or OpenTofu binary matches the versions your project supports, set [`validateInstalledBinary`](/create-and-deploy/configuration-file#validate-the-installed-binary) to `true` in `cdktf.json`. `cdktn diff`, `deploy`, and `destroy` then fail fast if the installed binary falls outside your declared [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes).</Note>
+
 ### Contribute Additional Examples
 
 To share another solution, please [open a GitHub issue](https://github.com/open-constructs/cdk-terrain/issues/new?assignees=&labels=enhancement%2C+new&template=feature-request.md&title=) or submit a pull request for this documentation page.

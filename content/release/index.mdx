@@ -8,9 +8,25 @@ We release CDK Terrain (CDKTN) regularly. The [CHANGELOG on Github](https://gith
 
 ## What's New
 
+- [Function availability validation](/release/function-availability) — the `Fn`
+  bindings cover Terraform and OpenTofu, and synthesis validates function usage
+  against your project's declared `targetVersions`.
 - [S3-native state locking](/release/s3-native-locking) — the `S3Backend` can now
   lock state with a native lock file via the `useLockfile` field, removing the
   need for a separate DynamoDB table.
+
+## Feature Flags
+
+Some new behaviors ship behind feature flags to preserve backwards
+compatibility for existing projects. Projects created with `cdktn init` get
+all current flags enabled in the `context` section of their `cdktf.json`;
+existing projects can opt in by adding the entries manually. In the next major
+release these behaviors become the default.
+
+| Flag                              | Behavior when enabled                                                                                                                     |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `failOnConstructsOutsideOfStacks` | Synthesis throws if constructs are scoped directly to the `App` instead of a `TerraformStack`.                                            |
+| `validateFunctionVersions`        | Functions used through `Fn` are validated at synth time against the project's declared `targetVersions`, without executing any binary. [Learn more](/release/function-availability). |
 
 ## Upgrade Guides
 

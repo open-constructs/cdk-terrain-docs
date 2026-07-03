@@ -224,6 +224,6 @@ output "name" {
 
 HCL can be used with Terraform CDK in two ways. Converting HCL code directly to a CDKTN language, and using Terraform modules directly within CDKTN projects.
 
-- In order to convert HCL to a CDKTN language, the [`cdktn convert`](/cli-reference/commands#convert) command can be used. It automatically translates HCL into a preferred CDKTN language. This is useful when working with an existing codebase that needs to be converted to CDKTN.
+- In order to convert HCL to a CDKTN language, the [`cdktn convert`](/cli-reference/commands#convert) command can be used. It automatically translates HCL into a preferred CDKTN language. This is useful when working with an existing codebase that needs to be converted to CDKTN. Built-in functions in the HCL are emitted as `Fn.*` calls, which are subject to CDK Terrain's [function availability validation](/concepts/functions#function-availability-across-terraform-and-opentofu) against your project's declared [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes).
 
 - While CDKTN has the ability to import HCL modules through `cdktn get` when referenced within the `cdktf.json` file, Terraform modules can also be referenced without generating language specific bindings. The [modules documentation](/concepts/modules) shows how to use existing Terraform modules in CDK Terrain projects.
