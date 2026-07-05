@@ -46,9 +46,50 @@ Connect your synthesized CDKTN configuration to a HCP Terraform workspace with t
 
 Refer to [Automatic Run Triggering](/terraform/cloud-docs/workspaces/settings/vcs#automatic-run-triggering) in the HCP Terraform documentation for details about how to trigger Terraform runs from merges and commits.
 
-### Terraform CDK GitHub Action
+### CDK Terrain GitHub Action
 
-You can use the [Terraform CDK GitHub Action](https://github.com/marketplace/actions/terraform-cdk-action) if you are using GitHub Actions and you want a default review / deployment workflow. The Terraform CDK GitHub Action runs the CDKTN CLI under the hood, it comments Terraform plans on your pull requests and provides a default review workflow. If you need more customization, refer to [GitHub Actions CI and HCP Terraform](#github-actions-ci-and-hcp-terraform).
+If you use GitHub Actions and want a default review / deployment workflow, use the [`cdktn-io/action`](https://github.com/cdktn-io/action) GitHub Action. It runs the CDKTN CLI (`cdktn-cli`) under the hood on **OpenTofu by default** (or Terraform), comments the plan on your pull requests, and supports `synth-only`, `plan-only`, `auto-approve-apply`, and `auto-approve-destroy` modes. If you need more customization, refer to [GitHub Actions CI and HCP Terraform](#github-actions-ci-and-hcp-terraform).
+
+<Note>
+  `cdktn-io/action` is the maintained successor to HashiCorp's archived [`terraform-cdk-action`](https://github.com/hashicorp/terraform-cdk-action).
+</Note>
+
+The action does **not** install the engine — pair it with [`opentofu/setup-opentofu`](https://github.com/opentofu/setup-opentofu) (or [`hashicorp/setup-terraform`](https://github.com/hashicorp/setup-terraform)) and disable the CLI wrapper so CDK Terrain can call the binary directly. The action verifies the engine on `PATH` rather than installing it: `engine: auto` (the default) detects whichever is installed, preferring OpenTofu, while `engine: tofu`/`terraform` forces a specific one.
+
+```yaml
+name: cdktn plan
+
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write # let the action comment the plan on the PR
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - uses: opentofu/setup-opentofu@v2
+        with:
+          tofu_version: 1.12.3
+          tofu_wrapper: false # let CDK Terrain call tofu directly
+      - run: npm ci
+      - uses: cdktn-io/action@main # pin to a released tag once published
+        with:
+          mode: plan-only
+          stackName: my-stack
+          cdktnVersion: 0.23.4
+          engine: tofu # omit to auto-detect (prefers OpenTofu)
+          cloudToken: ${{ secrets.TF_API_TOKEN }} # for HCP Terraform
+          githubToken: ${{ github.token }}
+```
+
+For a complete, runnable example see [`vincenthsh/cdktn-docker-demo`](https://github.com/vincenthsh/cdktn-docker-demo). The [action inputs](https://github.com/cdktn-io/action#inputs) document all options, including the `auto-approve-apply` / `auto-approve-destroy` deployment modes and HCP Terraform configuration.
 
 ### GitHub Actions CI and HCP Terraform
 
