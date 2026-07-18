@@ -101,6 +101,7 @@
                 "expanded": false,
                 "pages": [
                   "release/index",
+                  "release/canonical-asset-hashes",
                   "release/function-availability",
                   "release/s3-native-locking",
                   "release/upgrade-guide-v0-23",
