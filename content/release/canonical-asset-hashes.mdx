@@ -1,0 +1,85 @@
+---
+title: "What's New: Canonical Asset Hashes"
+sidebarTitle: "Canonical Asset Hashes"
+description: >-
+  The canonicalAssetHashes feature flag makes asset hashes track every
+  property of the emitted asset, and archives are now emitted
+  byte-reproducibly.
+---
+
+The `canonicalAssetHashes` feature flag introduces a new hashing scheme for
+[assets](/concepts/assets), and archive emission is now deterministic
+regardless of the flag.
+
+## Why a new scheme
+
+The legacy asset hash concatenates file contents in directory-listing order.
+Several changes that alter the emitted asset are invisible to it:
+
+- Renaming a file changes the emitted directory or archive, but not the hash.
+- Changing permissions (for example `0644` → `0755`) changes the archive's
+  zip metadata, but not the hash.
+- Adding or removing an empty directory changes an emitted directory asset,
+  but not the hash.
+- Shifting bytes across file boundaries (`"x"`/`"yz"` → `"xy"`/`"z"`) leaves
+  the concatenation — and therefore the hash — unchanged.
+
+When the hash misses a change, the asset path stays the same while the
+content behind it differs, so downstream resources (such as a Lambda function
+pointing at the archive) are not updated.
+
+## What changed
+
+With the flag enabled, the hash is computed from a canonical representation
+modeled on git trees and Nix NAR archives: every entry is framed with
+everything that affects the emitted artifact — entry type, permission bits,
+relative path, payload size, and payload — in sorted order. Symlinks are
+framed by their metadata and target instead of being followed. Concretely:
+
+- File renames, permission changes, file/symlink swaps, symlink retargeting,
+  and entry-boundary shifts all change the hash.
+- Empty directories are part of the hash for `FILE` and `DIRECTORY` assets,
+  where they are materialized in the output. They are excluded for `ARCHIVE`
+  assets, because zip archives contain no directory entries — the archive
+  hash changes exactly when the emitted zip bytes change.
+- Module assets (created automatically for local Terraform modules) hash
+  exactly the module sources that are copied into the asset. Unrelated files
+  that happen to live next to your modules no longer affect the hash.
+- Identical logical trees hash identically across machines and repeated
+  synth runs.
+
+### Byte-reproducible archives
+
+Independent of the flag, `ARCHIVE` assets are now emitted with sorted entry
+ordering. Combined with the already-pinned entry timestamps, the same source
+tree produces byte-identical zip files regardless of the filesystem's
+directory enumeration order — so the canonical archive hash corresponds
+one-to-one with the emitted bytes, and zip-based checksums (such as
+`filebase64sha256` on the archive) are stable across machines.
+
+## Enabling the flag
+
+Projects created with `cdktn init` get the flag automatically. Existing
+projects can opt in via `cdktf.json`:
+
+```json
+{
+  "context": {
+    "canonicalAssetHashes": "true"
+  }
+}
+```
+
+<Warning>
+  Enabling the flag on an existing project changes the hashes — and therefore
+  the synthesized paths — of all assets once. Resources referencing those
+  paths will see a one-time update on the next deploy.
+</Warning>
+
+<Note>
+  Like all feature flags, this behavior becomes the default in the next major
+  release. See [Feature Flags](/release#feature-flags).
+</Note>
+
+See the [Assets concept page](/concepts/assets#asset-hashing) for how asset
+hashing is used.
