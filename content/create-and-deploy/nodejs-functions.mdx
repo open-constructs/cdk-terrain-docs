@@ -1,0 +1,143 @@
+---
+title: Deploy Node.js Lambda functions
+sidebarTitle: Node.js functions
+description: Bundle TypeScript or JavaScript and deploy an AWS Lambda function with CDK Terrain's native NodejsFunction construct.
+---
+
+`NodejsFunction` bundles your handler and its dependencies with Rolldown, stages a ZIP, and configures the Lambda function, execution role and CloudWatch log group.
+
+<Note>
+
+This feature is proposed in [CDK Terrain PR #402](https://github.com/open-constructs/cdk-terrain/pull/402). The `@cdktn/aws-lambda-nodejs` and `@cdktn/bundler-nodejs` packages are not published yet. To try them before release, use the [feature branch example](https://github.com/garysassano/cdk-terrain/tree/feat/native-nodejs-function/examples/typescript/aws-nodejs-function) and its build instructions.
+
+</Note>
+
+## Prerequisites
+
+- A TypeScript or JavaScript CDKTN application with `@cdktn/aws-lambda-nodejs` available from the feature branch.
+- CDKTN 0.24 and a compatible AWS provider package (`@cdktn/provider-aws` 25.4 or later in the 25.x series).
+- Node.js 22.12 or newer on the machine running synthesis. The example uses Node.js 22.18 or newer to run TypeScript directly.
+- Terraform and AWS credentials permitted to manage Lambda functions, execution roles and CloudWatch log groups.
+
+## Define the handler and function
+
+Create your handler:
+
+```typescript src/hello.ts
+export async function handler(event: { name?: string } = {}) {
+  return {
+    message: `${process.env.GREETING ?? "Hello"}, ${event.name ?? "world"}!`,
+  };
+}
+```
+
+Point `NodejsFunction` at the entry file in your CDKTN app:
+
+```typescript main.ts
+import { App, TerraformOutput, TerraformStack } from "cdktn";
+import { AwsProvider } from "@cdktn/provider-aws/lib/provider/index.js";
+import { NodejsFunction } from "@cdktn/aws-lambda-nodejs";
+
+const app = new App();
+const stack = new TerraformStack(app, "hello");
+new AwsProvider(stack, "aws", { region: "eu-central-1" });
+
+const hello = new NodejsFunction(stack, "hello", {
+  entry: "src/hello.ts",
+  environment: { GREETING: "Hello from CDK Terrain" },
+});
+
+new TerraformOutput(stack, "function_name", { value: hello.functionName });
+app.synth();
+```
+
+With Node.js 22.18 or newer and `"type": "module"` in your `package.json`, configure `cdktf.json` to run the app:
+
+```json cdktf.json
+{
+  "language": "typescript",
+  "app": "node main.ts",
+  "sendCrashReports": "false"
+}
+```
+
+Synthesize the configuration, review the plan, and deploy it with your configured AWS credentials:
+
+```shell
+cdktn synth
+cdktn diff
+cdktn deploy
+```
+
+Terraform uploads the generated ZIP during apply. You do not need a packaging provider, a prebuild script or an asset bucket. Use the `function_name` output to invoke the Lambda, then remove the example resources when you finish:
+
+```shell
+cdktn destroy
+```
+
+## Defaults
+
+| Setting             | Default                                                       |
+| ------------------- | ------------------------------------------------------------- |
+| Lambda runtime      | `nodejs24.x`                                                  |
+| Architecture        | `arm64`                                                       |
+| Memory and timeout  | 512 MiB and 10 seconds                                        |
+| Handler export      | `handler`                                                     |
+| Bundle              | Minified ESM with source maps                                 |
+| Runtime source maps | Enabled through `NODE_OPTIONS`                                |
+| Logs                | JSON with 30-day retention                                    |
+| Execution role      | Created with permissions scoped to the function's log streams |
+
+The class name follows AWS CDK's `NodejsFunction` terminology. This CDKTN implementation extends the generated Terraform `LambdaFunction` and has its own props and defaults. You can use the generated resource's outputs, configuration and overrides.
+
+## Configure the function
+
+You can configure the runtime, memory, timeout, environment and execution-role permissions:
+
+```typescript
+const worker = new NodejsFunction(stack, "worker", {
+  entry: "src/hello.ts",
+  memorySize: 1024,
+  timeout: 30,
+  environment: { GREETING: "Hello from the worker" },
+  logRetentionDays: 7,
+});
+
+worker.addEnvironment("STAGE", "production");
+worker.addToRolePolicy({
+  actions: ["s3:GetObject"],
+  resources: ["arn:aws:s3:::example-input-bucket/*"],
+});
+```
+
+You can also pass permissions through `initialPolicy`. When you supply an existing execution-role ARN through `role`, manage that role's permissions yourself. Supply an existing `CloudwatchLogGroup` through `logGroup` to control logging resources separately. A provider alias is forwarded to the function and all owned AWS resources.
+
+## Configure bundling
+
+Relative paths resolve from `projectRoot`, the directory containing `cdktf.json`, or the working directory when no configuration file is present. Rolldown reads your TypeScript configuration, including path aliases. TypeScript is transpiled during bundling; run your application's type checker separately.
+
+For example, create a `templates` directory when your handler needs additional files, then include it in the ZIP and select CommonJS output:
+
+```typescript
+new NodejsFunction(stack, "templated", {
+  entry: "src/hello.ts",
+  bundling: {
+    format: "cjs",
+    copyFiles: [{ from: "templates", to: "templates" }],
+  },
+});
+```
+
+Bundling options also include `minify`, `sourceMap`, `tsconfig`, compile-time `define` substitutions, `externalModules`, and a JavaScript `configFile` for Rolldown options and compatible plugins. Dependencies are bundled by default. If you externalize a package, provide it through a Lambda layer or a prepared `node_modules` directory included with `copyFiles`.
+
+## Builds and deployment updates
+
+Bundling runs during app construction so the deployment hash can use the completed ZIP bytes. Each construction rebuilds the import graph. A changed dependency or copied file changes the hash when it changes the output; unchanged output keeps the same hash.
+
+`TerraformAsset` stages the ZIP under the stack's `assets` directory. If you run Terraform separately, transfer the complete synthesized stack directory, including its assets. The machine running apply does not need the handler sources or Rolldown. See [Assets](/concepts/assets) for the staging model.
+
+## Current limits
+
+The initial packages support TypeScript and JavaScript APIs. Native addons require files built for the selected Lambda architecture and Amazon Linux runtime, supplied through `copyFiles` or a layer. Automatic native dependency installation and Docker builds are not included.
+
+Deployment uses Lambda's direct ZIP upload path and its [package size limits](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html). S3 publishing for larger artifacts and a watch server are not included.

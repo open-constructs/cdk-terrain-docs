@@ -67,6 +67,7 @@
                   "create-and-deploy/environment-variables",
                   "create-and-deploy/hcp-terraform",
                   "create-and-deploy/deployment-patterns",
+                  "create-and-deploy/nodejs-functions",
                   "create-and-deploy/performance",
                   "create-and-deploy/remote-templates",
                   "create-and-deploy/aws-adapter"
