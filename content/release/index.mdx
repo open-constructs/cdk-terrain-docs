@@ -8,6 +8,10 @@ We release CDK Terrain (CDKTN) regularly. The [CHANGELOG on Github](https://gith
 
 ## What's New
 
+- [Canonical asset hashes](/release/canonical-asset-hashes) — the
+  `canonicalAssetHashes` flag makes asset hashes track every property of the
+  emitted asset (names, permissions, symlinks, empty directories), and
+  archives are now emitted byte-reproducibly.
 - [Function availability validation](/release/function-availability) — the `Fn`
   bindings cover Terraform and OpenTofu, and synthesis validates function usage
   against your project's declared `targetVersions`.
@@ -25,6 +29,7 @@ release these behaviors become the default.
 
 | Flag                              | Behavior when enabled                                                                                                                     |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `canonicalAssetHashes`            | Asset hashes cover every property of the emitted asset — file names, permission bits, symlink targets, and empty directories — so any change to the asset changes its hash and path. [Learn more](/release/canonical-asset-hashes). |
 | `failOnConstructsOutsideOfStacks` | Synthesis throws if constructs are scoped directly to the `App` instead of a `TerraformStack`.                                            |
 | `validateFunctionVersions`        | Functions used through `Fn` are validated at synth time against the project's declared `targetVersions`, without executing any binary. [Learn more](/release/function-availability). |
 

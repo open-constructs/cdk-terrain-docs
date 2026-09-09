@@ -246,3 +246,23 @@ func main() {
 ## Paths
 
 Assets support both absolute and relative paths. Relative paths are always considered to be relative to your project's `cdktf.json` file.
+
+## Asset Hashing
+
+Each asset exposes an `assetHash`, and the hash is part of the synthesized `path`. When the asset's contents change, the hash — and therefore the path — changes, so resources referencing the asset pick up the new version. You can pass a fixed `assetHash` in the `TerraformAsset` configuration to control this yourself, for example to avoid updates from files that change on every build.
+
+With the `canonicalAssetHashes` feature flag enabled, the hash covers everything that affects the emitted asset: file contents, names, permission bits, symlink targets, and — for directory assets — empty directories. Renaming a file, making a script executable, or retargeting a symlink each produce a new hash and asset path. For `ARCHIVE` assets the hash corresponds exactly to the emitted zip file.
+
+Projects created with `cdktn init` have the flag enabled. Existing projects can opt in via `cdktf.json`:
+
+```json
+{
+  "context": {
+    "canonicalAssetHashes": "true"
+  }
+}
+```
+
+<Note>
+  Enabling the flag on an existing project changes all asset hashes and paths once, so referencing resources see a one-time update. See [Canonical Asset Hashes](/release/canonical-asset-hashes) for details.
+</Note>
