@@ -472,6 +472,12 @@ Create a new Typescript project.
 $ cdktn init --template="typescript"
 ```
 
+Create a new TypeScript project managed by pnpm instead of npm.
+
+```bash
+$ cdktn init --template="typescript-pnpm"
+```
+
 Create a new Python project and use a specific version of the `cdktn` package.
 
 ```bash
@@ -755,7 +761,7 @@ io.cdktn.cdktn-provider-ad (PREBUILT)
 
 ## provider add
 
-This command facilitates adding Terraform providers to a CDKTN project. If a [pre-built provider](/concepts/providers#install-pre-built-providers) is available for the CDKTN version you are using and the Terraform provider version you requested (if any), it will be installed using e.g. `npm install` or `dotnet add` depending on the language you are using. Otherwise, the provider will be added to the `cdktf.json` config and `cdktn get` will be automatically invoked to generate [local provider bindings](/concepts/providers#add-provider-to-cdktn-json).
+This command facilitates adding Terraform providers to a CDKTN project. If a [pre-built provider](/concepts/providers#install-pre-built-providers) is available for the CDKTN version you are using and the Terraform provider version you requested (if any), it will be installed with the package manager of your project, e.g. `npm install`, `pnpm add` or `dotnet add` depending on the language and, for TypeScript, the package manager the project uses (see [TypeScript package managers](/create-and-deploy/project-setup#typescript-package-managers)). Otherwise, the provider will be added to the `cdktf.json` config and `cdktn get` will be automatically invoked to generate [local provider bindings](/concepts/providers#add-provider-to-cdktn-json).
 
 ```sh
 $ cdktn provider add --help
