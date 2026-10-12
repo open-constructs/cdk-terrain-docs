@@ -23,11 +23,27 @@ $ cdktn init --template="templateName"
 
 Use these template names for the available pre-built templates:
 
-- `typescript`
-- `python`
-- `c#`
+- `typescript` (npm)
+- `typescript-pnpm` (pnpm)
+- `python` (pipenv)
+- `python-pip` (pip)
+- `csharp`
 - `java`
 - `go`
+
+### TypeScript package managers
+
+The `typescript` template installs dependencies with npm. The `typescript-pnpm` template produces the same project managed by pnpm: it installs with `pnpm add`, pins the pnpm version in the `packageManager` field of `package.json`, runs the app with `pnpm exec tsx main.ts`, and does not need npm on your `PATH`. It requires pnpm 10.26 or newer.
+
+```bash
+$ cdktn init --template="typescript-pnpm" --local
+```
+
+Commands that touch dependencies, such as `provider add` and `provider list`, use the package manager of the project they run in: the `packageManager` field in `package.json` first, then `pnpm-lock.yaml`, `.yarnrc.yml` or `yarn.lock`, and npm otherwise.
+
+<Warning>
+Yarn classic (1.x) is unmaintained, and CDKTN prints a deprecation warning for projects that use it; move them to npm or pnpm. Yarn Berry (2+) is not supported: `provider list`, `provider upgrade` and `debug` fail on Berry projects. See the [Yarn tracking issue](https://github.com/open-constructs/cdk-terrain/issues/492) for what works, workarounds, and to vote for support.
+</Warning>
 
 Note: Even though the CDKTN Java template sets up the Gradle build system for performance reasons, you can still use Maven to build your project. For more information refer to the Java examples which also include Maven examples: [Java Examples](/examples-and-guides/examples#java).
 
