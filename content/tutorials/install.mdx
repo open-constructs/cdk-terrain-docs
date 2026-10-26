@@ -44,8 +44,10 @@ You can install the `cdktn` CLI globally with npm on any platform or with Homebr
   <Tab title="Homebrew (macOS)">
 
   ```shell Shell
-  brew install cdktn
+  brew install open-constructs/tap/cdktn
   ```
+
+  The formula lives in the [`open-constructs/tap`](https://github.com/open-constructs/homebrew-tap) tap, not homebrew-core, so use the fully-qualified name. A bare `brew install cdktn` only works after `brew tap open-constructs/tap`. If you installed the deprecated `cdktf` formula, run `brew uninstall cdktf` first.
 
   </Tab>
 </Tabs>
