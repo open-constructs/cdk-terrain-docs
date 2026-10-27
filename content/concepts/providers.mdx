@@ -22,19 +22,13 @@ Terraform uses providers to provision [resources](https://developer.hashicorp.co
 
 ## Install Pre-Built Providers
 
-It can take several minutes for CDKTN to generate the code bindings for providers with very large schemas, so we offer several popular providers as pre-built packages. Pre-built providers are a completely optional performance optimization, and you may prefer to generate the code bindings for these providers yourself. For example, you may want to use a different version of that provider than the one in the pre-built package. The [Terraform CDK Providers](https://github.com/orgs/cdktn/repositories?q=cdktn-provider-) page has a complete list, but available pre-built providers include the following options:
+It can take several minutes for CDKTN to generate the code bindings for providers with very large schemas, so we offer several popular providers as pre-built packages. Pre-built providers are a completely optional performance optimization, and you may prefer to generate the code bindings for these providers yourself. For example, you may want to use a different version of that provider than the one in the pre-built package.
 
-- [AWS Provider](https://cdk.tf/provider/aws)
-- [Google Provider](https://cdk.tf/provider/google)
-- [Azure Provider](https://cdk.tf/provider/azurerm)
-- [Kubernetes Provider](https://cdk.tf/provider/kubernetes)
-- [Docker Provider](https://cdk.tf/provider/docker)
-- [Github Provider](https://cdk.tf/provider/github)
-- [Null Provider](https://cdk.tf/provider/null)
+The [pre-built provider dashboard](https://provider-dashboard.cdktn.io) lists every pre-built provider with its latest package version, the Terraform provider version it wraps, and the CDKTN version it requires. The source for each provider lives in the [`cdktn-io` GitHub organization](https://github.com/orgs/cdktn-io/repositories?q=cdktn-provider-).
 
-We regularly publish these packages to NPM / PyPi, and you can treat them like any other dependency. The following example shows how to install the AWS provider in TypeScript / Node.
+Pre-built providers are published to npm, PyPI, NuGet, Maven Central, and as Go modules, and you can treat them like any other dependency. The following example shows how to install the AWS provider in TypeScript / Node.
 
-```
+```bash
 npm install @cdktn/provider-aws
 ```
 
