@@ -33,6 +33,7 @@ export interface Config {
   readonly codeMakerOutput: string; // Default: '.gen'. Path where generated provider bindings will be rendered to.
   readonly projectId: string; // Default: generated UUID. Unique identifier for the project used to differentiate projects
   readonly sendCrashReports: boolean; // Default: false. Whether to send crash reports to the CDKTN team
+  readonly sendUsageTelemetry?: boolean; // Whether to send anonymous usage metrics to the CDKTN team. If unset, the CLI asks in an interactive terminal and otherwise sends them
   readonly terraformProviders?: RequirementDefinition[]; // Terraform Providers to build
   readonly terraformModules?: RequirementDefinition[]; // Terraform Modules to build
   readonly targetVersions?: { terraform?: string; opentofu?: string }; // npm semver ranges per product the project supports. Default: { terraform: '>=1.5.7', opentofu: '>=1.6.0' }
@@ -234,7 +235,7 @@ The following configuration generates the `aws` provider bindings in the folder 
 
 ### Enable Crash Reporting for the CLI
 
-You can enable or disable crash reporting by setting the `sendCrashReports` property to `true` or `false`. Sending crash reports helps our team improve the CLI faster. Refer to [Telemetry](/telemetry#crash-reporting) for more information about what we track.
+You can enable or disable crash reporting by setting the `sendCrashReports` property to `true` or `false`. Sending crash reports helps our team improve the CLI faster. Refer to [Telemetry](/telemetry#crash-reporting) for more information about what we track. The separate `sendUsageTelemetry` property controls anonymous usage metrics; refer to [Telemetry](/telemetry#consent) for how the two flags work.
 
 ```json
 {
