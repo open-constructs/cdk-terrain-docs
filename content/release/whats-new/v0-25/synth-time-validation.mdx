@@ -1,0 +1,81 @@
+---
+title: "What's New: Synth-Time Validation Against Target Versions"
+sidebarTitle: "Synth-Time Validation"
+description: >-
+  CDK Terrain v0.25 validates moved blocks, import blocks, terraform_data, and
+  the cloud backend against the targetVersions your project declares, and
+  synthesis no longer runs the Terraform or OpenTofu binary.
+---
+
+CDK Terrain v0.25.0 finishes the move to declared
+[target versions](/release/whats-new/v0-23/target-versions). Four features
+that used to be checked against the Terraform binary on your `PATH` are now
+checked against the `targetVersions` in `cdktf.json`
+([cdk-terrain#453](https://github.com/open-constructs/cdk-terrain/pull/453),
+[#454](https://github.com/open-constructs/cdk-terrain/pull/454),
+[#455](https://github.com/open-constructs/cdk-terrain/pull/455),
+[#456](https://github.com/open-constructs/cdk-terrain/pull/456)). With those
+moved, synthesis never runs `terraform` or `tofu` to validate features
+([#457](https://github.com/open-constructs/cdk-terrain/pull/457)). This is a
+breaking change. To upgrade, follow the
+[v0.25 upgrade guide](/release/upgrade-guide-v0-25).
+
+## What changed
+
+### Four features validate against `targetVersions`
+
+Before v0.25, synthesis ran the installed binary to check its version when you
+used one of these features. Now synthesis compares the feature's minimum
+version with your declared range:
+
+| Feature                                                     | Terraform  | OpenTofu   |
+| ----------------------------------------------------------- | ---------- | ---------- |
+| `cloud` block (`CloudBackend`)                              | `>=1.1.0`  | `>=1.6.0`  |
+| `terraform_data` resource (`DataResource`)                  | `>=1.4.0`  | `>=1.6.0`  |
+| `import` blocks (`importFrom`, `ImportableResource`)        | `>=1.5.0`  | `>=1.6.0`  |
+| `moved` blocks (`moveTo`, `moveToId`, `moveFromId`)         | `>=1.5.0`  | `>=1.6.0`  |
+
+As with [function availability](/concepts/functions#function-availability-across-terraform-and-opentofu),
+the feature must be supported across the whole declared range of every product
+you target. If you don't declare `targetVersions`, CDKTN checks against
+Terraform `>=1.5.7` and OpenTofu `>=1.6.0`, and all four features pass.
+
+A project that declares a Terraform floor below a feature's minimum now fails
+synthesis when it uses that feature. For example, with
+`"targetVersions": { "terraform": ">=1.4.0" }`, a resource move fails:
+
+```text
+Error: Validation failed with the following errors:
+  [my-stack] The moved block requires terraform >=1.5.0, but the project targets terraform >=1.4.0.
+```
+
+To fix it, raise the floor of the declared range to the version in the table,
+or stop using the feature. See
+[Declare Target Runtimes](/create-and-deploy/configuration-file#declare-target-runtimes).
+
+### Synthesis no longer runs a binary
+
+The same `cdktn synth` gives the same result in CI, in package builds, and on
+a machine without Terraform or OpenTofu. Your installed binary no longer
+decides whether synthesis passes.
+
+To check the installed binary as well, set `validateInstalledBinary` in
+`cdktf.json`. The commands that run the binary then fail if it's outside your
+declared `targetVersions`. See
+[Validate the Installed Binary](/create-and-deploy/configuration-file#validate-the-installed-binary).
+
+```json
+{
+  "targetVersions": {
+    "terraform": ">=1.5.7",
+    "opentofu": ">=1.6.0"
+  },
+  "validateInstalledBinary": true
+}
+```
+
+### `ValidateBinaryVersion` and `ValidateTerraformVersion` are removed
+
+The validations that ran the binary are deleted. The `cdktn` package root never
+exported them, so this only breaks code that deep-imported them from inside the
+package. Use the declared `targetVersions` instead.

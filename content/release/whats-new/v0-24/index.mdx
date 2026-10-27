@@ -1,0 +1,144 @@
+---
+title: "What's New in CDK Terrain v0.24"
+sidebarTitle: Overview
+description: >-
+  Everything CDK Terrain v0.24.0 introduced: function validation on by default,
+  a Node.js 22.19 minimum, symlink-preserving assets, undici for CLI HTTP
+  requests, canonical asset hashes, ephemeral resources, provider-defined
+  functions, write-only attributes, and pre-built provider updates.
+---
+
+CDK Terrain (CDKTN) v0.24.0 shipped on 2026-08-06. It is a breaking release.
+To upgrade from v0.23, follow the
+[v0.24 upgrade guide](/release/upgrade-guide-v0-24).
+
+## Breaking changes
+
+### Function validation is always on
+
+The `validateFunctionVersions` feature flag from v0.23.4 is gone, and every
+`TerraformStack` now checks the functions you use through `Fn` against your
+declared `targetVersions`. If you use a function that isn't available across
+your whole target range, synthesis fails.
+[Learn more](/release/whats-new/v0-24/function-validation-default).
+
+### Node.js 22.19.0 minimum
+
+`cdktn-cli` and `@cdktn/cli-core` now declare `engines.node` `>=22.19.0`. The
+CLI's new HTTP client, undici 8, requires that version. Move your local and CI
+environments to Node.js 22.19.0 or later before you upgrade.
+
+<Note>
+  v0.25 raised the minimum to Node.js 22.23.4.
+</Note>
+
+### Assets preserve symlinks
+
+`TerraformAsset` and module assets no longer follow symlinks when they walk a
+source directory
+([cdk-terrain#321](https://github.com/open-constructs/cdk-terrain/pull/321)):
+
+- `ARCHIVE` assets store symlinks as symlink entries. Before, every symlink
+  became a full copy of its target. On a symlink-heavy tree such as a pnpm
+  `node_modules`, this makes archives much smaller.
+- `DIRECTORY` assets recreate symlinks in the output instead of copying their
+  targets.
+- Circular symlinks no longer crash synthesis with `ELOOP`.
+- The asset hash covers a symlink's target path instead of the content behind
+  it. Hashes change only for trees that contain symlinks. Trees without
+  symlinks keep their existing hashes.
+
+The same fix makes archives keep each file's Unix permission bits, so
+executables stay executable. It also pins entry timestamps, so the same
+source produces the same zip bytes on every synthesis.
+
+### undici replaces node-fetch in the CLI
+
+The CLI now makes its HTTP requests with undici instead of `node-fetch`. It
+still reads the proxy from `http_proxy` or `HTTP_PROXY` (see
+[Environment Variables](/create-and-deploy/environment-variables)). The proxy
+now also applies to the registry lookups the CLI makes when it resolves
+pre-built provider versions on PyPI, NuGet, Maven Central, GitHub, and npm.
+Before, those lookups ignored the proxy.
+
+## Features
+
+### Canonical asset hashes
+
+The new `canonicalAssetHashes` feature flag computes asset hashes from every
+property of the emitted asset: file names, permission bits, symlink targets,
+and empty directories. Any change to the asset changes its hash and path.
+`cdktn init` enables the flag for new projects.
+[Learn more](/release/whats-new/v0-24/canonical-asset-hashes).
+
+### Ephemeral resources, provider-defined functions, and write-only attributes
+
+`cdktn get` generates bindings for three newer provider protocol features
+([cdk-terrain#296](https://github.com/open-constructs/cdk-terrain/pull/296)):
+
+- Ephemeral resources, as `Ephemeral*` classes that extend the new
+  `TerraformEphemeralResource` base class.
+- Provider-defined functions, on the provider instance, for example
+  `time.functions.rfc3339Parse(...)`.
+- Write-only attributes, whose getters are now deprecated.
+
+When you use one of these features, synthesis checks it against your declared
+`targetVersions`.
+[Learn more](/release/whats-new/v0-24/plugin-protocol).
+
+## Deprecations
+
+- **Write-only attribute getters:** the provider never returns a write-only
+  value, so the getter always yields `null`. Generated bindings mark it
+  `@deprecated`, and removal is planned for a future pre-built provider
+  major. Set write-only attributes, but don't read them. See
+  [Write-only attributes](/release/whats-new/v0-24/plugin-protocol#write-only-attributes).
+
+## Notable fixes
+
+- **`constructs` 10.8 disallowed:** `constructs` 10.8.0 changed its package
+  metadata in a way that breaks jsii's symbol lookup, so CDKTN produced
+  silently wrong output with it. The `cdktn` peer dependency is now
+  `>=10.6.0 <10.8.0`, and the TypeScript template of `cdktn init` installs a
+  matching version. v0.25 adopted jsii 6 and restored the `^10.6.0` range.
+- **Pre-built provider resolution:** a transient registry failure (a network
+  error, HTTP 408, 429, or 5xx) no longer makes `cdktn provider add` silently
+  install an older pre-built provider. The CLI retries, and if the registry
+  stays unreachable, it fails with an error.
+- **npm version lookup:** with npm, the CLI now finds `cdktn` when it's
+  installed as a dev dependency, for example in `cdktn debug` and
+  `cdktn provider list`.
+- **Terminal UI:** the CLI dropped Ink and React for smaller libraries. Output
+  is free of ANSI escape codes when stdout isn't a TTY. When `deploy` or
+  `destroy` needs approval and stdin isn't a TTY, the CLI prints a message
+  and stops cleanly instead of crashing.
+- **Provider schema cache:** `cdktn get` keys its schema cache on the
+  Terraform or OpenTofu product and minor version that fetched the schema. A
+  schema fetched with an old CLI no longer hides features a newer one
+  reports.
+
+See the [CHANGELOG](https://github.com/open-constructs/cdk-terrain/blob/main/CHANGELOG.md)
+for the complete list.
+
+## Pre-built providers
+
+These changes landed in the pre-built provider packages (`@cdktn/provider-*`)
+while v0.24 was current:
+
+- **CDKTN 0.24 pin:** every pre-built provider was regenerated against `cdktn`
+  `^0.24.0` and `constructs` `>=10.6.0 <10.8.0`, and shipped as a new major
+  version. For example, `@cdktn/provider-random` went from 14.x to 15.0.0.
+  The bindings were generated with Terraform 1.15.8, so they include the
+  ephemeral resources, provider-defined functions, and write-only attributes
+  that each provider's schema defines.
+- **New providers:** `@cdktn/provider-azapi` (`Azure/azapi`),
+  `@cdktn/provider-awscc` (`hashicorp/awscc`), and `@cdktn/provider-cfncompat`
+  (`cdktn-io/terraform-provider-cfncompat`). cfncompat has no resources. It
+  ships CloudFormation intrinsic functions as provider-defined functions.
+- **New provider majors:** Google and Google Beta moved to provider v8,
+  AzureRM to v5, and ACME (`vancluever/acme`) to v3. Each is a breaking change
+  for code that uses those providers. Check the upstream provider's upgrade
+  notes before you bump.
+
+Browse all pre-built providers and their current versions on the
+[provider dashboard](https://provider-dashboard.cdktn.io).

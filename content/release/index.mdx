@@ -1,51 +1,84 @@
 ---
-title: Releases
+title: What's New in CDK Terrain
+sidebarTitle: Overview
 description: >-
-  We release CDK Terrain regularly. Find a link to the changelog and upgrade guides. Use feature flags to enable new behaviors.
+  The latest CDK Terrain release at a glance, the feature flags you can enable
+  today, and links to the release notes of earlier versions.
 ---
 
-We release CDK Terrain (CDKTN) regularly. The [CHANGELOG on Github](https://github.com/open-constructs/cdk-terrain/blob/main/CHANGELOG.md) contains details about bug fixes, new features, and deprecations.
+We release CDK Terrain (CDKTN) regularly. This page always reflects the latest
+release. Each version has its own release notes in the sidebar, and versions
+with breaking changes have an upgrade guide. The
+[CHANGELOG on GitHub](https://github.com/open-constructs/cdk-terrain/blob/main/CHANGELOG.md)
+lists every bug fix, feature, and deprecation.
 
-## What's New
+## Latest: v0.25 (2026-10-27)
 
-- [Canonical asset hashes](/release/canonical-asset-hashes) — the
-  `canonicalAssetHashes` flag makes asset hashes track every property of the
-  emitted asset (names, permissions, symlinks, empty directories), and
-  archives are now emitted byte-reproducibly.
-- [Function availability validation](/release/function-availability) — the `Fn`
-  bindings cover Terraform and OpenTofu, and synthesis validates function usage
-  against your project's declared `targetVersions`.
-- [S3-native state locking](/release/s3-native-locking) — the `S3Backend` can now
-  lock state with a native lock file via the `useLockfile` field, removing the
-  need for a separate DynamoDB table.
+v0.25 is a breaking release. Read the
+[v0.25 release notes](/release/whats-new/v0-25) for every change, and follow
+the [v0.25 upgrade guide](/release/upgrade-guide-v0-25) to upgrade from v0.24.
+
+**Synthesis validates against your declared targets only.** Moved blocks,
+import blocks, `terraform_data`, and the `cloud` backend are checked against
+the `targetVersions` in `cdktf.json`, and synthesis no longer runs the
+Terraform or OpenTofu binary. A project that declares a Terraform floor below
+a feature's minimum now fails synthesis.
+[Learn more](/release/whats-new/v0-25/synth-time-validation).
+
+**Asset staging and bundling.** `TerraformAsset` can exclude files, fold
+extra inputs into its hash, and run a bundler that builds the source into a
+directory or a single-file artifact before it's staged.
+[Learn more](/release/whats-new/v0-25/asset-pipeline).
+
+**Registry-aware provider resolution.** A project that targets only OpenTofu
+resolves providers, versions, and generated documentation links from the
+OpenTofu Registry, without fully qualified provider sources.
+[Learn more](/release/whats-new/v0-25/registry-resolution).
+
+**Usage metrics with consent.** The CLI no longer contacts HashiCorp
+Checkpoint. It reports aggregated usage metrics to the CDKTN project's
+Sentry, behind a new `sendUsageTelemetry` flag in `cdktf.json`.
+[Learn more](/release/whats-new/v0-25/usage-telemetry).
+
+**New TypeScript defaults and a Node.js 22.23.4 minimum.** The CLI requires
+Node.js 22.23.4 or later. A new `typescript-pnpm` template manages the
+project with pnpm, the TypeScript template runs on tsx and TypeScript 6, and
+Yarn is deprecated.
+[Learn more](/release/whats-new/v0-25#typescript-pnpm-template).
 
 ## Feature Flags
 
 Some new behaviors ship behind feature flags to preserve backwards
 compatibility for existing projects. Projects created with `cdktn init` get
 all current flags enabled in the `context` section of their `cdktf.json`;
-existing projects can opt in by adding the entries manually. In the next major
-release these behaviors become the default.
+existing projects can opt in by adding the entries manually. A later release
+makes each behavior the default and removes its flag; the upgrade guide for
+that release tells you what changes.
 
 | Flag                              | Behavior when enabled                                                                                                                     |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `canonicalAssetHashes`            | Asset hashes cover every property of the emitted asset — file names, permission bits, symlink targets, and empty directories — so any change to the asset changes its hash and path. [Learn more](/release/canonical-asset-hashes). |
+| `canonicalAssetHashes`            | Asset hashes cover every property of the emitted asset — file names, permission bits, symlink targets, and empty directories — so any change to the asset changes its hash and path. [Learn more](/release/whats-new/v0-24/canonical-asset-hashes). |
 | `failOnConstructsOutsideOfStacks` | Synthesis throws if constructs are scoped directly to the `App` instead of a `TerraformStack`.                                            |
-| `validateFunctionVersions`        | Functions used through `Fn` are validated at synth time against the project's declared `targetVersions`, without executing any binary. [Learn more](/release/function-availability). |
 
-## Upgrade Guides
+To opt in on an existing project, set the flags to `"true"` in `cdktf.json`:
 
-CDKTN includes upgrade guides for releases that have breaking changes.
+```json
+{
+  "context": {
+    "canonicalAssetHashes": "true",
+    "failOnConstructsOutsideOfStacks": "true"
+  }
+}
+```
 
-- [Upgrading to v0.23](/release/upgrade-guide-v0-23)
-- [Upgrading to v0.22](/release/upgrade-guide-v0-22)
-- [Upgrading to v0.19](/release/upgrade-guide-v0-19)
-- [Upgrading to v0.17](/release/upgrade-guide-v0-17)
-- [Upgrading to v0.15](/release/upgrade-guide-v0-15)
-- [Upgrading to v0.13](/release/upgrade-guide-v0-13)
-- [Upgrading to v0.12](/release/upgrade-guide-v0-12)
-- [Upgrading to v0.11](/release/upgrade-guide-v0-11)
-- [Upgrading to v0.10](/release/upgrade-guide-v0-10)
-- [Upgrading to v0.9](/release/upgrade-guide-v0-9)
-- [Upgrading to v0.7](/release/upgrade-guide-v0-7)
-- [Upgrading to v0.6](/release/upgrade-guide-v0-6)
+## Earlier Releases
+
+- [v0.24](/release/whats-new/v0-24): function validation on by default, a
+  Node.js 22.19 minimum, symlink-preserving assets, canonical asset hashes,
+  and ephemeral resources, provider-defined functions, and write-only
+  attributes.
+- [v0.23](/release/whats-new/v0-23): runtime support drops, mixins, declared
+  `targetVersions`, function availability validation, and S3-native state
+  locking.
+- [v0.22](/release/whats-new/v0-22): the first release as CDK Terrain, with
+  packages renamed from `cdktf` to `cdktn`.

@@ -2,25 +2,50 @@
 title: Telemetry - CDK Terrain
 sidebarTitle: Telemetry
 description: >-
-  CDK Terrain uses a HashiCorp service called Checkpoint to report project
-  metrics. Using Checkpoint is optional.
+  The CDK Terrain CLI can report anonymous usage metrics and crash reports to
+  the project's Sentry. Learn what it sends and how to turn each one off.
 ---
 
-The [CDK Terrain CLI](/cli-reference/cli-configuration) interacts with a HashiCorp service called [Checkpoint](https://checkpoint.hashicorp.com) to report project metrics such as cdktn version, project language, provider name, platform name, and other details that help guide the project maintainers with feature and roadmap decisions. All HashiCorp projects, including Terraform Core, use Checkpoint. Read more about project metrics [in this issue](https://github.com/open-constructs/cdk-terrain/issues/325).
+The [CDK Terrain CLI](/cli-reference/cli-configuration) can send two kinds of data to the CDKTN project's [Sentry](https://sentry.io/): anonymous usage metrics and crash reports. Each one has its own consent flag in your [`cdktf.json`](/create-and-deploy/configuration-file) file. The maintainers use this data to decide which features, languages, and providers to prioritize.
 
-Starting with CDK Terrain 0.6, this information includes a random UUID that uniquely identifies the machine, and new projects will have a project-specific UUID added to the `cdktf.json` file. The purpose of these UUIDs is to help team understand how the tool is used in order to help us prioritize features. The [code that interacts with Checkpoint](https://github.com/open-constructs/cdk-terrain/blob/main/packages/%40cdktf/commons/src/checkpoint.ts) is part of CDK Terrain CLI.
+<Note>
+Before v0.25, the CLI reported usage data to HashiCorp Checkpoint. v0.25 removed Checkpoint, and the CLI no longer contacts `checkpoint-api.hashicorp.com`. See [What's New: Usage Metrics and Consent](/release/whats-new/v0-25/usage-telemetry).
+</Note>
 
-CDK Terrain fingerprints the type of CI used and includes that in telemetry instead of the UUID when CDK Terrain runs in a Continuous Integration tool, such as GitHub Actions, Jenkins, or GitLab. The only information submitted is the type of CI system, and no unique information about accounts, paths, workspaces, environment variables, or other potentially private information is shared. This data helps the team plan where to focus future efforts, because running infrastructure as code tools in CI is a key workflow we seek to improve.
+## Consent
 
-The information that is sent to Checkpoint is anonymous and cannot be used to identify the user or host. The use of Checkpoint is completely optional and it can be disabled at any time by setting the `CHECKPOINT_DISABLE` environment variable to a non-empty value.
+`sendUsageTelemetry` controls usage metrics, and `sendCrashReports` controls crash reports:
+
+```json cdktf.json
+{
+  "sendCrashReports": false,
+  "sendUsageTelemetry": false
+}
+```
+
+| Situation                                                | Usage metrics                        | Crash reports                        |
+| -------------------------------------------------------- | ------------------------------------ | ------------------------------------ |
+| `CHECKPOINT_DISABLE` is set to any non-empty value       | Off                                  | Unaffected                           |
+| The flag is `true` or `false` in `cdktf.json`            | As set                               | As set                               |
+| The flag is missing, in an interactive terminal          | The CLI asks once, saves your answer | The CLI asks once, saves your answer |
+| The flag is missing, in CI or with piped input or output | On                                   | Off                                  |
+
+- To turn usage metrics off everywhere, for example on CI runners, set `CHECKPOINT_DISABLE` to a non-empty value. It takes precedence over `cdktf.json`.
+- The flags accept booleans or the strings `"true"` and `"false"`. Any other value counts as missing.
+- The CLI only prompts when stdin and stdout are terminals, it isn't running in CI, and the project has a `cdktf.json` file to save the answer to.
+- `cdktn init` asks both questions for a new project. To answer them without a prompt, pass `--enable-usage-telemetry=true|false` and `--enable-crash-reporting=true|false`.
+- If you agree to usage metrics only, the CLI sends no crash reports.
+
+## Usage metrics
+
+Usage metrics are counters and durations, aggregated per run. They cover the commands you run and whether they succeed, your environment (CI system, project language, operating system, Terraform or OpenTofu version, declared `targetVersions`, and package manager), and counts that describe your stacks, such as the backend type and the public registry providers you use. The [v0.25 release notes](/release/whats-new/v0-25/usage-telemetry#what-the-cli-reports) list every metric and which commands report them.
+
+Sentry adds a random install ID, stored in `~/.cdktf/config.json`. To create a new ID, delete that file.
+
+The CLI never sends stack names, construct IDs, resource addresses, file paths, your hostname or username, error messages, or `SENTRY_*` environment variables. Private registry hosts and module sources are reduced to a category such as `private-registry`, `git`, or `local`.
 
 ## Crash Reporting
 
-To improve the stability of the [CDK Terrain CLI](/cli-reference/cli-configuration) we also use [Sentry](https://sentry.io/) for error reporting.
+Crash reports help the maintainers improve the stability of the CLI. A crash report includes a stack trace and the log events that happened before the error. The CLI only sends a report when an error occurs, and it doesn't report usage errors.
 
-The error reports sent include a stack trace and log events that happened before the error. This information only gets sent if there is an error. If no error happens a session is tracked, so that we can calculate the percentage of crash free sessions as a metric.
-
-The error reporting is scoped to the CLI and no environment variables are tracked, limiting the risk of sending secret information by accident.
-
-We won't track any errors as long as the [`sendCrashReports`](/create-and-deploy/configuration-file#enable-crash-reporting-for-the-cli) property in the `cdktf.json` file is not set or is set to `false`. If it is not set we will ask you if you want to enable crash reporting and persist the answer in your `cdktf.json` file.
-If you change your mind, change the [`sendCrashReports`](/create-and-deploy/configuration-file#enable-crash-reporting-for-the-cli) property in your `cdktf.json` file to false to disable error reporting.
+The CLI sends no crash reports unless the [`sendCrashReports`](/create-and-deploy/configuration-file#enable-crash-reporting-for-the-cli) property in your `cdktf.json` file is `true`. If the property is missing, the CLI asks you in an interactive terminal and saves your answer. To stop sending crash reports, set the property to `false`.

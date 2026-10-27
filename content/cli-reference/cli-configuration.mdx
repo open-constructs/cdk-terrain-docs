@@ -58,7 +58,4 @@ You can configure the behavior of the Terraform CDK CLI by modifying the `cdktf.
 
 ## Telemetry
 
-The CDKTN CLI ([cdktn-cli](https://github.com/open-constructs/cdk-terrain/tree/main/packages/cdktn-cli) interacts with a HashiCorp service called [Checkpoint](https://checkpoint.hashicorp.com)
-to report project metrics such as cdktn version, project language, provider name, platform name, and other details that help guide the project maintainers with feature and roadmap decisions. The [code that interacts with Checkpoint](https://github.com/open-constructs/cdk-terrain/blob/main/packages/%40cdktf/commons/src/checkpoint.ts) is part of the CDK Terrain CLI.
-
-The use of Checkpoint is completely optional. Refer to the [telemetry documentation](/telemetry) for more information about Checkpoint and you can disable it if desired.
+The CDKTN CLI can send anonymous usage metrics and crash reports to the CDKTN project's Sentry. Each one has its own consent flag in `cdktf.json`, `sendUsageTelemetry` and `sendCrashReports`. Refer to [Telemetry](/telemetry) for what the CLI sends and how to turn each one off.

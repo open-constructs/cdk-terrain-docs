@@ -1,0 +1,379 @@
+---
+title: Upgrading to CDKTN Version 0.25
+sidebarTitle: Upgrading to Version 0.25
+description: >-
+  Upgrade your CDK Terrain (cdktn) project from v0.24 to v0.25. This release
+  requires Node.js 22.23.4, validates moved, import, terraform_data, and cloud
+  against targetVersions at synth time, changes the asset packaging interface,
+  and replaces HashiCorp Checkpoint telemetry.
+---
+
+0.25 contains **breaking changes**. Most projects only need a newer Node.js
+and the package bumps below. Read the breaking changes to check whether your
+project is affected. For everything v0.25 introduced, see
+[What's New in v0.25](/release/whats-new/v0-25).
+
+## Prerequisites
+
+- A project on CDKTN 0.24.x. If you're on an earlier version, follow the
+  [v0.24 upgrade guide](/release/upgrade-guide-v0-24) first.
+- Node.js 22.23.4 or later.
+- Python 3.10 or later, if your project uses Python.
+
+## Breaking Changes
+
+### Node.js 22.23.4 minimum
+
+`cdktn-cli` now requires Node.js 22.23.4 or later, the 22.x release with the
+October 2026 Node.js security fixes. This applies to every project language,
+because the CLI runs on Node.js. Update your local environment and CI before
+you upgrade:
+
+```bash
+node --version   # must be >= 22.23.4
+```
+
+### Python 3.10 minimum
+
+The `cdktn` 0.25.0 package on PyPI requires Python 3.10 or later
+(`requires_python >=3.10`); 0.24.0 accepted Python 3.9. Python projects must
+run on Python 3.10+ locally and in CI before upgrading:
+
+```bash
+python3 --version   # must be >= 3.10
+```
+
+### Moved, import, `terraform_data`, and `cloud` validate against `targetVersions`
+
+Synthesis now checks these features against the `targetVersions` in
+`cdktf.json` instead of the Terraform binary on your `PATH`:
+
+| Feature                    | Terraform | OpenTofu  |
+| -------------------------- | --------- | --------- |
+| `cloud` block              | `>=1.1.0` | `>=1.6.0` |
+| `terraform_data` resource  | `>=1.4.0` | `>=1.6.0` |
+| `import` blocks            | `>=1.5.0` | `>=1.6.0` |
+| `moved` blocks             | `>=1.5.0` | `>=1.6.0` |
+
+If you don't declare `targetVersions`, CDKTN checks against Terraform
+`>=1.5.7` and OpenTofu `>=1.6.0`, and all four features pass. You only need
+to act if you declare a range whose floor is below a feature you use.
+
+1. Open `cdktf.json` and find `targetVersions`. Projects created with
+   `cdktn init` since v0.23.4 declare the defaults:
+
+   ```json
+   {
+     "targetVersions": {
+       "terraform": ">=1.5.7",
+       "opentofu": ">=1.6.0"
+     }
+   }
+   ```
+
+2. Run `cdktn synth`. If it fails with a message such as
+   `The moved block requires terraform >=1.5.0, but the project targets terraform >=1.4.0`,
+   raise the floor of that product to the version in the table, or stop using
+   the feature. Each key takes an npm semver range. Leave out a product you
+   don't deploy with. See
+   [Declare Target Runtimes](/create-and-deploy/configuration-file#declare-target-runtimes).
+
+3. Synthesis no longer notices when the installed binary is older than your
+   declared range. To keep that check, set `validateInstalledBinary` so the
+   commands that run the binary verify it first. See
+   [Validate the Installed Binary](/create-and-deploy/configuration-file#validate-the-installed-binary).
+
+   ```json
+   {
+     "validateInstalledBinary": true
+   }
+   ```
+
+See [Synth-Time Validation](/release/whats-new/v0-25/synth-time-validation)
+for details.
+
+### `ValidateBinaryVersion` and `ValidateTerraformVersion` removed
+
+These classes are deleted. They were never exported from the `cdktn` package
+root, so this only affects code that deep-imported them from inside the
+package. Remove those imports. To validate a feature
+against the project's targets, rely on `targetVersions`. To check the
+installed binary, use `validateInstalledBinary`.
+
+### Asset API changes
+
+**Custom `IAssetPackaging` implementations** must add two required members:
+
+```diff
+ class TarGzPackaging implements IAssetPackaging {
+   public readonly extension = ".tar.gz";
+   public readonly producesDirectory = false;
++  // pack() accepts a directory as its source
++  public readonly acceptsDirectorySource = true;
++  // the artifact has no directory entries of its own
++  public readonly omitsDirectoryEntries = false;
+   public pack(options: PackOptions): void {
+     // ...
+   }
+ }
+```
+
+`omitsDirectoryEntries` must match what `pack()` writes, or the asset hash and
+the artifact describe different file sets. The built-in zip packaging sets it
+to `true`, because its archives contain no directory entries.
+
+**Custom `assetHash` values** may only contain letters, digits, `_`, `.`, and
+`-`, because the hash becomes part of the staged asset's path. Sanitize values
+built from branch names or paths:
+
+```typescript
+new TerraformAsset(this, "lambda", {
+  path: "./lambda",
+  assetHash: branchName.replace(/[^A-Za-z0-9_.-]/g, "-"), // "feature/x" -> "feature-x"
+});
+```
+
+**`TerraformAsset.assetHash` is read-only.** Java, C#, Python, and Go lose the
+setter. Pass `assetHash` when you create the asset instead of assigning it
+afterward.
+
+## Deprecations
+
+### `--cdktf-version`
+
+`cdktn init --cdktf-version` still works but prints a warning. Replace it with
+`--cdktn-version` in scripts and CI:
+
+```diff
+- cdktn init --template=typescript --cdktf-version=0.25.0
++ cdktn init --template=typescript --cdktn-version=0.25.0
+```
+
+### Yarn
+
+Projects that use Yarn, classic (1.x) or Berry (2+), print a one-time
+deprecation warning. Move them to npm or pnpm. On Yarn Berry, `provider list`,
+`provider upgrade`, and `debug` fail with a usage error. See
+[TypeScript package managers](/create-and-deploy/project-setup#typescript-package-managers).
+
+## Telemetry changes
+
+The CLI no longer sends data to HashiCorp Checkpoint. It reports aggregated
+usage metrics to the CDKTN project's Sentry, behind a new
+`sendUsageTelemetry` flag in `cdktf.json`:
+
+- On your first interactive run after the upgrade, the CLI asks once about
+  each consent flag that's missing from `cdktf.json` and saves your answers.
+  This includes `sendCrashReports`, which earlier versions never asked about
+  when the key was missing.
+- In CI, or when input or output is piped, the CLI never asks. Usage metrics
+  stay on unless you opt out, and crash reports stay off.
+- To opt out, set `"sendUsageTelemetry": false` in `cdktf.json`, or set
+  `CHECKPOINT_DISABLE` to any non-empty value.
+
+```json
+{
+  "sendCrashReports": false,
+  "sendUsageTelemetry": false
+}
+```
+
+See [Usage Metrics and Consent](/release/whats-new/v0-25/usage-telemetry) for
+what the CLI reports.
+
+## Upgrade Process
+
+<Warning>
+  Each pre-built provider major supports one CDKTN minor. Before you upgrade,
+  check that a major built for 0.25 exists for every pre-built provider you
+  use: its `peerDependencies` must allow `cdktn` 0.25. A major that requires
+  `cdktn` `^0.24.0` doesn't install next to 0.25. npm stops with `ERESOLVE`.
+  Until a 0.25 major exists for a provider, stay on 0.24 or remove the
+  pre-built package and
+  [generate the bindings locally](/concepts/providers#import-providers)
+  with `cdktn get`. The
+  [provider dashboard](https://provider-dashboard.cdktn.io) lists every
+  pre-built provider and its current version.
+</Warning>
+
+<Tabs>
+  <Tab title="TypeScript/JavaScript">
+
+  **1. Ensure Node.js 22.23.4+:**
+
+  ```bash
+  node --version
+  ```
+
+  **2. Check your pre-built providers:**
+
+  ```bash
+  npm view @cdktn/provider-random peerDependencies
+  ```
+
+  **3. Bump the cdktn packages in package.json:**
+
+  CDKTN 0.25 supports `constructs` `^10.6.0` again, so you can lift a
+  `<10.8.0` cap you added for 0.24.
+
+  ```diff
+  {
+    "dependencies": {
+  -   "cdktn": "^0.24.0",
+  -   "constructs": ">=10.6.0 <10.8.0"
+  +   "cdktn": "^0.25.0",
+  +   "constructs": "^10.6.0"
+    },
+    "devDependencies": {
+  -   "cdktn-cli": "^0.24.0"
+  +   "cdktn-cli": "^0.25.0"
+    }
+  }
+  ```
+
+  Bump each `@cdktn/provider-*` package to its major for 0.25 as well.
+
+  **4. Reinstall and verify:**
+
+  ```bash
+  npm install
+  npx tsc --noEmit
+  ```
+
+  **5. Optional: move to TypeScript 6.** Your project keeps working with
+  `ts-node` on TypeScript 5. ts-node doesn't support TypeScript 6, so if you
+  move to it, run the app with tsx as new projects do:
+
+  ```bash
+  npm install --save-dev tsx typescript@6
+  ```
+
+  In `cdktf.json`:
+
+  ```diff
+  - "app": "npx ts-node main.ts",
+  + "app": "npx tsx main.ts",
+  ```
+
+  TypeScript 6 no longer loads ambient `@types` packages automatically, and
+  ts-jest needs `isolatedModules` on TypeScript 6. Add both to
+  `tsconfig.json`:
+
+  ```json
+  {
+    "compilerOptions": {
+      "types": ["node", "jest"],
+      "isolatedModules": true
+    }
+  }
+  ```
+
+  tsx doesn't type-check, so `cdktn synth` no longer reports type errors. Run
+  `npx tsc --noEmit` or `npm run build` in CI.
+
+  </Tab>
+  <Tab title="Python">
+
+  **1. Ensure Node.js 22.23.4+** for the CLI and **Python 3.10+** for your project.
+
+  **2. Bump cdktn in requirements.txt or Pipfile:**
+
+  ```diff
+  - cdktn>=0.24.0
+  + cdktn>=0.25.0
+  ```
+
+  Bump each `cdktn-provider-*` package to the major built for 0.25 as well.
+  `cdktn` 0.25.0 requires `constructs>=10.6.0,<11.0.0`.
+
+  **3. Reinstall:**
+
+  ```bash
+  pip install -r requirements.txt --force-reinstall
+  ```
+
+  </Tab>
+  <Tab title="Go">
+
+  **1. Ensure Node.js 22.23.4+** for the CLI.
+
+  **2. Bump the cdktn module:**
+
+  ```diff
+  require (
+  -   github.com/open-constructs/cdk-terrain-go/cdktn v0.24.0
+  +   github.com/open-constructs/cdk-terrain-go/cdktn v0.25.0
+  )
+  ```
+
+  **3. Tidy modules:**
+
+  ```bash
+  go mod tidy
+  ```
+
+  </Tab>
+  <Tab title="Java">
+
+  Ensure Node.js 22.23.4+ for the CLI, bump the dependency to `0.25.0`, and
+  rebuild.
+
+  ```diff
+  dependencies {
+  -   implementation "io.cdktn:cdktn:0.24.0"
+  +   implementation "io.cdktn:cdktn:0.25.0"
+  }
+  ```
+
+  ```bash
+  ./gradlew build
+  ```
+
+  </Tab>
+  <Tab title="C#">
+
+  Ensure Node.js 22.23.4+ for the CLI, bump the package reference to
+  `0.25.0`, and restore.
+
+  ```diff
+  <ItemGroup>
+  -   <PackageReference Include="Io.Cdktn" Version="0.24.0" />
+  +   <PackageReference Include="Io.Cdktn" Version="0.25.0" />
+  </ItemGroup>
+  ```
+
+  ```bash
+  dotnet restore
+  ```
+
+  </Tab>
+</Tabs>
+
+If you generate provider bindings locally with `cdktn get`, regenerate them
+with the 0.25 CLI. In a project that targets only OpenTofu, the documentation
+links in the bindings now point to the OpenTofu Registry. See
+[Registry-Aware Provider Resolution](/release/whats-new/v0-25/registry-resolution).
+
+## What Stays the Same
+
+The `cdktf.json` file name, the output directory (`cdktf.out/`), `CDKTF_*`
+environment variables, Terraform provider sources you already wrote, and your
+Terraform state are unaffected. Assets that don't use the new options keep
+their hashes.
+
+## Verification
+
+After upgrading, confirm your project still synthesizes:
+
+```bash
+# Synthesize
+cdktn synth
+
+# Verify output
+ls cdktf.out/stacks/*/cdk.tf.json
+```
+
+## Getting Help
+
+- Ask a question in [the cdk.dev Slack](https://cdk.dev/)
+- GitHub Issues: https://github.com/open-constructs/cdk-terrain/issues

@@ -2,12 +2,19 @@
 title: "What's New: Function Availability Validation"
 sidebarTitle: "Function Availability"
 description: >-
-  CDK Terrain validates the Terraform functions you use against the installed
-  Terraform or OpenTofu version, and the Fn bindings now cover both products.
+  CDK Terrain v0.23.4 validates the Terraform functions you use against your
+  declared targetVersions, and the Fn bindings cover Terraform and OpenTofu.
 ---
 
-CDK Terrain's `Fn` bindings and the new `validateFunctionVersions` feature flag
-make function usage safe across Terraform **and** OpenTofu.
+<Note>
+  Function validation became the default in v0.24, and the
+  `validateFunctionVersions` flag was removed. See the
+  [v0.24 upgrade guide](/release/upgrade-guide-v0-24).
+</Note>
+
+CDK Terrain v0.23.4 regenerated the `Fn` bindings and added the
+`validateFunctionVersions` feature flag, making function usage safe across
+Terraform **and** OpenTofu.
 
 ## What changed
 
@@ -47,9 +54,9 @@ project's declared [`targetVersions`](/create-and-deploy/configuration-file#decl
 function that is not available across the entire declared range fails
 synthesis with a clear message:
 
-```
+```text
 Validation failed with the following errors:
-  [MyStack/resource] Terraform function "cidrcontains" is not supported by terraform, but the project targets terraform >=1.5.7. It is available in opentofu >=1.7.0.
+  [MyStack] Terraform function "cidrcontains" is not supported by terraform, but the project targets terraform >=1.5.7. It is available in opentofu >=1.7.0.
 ```
 
 Behavior details:
@@ -65,11 +72,11 @@ Behavior details:
 - `skipValidation: true` on the `App` disables it along with all other
   validations.
 
-## Enabling the flag
+## Opting in during v0.23
 
-Projects created with `cdktn init` get the flag (and an explicit default
-`targetVersions`) automatically. Existing projects can opt in via
-`cdktf.json`:
+In v0.23.4 the validation was opt-in. Projects created with `cdktn init` got
+the flag (and an explicit default `targetVersions`) automatically, and existing
+projects enabled it in `cdktf.json`:
 
 ```json
 {
@@ -82,11 +89,6 @@ Projects created with `cdktn init` get the flag (and an explicit default
   }
 }
 ```
-
-<Note>
-  Like all feature flags, this behavior becomes the default in the next major
-  release. See [Feature Flags](/release#feature-flags).
-</Note>
 
 ## Limitations
 

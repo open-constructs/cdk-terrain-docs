@@ -28,6 +28,29 @@ the full API reference — rather than relying on training data.
 - **Read-only and safe.** The server cannot mutate state or run actions; it only
   searches and returns published site content.
 
+## New projects are already set up
+
+Since v0.25, `cdktn init` prepares new projects for coding agents. Every
+built-in template adds an `AGENTS.md` file that tells agents the project uses
+CDKTN and points them to the MCP server, the agent skill file, and `llms.txt`.
+`cdktn init` also writes a `.mcp.json` that registers the server for Claude
+Code under the name `cdktn`:
+
+```json .mcp.json
+{
+  "mcpServers": {
+    "cdktn": {
+      "type": "http",
+      "url": "https://cdktn.io/docs/mcp"
+    }
+  }
+}
+```
+
+If the project already has a `.mcp.json`, `cdktn init` leaves it alone and
+prints a pointer to this page. To add the server to an existing project or to
+another client, follow the steps below.
+
 ## Set up your agent
 
 Use the server name **`cdktn-terraform-cdk-docs`** so the agent associates

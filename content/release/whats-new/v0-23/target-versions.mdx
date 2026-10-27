@@ -1,0 +1,72 @@
+---
+title: "What's New: Declared Target Versions"
+sidebarTitle: "Target Versions"
+description: >-
+  CDK Terrain v0.23.4 added the targetVersions field to cdktf.json, so
+  synth-time validations check features against the Terraform and OpenTofu
+  versions your project declares instead of running a binary.
+---
+
+CDK Terrain v0.23.4 lets you declare, in `cdktf.json`, the Terraform and
+OpenTofu versions your project supports. Synth-time validations check features
+against that declaration
+([cdk-terrain#269](https://github.com/open-constructs/cdk-terrain/pull/269)).
+
+<Note>
+  Later releases added more validations against `targetVersions`: function
+  availability became the default in v0.24, and v0.25 validates moved blocks,
+  import blocks, `terraform_data`, and the `cloud` backend at synth time
+  instead of probing the installed binary.
+</Note>
+
+## What changed
+
+### New `targetVersions` field
+
+`targetVersions` takes an [npm semver range](https://github.com/npm/node-semver#ranges)
+per product, keyed by `terraform` and `opentofu`:
+
+```json
+{
+  "targetVersions": {
+    "terraform": ">=1.5.7",
+    "opentofu": ">=1.6.0"
+  }
+}
+```
+
+- A feature passes validation only if every version in the declared range of
+  every targeted product supports it. If you use a feature that needs a newer
+  version, raise the floor of your declared range.
+- If you leave out a product, your project does not target it. If you leave
+  out `targetVersions` entirely, CDKTN assumes both products, from
+  `terraform >=1.5.7` and `opentofu >=1.6.0`.
+- CDKTN validates the field when it parses `cdktf.json`. Terraform's `~>`
+  constraint syntax is rejected, because npm semver would read it with
+  different semantics.
+- `cdktn init` writes the default ranges explicitly into new projects.
+
+In v0.23.4, two validations used the declared targets:
+[function availability](/release/whats-new/v0-23/function-availability)
+(behind the `validateFunctionVersions` flag) and
+[S3-native state locking](/release/whats-new/v0-23/s3-native-locking), which
+requires Terraform or OpenTofu 1.10 or later when `useLockfile` is set.
+
+### Synthesis never runs a binary for these checks
+
+Validations against `targetVersions` are declarative. Synthesis behaves the
+same in CI, in package builds, and on machines without Terraform or OpenTofu
+installed.
+
+### Opt-in installed-binary check
+
+Set `"validateInstalledBinary": true` to have `cdktn diff`, `cdktn deploy`,
+`cdktn destroy`, and `cdktn output` verify the installed binary before they run
+it. The command fails if CDKTN can't tell whether the binary is Terraform or
+OpenTofu, if that product isn't declared in `targetVersions`, or if its version
+is outside the declared range. The default is `false`.
+
+## Learn more
+
+See [Declare Target Runtimes](/create-and-deploy/configuration-file#declare-target-runtimes)
+for the full reference.

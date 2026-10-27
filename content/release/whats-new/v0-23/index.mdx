@@ -1,0 +1,156 @@
+---
+title: "What's New in CDK Terrain v0.23"
+sidebarTitle: Overview
+description: >-
+  Everything CDK Terrain v0.23.0 through v0.23.4 introduced: runtime support
+  drops, mixins, declared target versions, function availability validation,
+  S3-native state locking, faster synthesis, and pre-built provider updates.
+---
+
+CDK Terrain (CDKTN) v0.23.0 shipped on 2026-05-05, and four patch releases
+followed through v0.23.4 on 2026-07-02. v0.23.0 dropped support for end-of-life
+language runtimes. The patch releases added new features, so this page covers
+the whole 0.23.x line. To upgrade from v0.22, follow the
+[v0.23 upgrade guide](/release/upgrade-guide-v0-23).
+
+## Breaking changes
+
+### Dropped language runtimes (v0.23.0)
+
+v0.23.0 no longer supports Python 3.8, Go 1.18 to 1.24, or TypeScript versions
+below 4.5. The new minimums are Python 3.9 and Go 1.25. Generated provider
+bindings now use the TypeScript 4.5 `type` modifier on imports (see
+[Generated TypeScript bindings](#generated-typescript-bindings)). The
+[v0.23 upgrade guide](/release/upgrade-guide-v0-23) has the exact steps for each
+language.
+
+<Note>
+  v0.23 also announced that Node.js 20 is end-of-life and that Node.js 22 would
+  become the minimum in an upcoming release. v0.24 made Node.js 22.19.0 the
+  minimum, and v0.25 raised it to 22.23.4.
+</Note>
+
+## Features
+
+### Mixins (v0.23.0)
+
+v0.23.0 raised the `constructs` peer dependency to `^10.6.0`, which brings the
+`IMixin` interface and the `construct.with(...)` method. You can apply reusable
+behavior to a single construct without subclassing.
+[Learn more](/release/whats-new/v0-23/mixins).
+
+### Fail on constructs outside of stacks (v0.23.0)
+
+The new `failOnConstructsOutsideOfStacks` feature flag makes synthesis fail when
+a construct is scoped directly to the `App` instead of a `TerraformStack`. Such
+constructs never appear in any stack's output. `cdktn init` enables the flag
+for new projects. See [Feature Flags](/release#feature-flags).
+
+### `StringMapMap` for nested map attributes (v0.23.0)
+
+Some provider schemas define attributes as a map of string maps
+(`map(map(string))`). Provider generation previously failed on them. Generated
+bindings now expose these attributes as the new `StringMapMap` class, whose
+`lookup(key)` method returns a `StringMap`.
+
+### Generated TypeScript bindings
+
+- **`type` modifier on imports (v0.23.0):** generated provider and module
+  bindings import types with `import { ..., type X }`. You can now compile
+  projects that use generated bindings with `isolatedModules`,
+  `verbatimModuleSyntax`, or `preserveValueImports`.
+- **Configurable import extensions (v0.23.2):** set
+  `languageOptions.importExtension` in `cdktf.json` to `".js"` or `".ts"`, and
+  `cdktn get` emits fully qualified relative imports (for example
+  `./<folder>/index.js`) for ESM toolchains. Without the setting, CDKTN keeps
+  extensionless imports.
+
+  ```json
+  {
+    "language": "typescript",
+    "languageOptions": {
+      "importExtension": ".js"
+    }
+  }
+  ```
+
+### Faster synthesis (v0.23.3)
+
+- CDKTN now serializes synthesized JSON with `safe-stable-stringify` instead of
+  `json-stable-stringify`. In the benchmarks in
+  [cdk-terrain#224](https://github.com/open-constructs/cdk-terrain/pull/224),
+  this made serialization about twice as fast.
+- Set the `CDKTN_DISABLE_CREATION_STACK` environment variable to `true` or `1`
+  to skip capturing a stack trace for every token CDKTN creates. Capturing
+  stack traces is slow in Node.js, so this speeds up synthesis of large stacks.
+  The trade-off is that error messages no longer show where a token was
+  created.
+
+### Declared target versions (v0.23.4)
+
+The new `targetVersions` field in `cdktf.json` declares the Terraform and
+OpenTofu versions your project supports. Synth-time validations check against
+this declaration without running a binary. The optional `validateInstalledBinary`
+setting checks the installed binary before `diff`, `deploy`, `destroy`, and
+`output`. v0.25 extended synth-time validation against `targetVersions` to
+moved blocks, import blocks, `terraform_data`, and the `cloud` backend.
+[Learn more](/release/whats-new/v0-23/target-versions).
+
+### Function availability validation (v0.23.4)
+
+The `Fn` bindings now cover functions from current Terraform and OpenTofu
+releases. The `validateFunctionVersions` feature flag checks the functions you
+use against your `targetVersions` at synth time. The validation became the
+default in v0.24, and the flag was removed.
+[Learn more](/release/whats-new/v0-23/function-availability).
+
+### S3-native state locking (v0.23.4)
+
+`S3Backend` gained a `useLockfile` field that locks state with a lock file in
+S3 instead of a DynamoDB table, and `dynamodbTable` is deprecated.
+[Learn more](/release/whats-new/v0-23/s3-native-locking).
+
+## Deprecations
+
+- **`S3Backend.dynamodbTable` (v0.23.4):** use `useLockfile` instead. See
+  [S3-native state locking](/release/whats-new/v0-23/s3-native-locking#dynamodbtable-is-deprecated).
+
+## Notable fixes
+
+- **CLI (v0.23.4):** interrupting `cdktn diff` or `cdktn deploy` releases the
+  Terraform state lock. Terraform error output is no longer mistaken for a
+  missing-variable prompt.
+- **Pre-built Java providers (v0.23.4):** the CLI resolves pre-built Java
+  provider versions via `repo1.maven.org`.
+- **Provider generation (v0.23.4):** shorthand provider sources now match
+  OpenTofu schema keys.
+- **Provider generation (v0.23.1):** fixes code generation failures caused by
+  provider names that collide when case is ignored.
+- **CLI (v0.23.0, v0.23.2):** the CLI supports pre-built provider metadata with
+  a `cdktn` key, and interactive input is no longer split between `cdktn` and
+  Terraform.
+
+See the [CHANGELOG](https://github.com/open-constructs/cdk-terrain/blob/main/CHANGELOG.md)
+for the complete list.
+
+## Pre-built providers
+
+These changes landed in the pre-built provider packages (`@cdktn/provider-*`)
+while v0.23 was current:
+
+- **CDKTN 0.23 pin:** the pre-built providers moved to `cdktn` `^0.23.0`,
+  `constructs` `^10.6.0`, and jsii/TypeScript 5.9. This shipped as a new major
+  version of each provider.
+- **New provider majors:** Google and Google Beta moved to provider v7,
+  Docker (`kreuzwerker/docker`) and Datadog to v4, and Kubernetes to v3. Each
+  is a breaking change for code that uses those providers. Check the upstream
+  provider's upgrade notes before you bump.
+- **Node.js floor:** pre-built provider packages declare `engines.node`
+  `>=22.11.0` instead of `>=20.16.0`, starting with each provider's next major
+  release.
+- **Publishing:** Maven and NuGet publishing were re-enabled for the pre-built
+  providers. npm and PyPI packages are now published with trusted publishing
+  (OIDC).
+
+Browse all pre-built providers and their current versions on the
+[provider dashboard](https://provider-dashboard.cdktn.io).
