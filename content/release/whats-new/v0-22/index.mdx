@@ -44,15 +44,18 @@ NuGet.org.
 
 ### Generated TypeScript without parameter properties (v0.22.1)
 
-Generated provider bindings no longer use TypeScript parameter properties
-(for example `constructor(private x: string)`). That syntax can't be erased,
-so removing it brings generated code closer to running directly in Node.js
-with type stripping.
+The provider generator no longer emits TypeScript parameter properties (for
+example `constructor(private x: string)`) in generated structs
+([cdk-terrain#43](https://github.com/open-constructs/cdk-terrain/pull/43)).
+That syntax can't be erased, so removing it brings generated code closer to
+running directly in Node.js with type stripping.
 
 ## Notable fixes
 
 - **`cdktn init` (v0.22.1):** the TypeScript template pins TypeScript 5.x,
-  because `ts-jest` didn't support TypeScript 6 yet.
+  because `ts-jest` didn't support TypeScript 6 yet. v0.25 moved the template
+  to `tsx` and TypeScript 6
+  ([cdk-terrain#396](https://github.com/open-constructs/cdk-terrain/pull/396)).
 - **`TerraformOutput` (v0.22.1):** no longer triggers the Node.js `DEP0044`
   deprecation warning about `util.isArray`.
 - **Provider generation (v0.22.1):** Terraform variable types with inline

@@ -12,6 +12,13 @@ OpenTofu versions your project supports. Synth-time validations check features
 against that declaration
 ([cdk-terrain#269](https://github.com/open-constructs/cdk-terrain/pull/269)).
 
+<Note>
+  Later releases added more validations against `targetVersions`: function
+  availability became the default in v0.24, and v0.25 validates moved blocks,
+  import blocks, `terraform_data`, and the `cloud` backend at synth time
+  instead of probing the installed binary.
+</Note>
+
 ## What changed
 
 ### New `targetVersions` field
@@ -53,11 +60,11 @@ installed.
 
 ### Opt-in installed-binary check
 
-Set `"validateInstalledBinary": true` to have `cdktn diff`, `cdktn deploy`, and
-`cdktn destroy` verify the installed binary before they run it. The command
-fails if CDKTN can't tell whether the binary is Terraform or OpenTofu, if that
-product isn't declared in `targetVersions`, or if its version is outside the
-declared range. The default is `false`.
+Set `"validateInstalledBinary": true` to have `cdktn diff`, `cdktn deploy`,
+`cdktn destroy`, and `cdktn output` verify the installed binary before they run
+it. The command fails if CDKTN can't tell whether the binary is Terraform or
+OpenTofu, if that product isn't declared in `targetVersions`, or if its version
+is outside the declared range. The default is `false`.
 
 ## Learn more
 

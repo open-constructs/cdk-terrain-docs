@@ -26,7 +26,8 @@ language.
 
 <Note>
   v0.23 also announced that Node.js 20 is end-of-life and that Node.js 22 would
-  become the minimum in an upcoming release.
+  become the minimum in an upcoming release. v0.24 made Node.js 22.19.0 the
+  minimum, and v0.25 raised it to 22.23.4.
 </Note>
 
 ## Features
@@ -90,14 +91,17 @@ bindings now expose these attributes as the new `StringMapMap` class, whose
 The new `targetVersions` field in `cdktf.json` declares the Terraform and
 OpenTofu versions your project supports. Synth-time validations check against
 this declaration without running a binary. The optional `validateInstalledBinary`
-setting checks the installed binary before `diff`, `deploy`, and `destroy`.
+setting checks the installed binary before `diff`, `deploy`, `destroy`, and
+`output`. v0.25 extended synth-time validation against `targetVersions` to
+moved blocks, import blocks, `terraform_data`, and the `cloud` backend.
 [Learn more](/release/whats-new/v0-23/target-versions).
 
 ### Function availability validation (v0.23.4)
 
 The `Fn` bindings now cover functions from current Terraform and OpenTofu
 releases. The `validateFunctionVersions` feature flag checks the functions you
-use against your `targetVersions` at synth time.
+use against your `targetVersions` at synth time. The validation became the
+default in v0.24, and the flag was removed.
 [Learn more](/release/whats-new/v0-23/function-availability).
 
 ### S3-native state locking (v0.23.4)
@@ -141,6 +145,9 @@ while v0.23 was current:
   Docker (`kreuzwerker/docker`) and Datadog to v4, and Kubernetes to v3. Each
   is a breaking change for code that uses those providers. Check the upstream
   provider's upgrade notes before you bump.
+- **Node.js floor:** pre-built provider packages declare `engines.node`
+  `>=22.11.0` instead of `>=20.16.0`, starting with each provider's next major
+  release.
 - **Publishing:** Maven and NuGet publishing were re-enabled for the pre-built
   providers. npm and PyPI packages are now published with trusted publishing
   (OIDC).
