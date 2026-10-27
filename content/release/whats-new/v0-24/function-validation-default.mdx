@@ -1,0 +1,69 @@
+---
+title: "What's New: Function Validation On by Default"
+sidebarTitle: "Function Validation Default"
+description: >-
+  CDK Terrain v0.24.0 validates the Terraform functions you use against your
+  declared targetVersions in every project, and removes the
+  validateFunctionVersions feature flag.
+---
+
+CDK Terrain v0.24.0 made
+[function availability validation](/release/whats-new/v0-23/function-availability)
+the default and removed the `validateFunctionVersions` feature flag
+([cdk-terrain#362](https://github.com/open-constructs/cdk-terrain/pull/362)).
+In v0.23.4 the validation was opt-in.
+
+## What changed
+
+- Every `TerraformStack` checks the functions you use through `Fn` against
+  your project's
+  [declared `targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes).
+  If you don't declare `targetVersions`, CDKTN checks against
+  `{ "terraform": ">=1.5.7", "opentofu": ">=1.6.0" }`.
+- The `validateFunctionVersions` context key no longer has any effect. If your
+  `cdktf.json` still sets it, CDKTN ignores it, whether it's `"true"` or
+  `"false"`. You can't turn the validation off with it anymore.
+- `cdktn init` no longer adds the key to new projects.
+
+In v0.24.0, only seven functions have limited availability: `base64gunzip`,
+`cidrcontains`, `convert`, `ephemeralasnull`, `issensitive`,
+`templatestring`, and `urldecode`. If your project doesn't use them, nothing
+changes for you.
+
+## What you see
+
+If you use one of these functions outside its supported range, synthesis
+fails:
+
+```text
+Validation failed with the following errors:
+  [MyStack] Terraform function "templatestring" requires terraform >=1.9.0, but the project targets terraform >=1.5.7. It is available in terraform >=1.9.0 and opentofu >=1.7.0.
+  [MyStack] Terraform function "templatestring" requires opentofu >=1.7.0, but the project targets opentofu >=1.6.0. It is available in terraform >=1.9.0 and opentofu >=1.7.0.
+
+If you wish to ignore these validations, pass 'skipValidation: true' to your App configuration.
+```
+
+## How to fix a failure
+
+Pick one of these:
+
+- **Raise the floor** of each product you target to a version that has the
+  function. For `templatestring`:
+
+  ```json
+  {
+    "targetVersions": {
+      "terraform": ">=1.9.0",
+      "opentofu": ">=1.7.0"
+    }
+  }
+  ```
+
+- **Drop a product** you don't deploy with. If you only use OpenTofu,
+  declare only `opentofu`. CDKTN then doesn't check Terraform.
+- **Stop using the function**, if you need to support older versions.
+- **Skip all validations** with `skipValidation: true` on the `App`. This
+  also turns off every other synth-time validation.
+
+See [Function Availability Across Terraform and OpenTofu](/concepts/functions#function-availability-across-terraform-and-opentofu)
+for the full table of functions and versions.

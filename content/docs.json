@@ -107,6 +107,9 @@
                       {
                         "group": "v0.24",
                         "pages": [
+                          "release/whats-new/v0-24/index",
+                          "release/whats-new/v0-24/function-validation-default",
+                          "release/whats-new/v0-24/plugin-protocol",
                           "release/whats-new/v0-24/canonical-asset-hashes"
                         ]
                       },
@@ -131,6 +134,7 @@
                   {
                     "group": "Upgrade Guides",
                     "pages": [
+                      "release/upgrade-guide-v0-24",
                       "release/upgrade-guide-v0-23",
                       "release/upgrade-guide-v0-22",
                       "release/upgrade-guide-v0-19",

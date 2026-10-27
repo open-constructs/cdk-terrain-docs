@@ -1,0 +1,188 @@
+---
+title: "What's New: Ephemeral Resources, Provider Functions, and Write-Only Attributes"
+sidebarTitle: "Provider Protocol Features"
+description: >-
+  CDK Terrain v0.24.0 generates bindings for ephemeral resources,
+  provider-defined functions, and write-only attributes, and validates their
+  use against your declared targetVersions.
+---
+
+CDK Terrain v0.24.0 added support for three newer provider protocol features
+([cdk-terrain#296](https://github.com/open-constructs/cdk-terrain/pull/296)):
+ephemeral resources, provider-defined functions, and write-only attributes.
+`cdktn get` generates the full set of bindings a provider schema offers. When
+you use one of these features, synthesis checks that every Terraform and
+OpenTofu version in your
+[`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes)
+supports it.
+
+## What changed
+
+### Synth-time validation against `targetVersions`
+
+Each feature needs a minimum Terraform or OpenTofu version:
+
+| Feature                     | Terraform  | OpenTofu   |
+| --------------------------- | ---------- | ---------- |
+| Provider-defined functions  | >= 1.8.0   | >= 1.7.0   |
+| Ephemeral resources         | >= 1.10.0  | >= 1.11.0  |
+| Write-only attributes       | >= 1.11.0  | >= 1.11.0  |
+
+The check runs only when you use a feature, and no feature flag controls it.
+If you don't declare `targetVersions`, CDKTN assumes
+`{ "terraform": ">=1.5.7", "opentofu": ">=1.6.0" }`, so using any of these
+features fails synthesis until you raise the floor:
+
+```text
+Validation failed with the following errors:
+  [my-stack/db_password] ephemeral resources requires terraform >=1.10.0, but the project targets terraform >=1.5.7. Ephemeral resources are available in terraform >=1.10.0 and opentofu >=1.11.0.
+  [my-stack/db_password] ephemeral resources requires opentofu >=1.11.0, but the project targets opentofu >=1.6.0. Ephemeral resources are available in terraform >=1.10.0 and opentofu >=1.11.0.
+```
+
+Declare a range that every feature you use supports. You can also drop a
+product you don't deploy with:
+
+```json
+{
+  "targetVersions": {
+    "terraform": ">=1.11.0",
+    "opentofu": ">=1.11.0"
+  }
+}
+```
+
+### Generating bindings needs a recent CLI
+
+`cdktn get` reads these features from the provider schema that your
+Terraform or OpenTofu binary exports. Older binaries don't export them, so
+`cdktn get` warns when the binary that fetches a schema can't report a
+feature your `targetVersions` allow. The schema cache is now keyed on the
+product and minor version of that binary, so a schema cached by an older
+binary no longer hides these features from a newer one.
+
+The pre-built providers (`@cdktn/provider-*`) regenerated for CDKTN 0.24
+were built with Terraform 1.15.8 and include these features.
+
+### Ephemeral resources
+
+Ephemeral resources produce values that Terraform never stores in state or
+plan files, such as a generated password. Generated bindings expose them as
+classes prefixed with `Ephemeral` that extend the new
+`TerraformEphemeralResource` base class. For example, the `random` provider's
+ephemeral `random_password` becomes `EphemeralRandomPassword`. They
+synthesize under the top-level `ephemeral` key, and references to their
+attributes render as `ephemeral.<type>.<name>.<attribute>`.
+
+Compared to managed resources:
+
+- `lifecycle` accepts only `precondition` and `postcondition`.
+- Ephemeral resources don't support provisioners, `connection` blocks, import,
+  or moves.
+
+`cdktn convert` doesn't convert HCL `ephemeral` blocks yet
+([cdk-terrain#310](https://github.com/open-constructs/cdk-terrain/issues/310)).
+
+### Provider-defined functions
+
+When a provider ships functions, `cdktn get` generates typed bindings and
+mounts them on the generated provider class through its `functions`
+property. `time.functions.rfc3339Parse(...)` synthesizes to
+`${provider::time::rfc3339_parse(...)}`. The namespace is the provider's
+local name in `required_providers`. For how to call them, the lower-level
+`TerraformProviderFunction.invoke` escape hatch, and caveats, see
+[Provider-Defined Functions](/concepts/functions#provider-defined-functions).
+
+### Write-only attributes
+
+Write-only attributes, such as Vault's `data_json_wo`, accept a value on
+create or update, but the provider never stores it in state and never returns
+it. In generated bindings:
+
+- You set them as before, through the constructor config or the setter.
+  Setting one registers the synth-time check above.
+- The getter is now `@deprecated`, because reading a write-only attribute
+  always yields `null`. Removing these getters changes the generated API, so
+  it's planned for a future pre-built provider major
+  ([cdk-terrain#316](https://github.com/open-constructs/cdk-terrain/issues/316)).
+- Write-only attributes inside nested blocks get the deprecated getter but
+  aren't validated against `targetVersions` yet
+  ([cdk-terrain#308](https://github.com/open-constructs/cdk-terrain/issues/308)).
+  An unsupported version then fails at plan time instead of at synthesis.
+
+## Example
+
+This stack generates a password with an ephemeral resource, stores it in
+Vault through a write-only attribute, and calls a provider-defined function.
+It uses the pre-built `random`, `vault`, and `time` providers, and requires
+the `targetVersions` shown above:
+
+```ts
+import { Fn, TerraformOutput, TerraformStack } from "cdktn";
+import { Construct } from "constructs";
+import { RandomProvider } from "@cdktn/provider-random/lib/provider";
+import { EphemeralRandomPassword } from "@cdktn/provider-random/lib/ephemeral-random-password";
+import { TimeProvider } from "@cdktn/provider-time/lib/provider";
+import { VaultProvider } from "@cdktn/provider-vault/lib/provider";
+import { KvSecretV2 } from "@cdktn/provider-vault/lib/kv-secret-v2";
+
+class MyStack extends TerraformStack {
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+    new RandomProvider(this, "random");
+    new VaultProvider(this, "vault");
+    const time = new TimeProvider(this, "time");
+
+    // Ephemeral: never written to state or plan files
+    const password = new EphemeralRandomPassword(this, "db_password", {
+      length: 32,
+    });
+
+    // Write-only: Vault receives the value, state doesn't keep it
+    new KvSecretV2(this, "db_secret", {
+      mount: "secret",
+      name: "db",
+      dataJsonWo: Fn.jsonencode({ password: password.result }),
+      dataJsonWoVersion: 1,
+    });
+
+    // Provider-defined function on the provider instance
+    new TerraformOutput(this, "parsed", {
+      value: time.functions.rfc3339Parse("2026-08-06T00:00:00Z"),
+    });
+  }
+}
+```
+
+The relevant part of the synthesized JSON, without the metadata entries:
+
+```json
+{
+  "ephemeral": {
+    "random_password": {
+      "db_password": { "length": 32 }
+    }
+  },
+  "resource": {
+    "vault_kv_secret_v2": {
+      "db_secret": {
+        "data_json_wo": "${jsonencode({\"password\" = ephemeral.random_password.db_password.result})}",
+        "data_json_wo_version": 1,
+        "mount": "secret",
+        "name": "db"
+      }
+    }
+  },
+  "output": {
+    "parsed": {
+      "value": "${provider::time::rfc3339_parse(\"2026-08-06T00:00:00Z\")}"
+    }
+  }
+}
+```
+
+<Note>
+  To output a value derived from an ephemeral resource, wrap it in
+  `Fn.ephemeralasnull(...)` and set `sensitive: true` on the
+  `TerraformOutput`. See the
+  [caveats for provider-defined functions](/concepts/functions#caveats).
+</Note>
