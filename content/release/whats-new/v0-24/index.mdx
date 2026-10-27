@@ -90,8 +90,8 @@ When you use one of these features, synthesis checks it against your declared
 
 - **Write-only attribute getters:** the provider never returns a write-only
   value, so the getter always yields `null`. Generated bindings mark it
-  `@deprecated`, and removal is planned for a future pre-built provider major. Set
-  write-only attributes, but don't read them. See
+  `@deprecated`, and removal is planned for a future pre-built provider
+  major. Set write-only attributes, but don't read them. See
   [Write-only attributes](/release/whats-new/v0-24/plugin-protocol#write-only-attributes).
 
 ## Notable fixes
@@ -100,8 +100,7 @@ When you use one of these features, synthesis checks it against your declared
   metadata in a way that breaks jsii's symbol lookup, so CDKTN produced
   silently wrong output with it. The `cdktn` peer dependency is now
   `>=10.6.0 <10.8.0`, and the TypeScript template of `cdktn init` installs a
-  matching version. v0.25
-  adopted jsii 6 and restored the `^10.6.0` range.
+  matching version. v0.25 adopted jsii 6 and restored the `^10.6.0` range.
 - **Pre-built provider resolution:** a transient registry failure (a network
   error, HTTP 408, 429, or 5xx) no longer makes `cdktn provider add` silently
   install an older pre-built provider. The CLI retries, and if the registry
