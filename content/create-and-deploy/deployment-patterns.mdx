@@ -79,11 +79,11 @@ jobs:
           tofu_version: 1.12.3
           tofu_wrapper: false # let CDK Terrain call tofu directly
       - run: npm ci
-      - uses: cdktn-io/action@main # pin to a released tag once published
+      - uses: cdktn-io/action@v1
         with:
           mode: plan-only
           stackName: my-stack
-          cdktnVersion: 0.23.4
+          cdktnVersion: 0.25.0
           engine: tofu # omit to auto-detect (prefers OpenTofu)
           cloudToken: ${{ secrets.TF_API_TOKEN }} # for HCP Terraform
           githubToken: ${{ github.token }}
