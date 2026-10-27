@@ -105,6 +105,16 @@
                     "pages": [
                       "release/index",
                       {
+                        "group": "v0.25",
+                        "pages": [
+                          "release/whats-new/v0-25/index",
+                          "release/whats-new/v0-25/synth-time-validation",
+                          "release/whats-new/v0-25/asset-pipeline",
+                          "release/whats-new/v0-25/registry-resolution",
+                          "release/whats-new/v0-25/usage-telemetry"
+                        ]
+                      },
+                      {
                         "group": "v0.24",
                         "pages": [
                           "release/whats-new/v0-24/index",
@@ -134,6 +144,7 @@
                   {
                     "group": "Upgrade Guides",
                     "pages": [
+                      "release/upgrade-guide-v0-25",
                       "release/upgrade-guide-v0-24",
                       "release/upgrade-guide-v0-23",
                       "release/upgrade-guide-v0-22",

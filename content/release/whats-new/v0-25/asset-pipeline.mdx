@@ -1,0 +1,160 @@
+---
+title: "What's New: Asset Staging and Bundling"
+sidebarTitle: "Asset Staging and Bundling"
+description: >-
+  CDK Terrain v0.25 adds an asset pipeline to TerraformAsset: exclusions,
+  custom ignore strategies, extra hash inputs, and a bundler extension
+  interface that can build a directory or a single-file artifact.
+---
+
+CDK Terrain v0.25.0 adds an asset pipeline behind
+[`TerraformAsset`](/concepts/assets). You can exclude files from an asset,
+fold extra inputs into its hash, and plug in a bundler that builds the source
+before it's staged
+([cdk-terrain#371](https://github.com/open-constructs/cdk-terrain/pull/371),
+[#433](https://github.com/open-constructs/cdk-terrain/pull/433),
+[#442](https://github.com/open-constructs/cdk-terrain/pull/442),
+[#464](https://github.com/open-constructs/cdk-terrain/pull/464),
+[#472](https://github.com/open-constructs/cdk-terrain/pull/472)). Existing
+assets that don't use the new options behave as before.
+
+The `cdktn` package ships the extension interface but no bundler. You write
+your own `IAssetBundler` or use one from a separate package.
+
+## New `TerraformAsset` options
+
+| Option           | What it does                                                                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `exclude`        | Paths to leave out, relative to `path`: exact paths, `*.ext` suffixes, and directories. Both the hash and the staged content honor it.            |
+| `ignoreStrategy` | An `IIgnoreStrategy` that replaces the built-in `exclude` matcher, for `.gitignore`-style rules such as `!` re-includes. Can't be combined with `exclude`. |
+| `extraHash`      | A string folded into the asset hash, for build inputs the source tree can't show.                                                                 |
+| `assetHashType`  | `SOURCE` (default) hashes the source, `CUSTOM` uses your `assetHash`, and `OUTPUT` hashes the bundler's output.                                     |
+| `bundler`        | An `IAssetBundler` that builds the source into the artifact that gets staged.                                                                     |
+
+## Bundlers
+
+A bundler implements `IAssetBundler`. Its `bundle()` method reads
+`options.source`, writes into the scratch directory `options.outputDir`, and
+returns a `BundleResult`:
+
+- `BundleResult.directory(path)`: the output is a directory tree. CDKTN packs
+  it according to the asset `type`, for example as a zip for
+  `AssetType.ARCHIVE`.
+- `BundleResult.file(path)`: the output is a finished single file, such as a
+  zip or a tarball. CDKTN stages it as is, so the asset `type` must be
+  `AssetType.FILE`. Set `outputFileName` on the bundler to name the staged
+  file.
+- `BundleResult.declined()`: the bundler can't run here. Inside a
+  `ChainBundler`, the next bundler gets a turn.
+
+`ChainBundler.of(...)` tries bundlers in order until one runs, for example a
+local build first and a Docker build as the fallback. `BundlerKey` builds the
+`bundlerKey` string from ordered parts. CDKTN folds the `bundlerKey` into the
+asset hash, so a changed build changes the asset's identity.
+
+```typescript main.ts
+import * as fs from "fs";
+import * as path from "path";
+import { Construct } from "constructs";
+import {
+  App,
+  AssetType,
+  BundleOptions,
+  BundleResult,
+  BundlerKey,
+  ChainBundler,
+  IAssetBundler,
+  TerraformAsset,
+  TerraformOutput,
+  TerraformStack,
+} from "cdktn";
+
+// Copies the source and writes a build stamp. A real bundler runs a build tool here.
+const copyBundler: IAssetBundler = {
+  bundlerKey: BundlerKey.of("copy", "v1").toString(),
+  bundle(options: BundleOptions): BundleResult {
+    fs.cpSync(options.source, options.outputDir, { recursive: true });
+    fs.writeFileSync(path.join(options.outputDir, "BUILD"), "copy-v1");
+    return BundleResult.directory(options.outputDir);
+  },
+};
+
+// Declines, so the chain falls through to the next bundler.
+const dockerBundler: IAssetBundler = {
+  bundlerKey: BundlerKey.of("docker", "node:22").toString(),
+  bundle(): BundleResult {
+    return BundleResult.declined();
+  },
+};
+
+class MyStack extends TerraformStack {
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+
+    const asset = new TerraformAsset(this, "handler", {
+      path: path.resolve(__dirname, "src/handler"),
+      type: AssetType.ARCHIVE,
+      exclude: ["*.test.ts"],
+      bundler: ChainBundler.of(dockerBundler, copyBundler),
+    });
+
+    new TerraformOutput(this, "asset_path", { value: asset.path });
+  }
+}
+
+const app = new App();
+new MyStack(app, "assets");
+app.synth();
+```
+
+With the default `SOURCE` hashing, the build runs during synthesis and the
+hash covers the source plus the `bundlerKey`. With `AssetHashType.OUTPUT`, the
+build runs when you create the asset, and the hash covers what the bundler
+produced. Use `OUTPUT` when the bundlers in a chain can produce different
+output for the same source.
+
+## Ignore strategies
+
+`ExcludeIgnoreStrategy` is the built-in matcher behind `exclude`. To match
+differently, implement `IIgnoreStrategy`. Its `ignores()` method receives
+each entry's path and whether it's a directory. To re-include a path under an
+excluded directory, set `pruneExcludedDirectories` to `false` so that CDKTN
+walks into excluded directories:
+
+```typescript
+import { IIgnoreStrategy, IgnoreQuery } from "cdktn";
+
+// Excludes docs/ except docs/README.md.
+const keepReadme: IIgnoreStrategy = {
+  pruneExcludedDirectories: false,
+  ignores({ relativePath }: IgnoreQuery): boolean {
+    if (relativePath === "docs/README.md") return false;
+    return relativePath === "docs" || relativePath.startsWith("docs/");
+  },
+};
+```
+
+Pass it as `ignoreStrategy` on `TerraformAsset`.
+
+## Lower-level building blocks
+
+- `AssetStaging` is the construct `TerraformAsset` uses to hash and stage
+  content. It takes a `sourcePath`, an `IAssetPackaging`, and the hashing,
+  exclusion, and bundler options above.
+- `AssetPackaging.FILE`, `AssetPackaging.DIRECTORY`, and `AssetPackaging.ZIP`
+  are the built-in packagings. `IAssetPackaging` lets you add your own format.
+- `AssetHash.of()` computes an asset's content hash without staging it.
+- The `cdktn:assetHashSalt` context key adds a salt to every asset hash in the
+  app.
+
+## Breaking changes
+
+- `IAssetPackaging` has two new required members, `acceptsDirectorySource` and
+  `omitsDirectoryEntries`. Custom implementations must add them.
+- A custom `assetHash` may only contain letters, digits, `_`, `.`, and `-`.
+  Values such as `feature/my-branch` now throw.
+- `TerraformAsset.assetHash` is read-only. The setter is gone from the Java,
+  C#, Python, and Go bindings.
+
+See the [v0.25 upgrade guide](/release/upgrade-guide-v0-25#asset-api-changes)
+for what to change.

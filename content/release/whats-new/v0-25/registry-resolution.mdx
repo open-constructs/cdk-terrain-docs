@@ -1,0 +1,82 @@
+---
+title: "What's New: Registry-Aware Provider Resolution"
+sidebarTitle: "Registry-Aware Providers"
+description: >-
+  CDK Terrain v0.25 resolves providers, versions, pre-built packages, and
+  generated documentation links from the registry your project targets, so
+  OpenTofu projects no longer need fully qualified provider sources.
+---
+
+Before v0.25, the CLI assumed the Terraform Registry. `cdktn provider add aws`
+always wrote `registry.terraform.io/hashicorp/aws`, and generated bindings
+linked to the Terraform Registry even in OpenTofu projects. OpenTofu users
+worked around this by fully qualifying every provider as
+`registry.opentofu.org/...`. CDK Terrain v0.25.0 picks the registry from your
+declared `targetVersions` instead
+([cdk-terrain#443](https://github.com/open-constructs/cdk-terrain/pull/443),
+[#445](https://github.com/open-constructs/cdk-terrain/pull/445),
+[#484](https://github.com/open-constructs/cdk-terrain/pull/484),
+[#489](https://github.com/open-constructs/cdk-terrain/pull/489),
+[#490](https://github.com/open-constructs/cdk-terrain/pull/490),
+[#493](https://github.com/open-constructs/cdk-terrain/pull/493)).
+
+## Which registry a project targets
+
+| `targetVersions` in `cdktf.json` | Registry  |
+| -------------------------------- | --------- |
+| Only `opentofu`                  | OpenTofu  |
+| Only `terraform`                 | Terraform |
+| Both                             | Terraform |
+| Not declared                     | Terraform |
+
+The registry depends only on `cdktf.json`, not on whether `terraform` or
+`tofu` runs the command. The same project generates the same bindings with
+either binary. To target the OpenTofu Registry, declare only `opentofu`:
+
+```json
+{
+  "targetVersions": {
+    "opentofu": ">=1.6.0"
+  }
+}
+```
+
+See [Declare Target Runtimes](/create-and-deploy/configuration-file#declare-target-runtimes).
+
+## What follows the registry
+
+- **Provider sources:** a source without a host, such as `hashicorp/aws`,
+  expands against the project's registry. A source that names a host keeps
+  it, so an explicit `registry.opentofu.org/...` or `registry.terraform.io/...`
+  always wins.
+- **Version resolution:** when you add a provider without a version, the CLI
+  looks up versions on the registry in the provider's source. The two
+  registries can list different versions of the same provider. Before v0.25,
+  a provider written as `registry.opentofu.org/...` without a version got no
+  version resolved at all.
+- **Pre-built providers:** `cdktn provider add` matches pre-built packages by
+  provider namespace and name, whatever registry the project targets.
+- **`cdktn provider upgrade`:** in an OpenTofu-only project, the upgrade
+  downloads the provider from the OpenTofu Registry. `provider add` and
+  `provider upgrade` write the short form (`hashicorp/random`) to
+  `cdktf.json`. An existing entry keeps the host it was written with.
+- **Generated documentation links:** the doc comments in provider, resource,
+  data source, and module bindings link to the OpenTofu Registry
+  (`search.opentofu.org`) in OpenTofu-only projects. The OpenTofu Registry has
+  no pages for ephemeral resources, so those link to the provider page.
+- **Regeneration:** `cdktn get` regenerates bindings when the project's
+  registry changes, even if the provider versions didn't.
+- **Lock file checks:** `diff`, `deploy`, and `destroy` compare your providers
+  with `.terraform.lock.hcl` to decide whether `init` needs `-upgrade`. A
+  provider source without a host now matches a lock entry from either public
+  registry. After a provider version bump in an OpenTofu project, `deploy` runs
+  `init -upgrade` instead of failing with
+  `locked provider ... does not match configured version constraint`.
+
+## Known limitation
+
+With OpenTofu 1.12 or later, a provider whose source names
+`registry.terraform.io` explicitly fails to deploy with
+`there is no package for registry.opentofu.org/... cached in .terraform/providers`.
+Plain HCL projects fail the same way. Use the short source
+(`hashicorp/random`) instead, or run `tofu init` again in the stack directory.

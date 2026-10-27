@@ -1,0 +1,163 @@
+---
+title: "What's New in CDK Terrain v0.25"
+sidebarTitle: Overview
+description: >-
+  Everything CDK Terrain v0.25.0 introduced: synth-time validation against
+  targetVersions, an asset staging and bundling pipeline, registry-aware
+  provider resolution, usage metrics with consent, a typescript-pnpm template,
+  tsx and TypeScript 6 in the TypeScript template, and a Node.js 22.23.4
+  minimum.
+---
+
+CDK Terrain (CDKTN) v0.25.0 shipped on 2026-10-27. It is a breaking release.
+To upgrade from v0.24, follow the
+[v0.25 upgrade guide](/release/upgrade-guide-v0-25).
+
+## Breaking changes
+
+### Moved, import, `terraform_data`, and `cloud` validate against `targetVersions`
+
+Synthesis checks `moved` blocks, `import` blocks, `terraform_data` resources,
+and the `cloud` backend against the `targetVersions` in `cdktf.json` instead
+of the binary on your `PATH`. With the default targets (Terraform `>=1.5.7`,
+OpenTofu `>=1.6.0`) all four pass. A project that declares a Terraform floor
+below 1.5.0 fails synthesis if it uses moves or imports, below 1.4.0 if it
+uses `terraform_data`, and below 1.1.0 if it uses the `cloud` block.
+[Learn more](/release/whats-new/v0-25/synth-time-validation).
+
+### `ValidateBinaryVersion` and `ValidateTerraformVersion` removed
+
+Synthesis no longer runs the Terraform or OpenTofu binary to validate
+features. The two validation classes that did are deleted. The `cdktn` package
+root never exported them, so only deep imports break. To check the installed
+binary, set
+[`validateInstalledBinary`](/create-and-deploy/configuration-file#validate-the-installed-binary)
+in `cdktf.json`.
+
+### Asset API changes
+
+- `IAssetPackaging` gains two required members, `acceptsDirectorySource` and
+  `omitsDirectoryEntries`. Custom implementations must add them.
+- A custom `assetHash` on `TerraformAsset` may only contain letters, digits,
+  `_`, `.`, and `-`. A value such as `feature/my-branch` now throws.
+- `TerraformAsset.assetHash` is read-only, and the Java, C#, Python, and Go
+  bindings lose its setter.
+
+[Learn more](/release/whats-new/v0-25/asset-pipeline#breaking-changes).
+
+### Node.js 22.23.4 minimum
+
+`cdktn-cli` and `@cdktn/cli-core` now declare `engines.node` `>=22.23.4`, the
+22.x release with the October 2026 Node.js security fixes
+([cdk-terrain#516](https://github.com/open-constructs/cdk-terrain/pull/516)).
+The same change bumps the CLI's undici dependency for security fixes. Move
+your local and CI environments to Node.js 22.23.4 or later before you upgrade.
+
+## Features
+
+### Asset staging and bundling
+
+`TerraformAsset` gains `exclude`, `ignoreStrategy`, `extraHash`,
+`assetHashType`, and `bundler` options. A bundler
+implements `IAssetBundler` and returns a directory or a single-file artifact,
+or declines so the next bundler in a `ChainBundler` runs. The `cdktn` package
+ships the interface but no bundler.
+[Learn more](/release/whats-new/v0-25/asset-pipeline).
+
+### Registry-aware provider resolution
+
+The CLI picks the registry from your declared `targetVersions`: OpenTofu when
+you target only OpenTofu, Terraform otherwise. Provider sources without a
+host, version lookups, pre-built provider matching, `provider upgrade`, and
+the documentation links in generated bindings follow that registry, so
+OpenTofu projects no longer need fully qualified provider sources.
+[Learn more](/release/whats-new/v0-25/registry-resolution).
+
+### Usage metrics with consent
+
+The CLI no longer sends anything to HashiCorp Checkpoint. It reports
+aggregated usage metrics to the CDKTN project's own Sentry, controlled by a
+new `sendUsageTelemetry` flag in `cdktf.json`. Interactive runs ask once for
+each unset consent flag. `CHECKPOINT_DISABLE` still turns usage metrics off.
+[Learn more](/release/whats-new/v0-25/usage-telemetry).
+
+### `typescript-pnpm` template
+
+`cdktn init --template=typescript-pnpm` creates a TypeScript project managed
+by pnpm. It requires pnpm 10.26 or later and doesn't need npm on your `PATH`
+([cdk-terrain#422](https://github.com/open-constructs/cdk-terrain/pull/422)).
+Commands that install or list dependencies, such as `provider add` and
+`provider list`, now use the package manager of the project they run in. See
+[TypeScript package managers](/create-and-deploy/project-setup#typescript-package-managers).
+
+### TypeScript template moves to tsx and TypeScript 6
+
+The `typescript` template runs your app with `tsx main.ts` instead of
+`ts-node main.ts`, and installs TypeScript `>=5.0.0 <7.0.0`
+([cdk-terrain#396](https://github.com/open-constructs/cdk-terrain/pull/396)).
+ts-node doesn't work with TypeScript 6. tsx doesn't type-check, so
+`cdktn synth` no longer catches type errors. `npm run build` still does. The
+template's `tsconfig.json` sets `types: ["node", "jest"]` and
+`isolatedModules`, which TypeScript 6 and ts-jest need. Existing projects keep
+working with `ts-node` until they move to TypeScript 6.
+
+The `cdktn` library is now built with jsii 6 and TypeScript 6
+([cdk-terrain#395](https://github.com/open-constructs/cdk-terrain/pull/395)).
+Its type declarations are unchanged, and its `constructs` peer dependency
+returns to `^10.6.0`.
+
+### AI coding agents find the docs MCP server
+
+Every built-in `cdktn init` template now adds an `AGENTS.md` that tells coding
+agents this is a CDKTN project and points them to the CDKTN docs MCP server.
+`cdktn init` also writes a `.mcp.json` that registers the server for Claude
+Code, unless the project already has one
+([cdk-terrain#518](https://github.com/open-constructs/cdk-terrain/pull/518)).
+The npm package READMEs carry the same pointer. See
+[Use CDKTN with AI Agents](/ai-agents).
+
+## Deprecations
+
+- **`--cdktf-version`:** `cdktn init --cdktf-version` is now a deprecated
+  alias of `--cdktn-version`, prints a warning, and will be removed in a
+  future release
+  ([cdk-terrain#228](https://github.com/open-constructs/cdk-terrain/pull/228)).
+- **Yarn:** projects managed by Yarn classic (1.x) print a deprecation
+  warning. Move them to npm or pnpm. Yarn Berry (2+) isn't supported:
+  `provider list`, `provider upgrade`, and `debug` fail with a usage error on
+  Berry projects. See the
+  [Yarn tracking issue](https://github.com/open-constructs/cdk-terrain/issues/492).
+
+## Notable fixes
+
+- **Deploy outputs:** a successful `cdktn deploy` no longer crashes with
+  `Cannot convert undefined or null to object` when an output is missing from
+  `terraform output`
+  ([#375](https://github.com/open-constructs/cdk-terrain/pull/375)). A failed
+  `--outputs-file` write now fails the command cleanly, instead of reporting
+  that the file was written and then crashing
+  ([#376](https://github.com/open-constructs/cdk-terrain/pull/376)).
+- **Stale bindings:** in TypeScript projects, `cdktn get` removes generated
+  resource directories for resources that the pinned provider version no
+  longer has ([#421](https://github.com/open-constructs/cdk-terrain/pull/421)).
+- **Binary probe:** the CLI checks the binary with `version` instead of `-v`,
+  which recent OpenTofu releases dropped
+  ([#471](https://github.com/open-constructs/cdk-terrain/pull/471)).
+- **Modules with provider aliases:** `cdktn get` works with Terraform 1.15 and
+  later for modules that declare `configuration_aliases`, including a bare
+  default configuration such as `[aws, aws.secondary]`
+  ([#383](https://github.com/open-constructs/cdk-terrain/pull/383),
+  [#466](https://github.com/open-constructs/cdk-terrain/pull/466)).
+- **Provider functions:** a resource or data source named
+  `<provider>_provider_functions` no longer overwrites the generated
+  provider-defined functions
+  ([#403](https://github.com/open-constructs/cdk-terrain/pull/403)).
+- **Security patches:** the unbundled npm packages (`@cdktn/hcl2cdk`,
+  `@cdktn/commons`, `@cdktn/provider-schema`, `@cdktn/provider-generator`,
+  `@cdktn/hcl2json`, and `yargs` in `cdktn-cli`) declare `^` ranges for their
+  runtime dependencies, so `npm update` and `npm audit fix` can pick up fixes
+  without a CDKTN release
+  ([#503](https://github.com/open-constructs/cdk-terrain/pull/503)).
+
+See the [CHANGELOG](https://github.com/open-constructs/cdk-terrain/blob/main/CHANGELOG.md)
+for the complete list.

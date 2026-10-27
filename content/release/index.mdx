@@ -12,7 +12,39 @@ with breaking changes have an upgrade guide. The
 [CHANGELOG on GitHub](https://github.com/open-constructs/cdk-terrain/blob/main/CHANGELOG.md)
 lists every bug fix, feature, and deprecation.
 
-{/* TODO v0.25 latest block */}
+## Latest: v0.25 (2026-10-27)
+
+v0.25 is a breaking release. Read the
+[v0.25 release notes](/release/whats-new/v0-25) for every change, and follow
+the [v0.25 upgrade guide](/release/upgrade-guide-v0-25) to upgrade from v0.24.
+
+**Synthesis validates against your declared targets only.** Moved blocks,
+import blocks, `terraform_data`, and the `cloud` backend are checked against
+the `targetVersions` in `cdktf.json`, and synthesis no longer runs the
+Terraform or OpenTofu binary. A project that declares a Terraform floor below
+a feature's minimum now fails synthesis.
+[Learn more](/release/whats-new/v0-25/synth-time-validation).
+
+**Asset staging and bundling.** `TerraformAsset` can exclude files, fold
+extra inputs into its hash, and run a bundler that builds the source into a
+directory or a single-file artifact before it's staged.
+[Learn more](/release/whats-new/v0-25/asset-pipeline).
+
+**Registry-aware provider resolution.** A project that targets only OpenTofu
+resolves providers, versions, and generated documentation links from the
+OpenTofu Registry, without fully qualified provider sources.
+[Learn more](/release/whats-new/v0-25/registry-resolution).
+
+**Usage metrics with consent.** The CLI no longer contacts HashiCorp
+Checkpoint. It reports aggregated usage metrics to the CDKTN project's
+Sentry, behind a new `sendUsageTelemetry` flag in `cdktf.json`.
+[Learn more](/release/whats-new/v0-25/usage-telemetry).
+
+**New TypeScript defaults and a Node.js 22.23.4 minimum.** The CLI requires
+Node.js 22.23.4 or later. A new `typescript-pnpm` template manages the
+project with pnpm, the TypeScript template runs on tsx and TypeScript 6, and
+Yarn is deprecated.
+[Learn more](/release/whats-new/v0-25#typescript-pnpm-template).
 
 ## Feature Flags
 

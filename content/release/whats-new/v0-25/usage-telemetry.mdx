@@ -1,0 +1,89 @@
+---
+title: "What's New: Usage Metrics and Consent"
+sidebarTitle: "Usage Metrics and Consent"
+description: >-
+  CDK Terrain v0.25 stops sending usage data to HashiCorp Checkpoint. The CLI
+  reports aggregated usage metrics to the project's own Sentry, behind a new
+  sendUsageTelemetry consent flag in cdktf.json.
+---
+
+CDK Terrain v0.25.0 replaces the HashiCorp Checkpoint telemetry that the CLI
+inherited from CDKTF. The CLI no longer contacts
+`checkpoint-api.hashicorp.com`. It reports counted usage metrics to the CDKTN
+project's own Sentry instead, and asks for your consent first
+([cdk-terrain#411](https://github.com/open-constructs/cdk-terrain/pull/411),
+[#412](https://github.com/open-constructs/cdk-terrain/pull/412),
+[#413](https://github.com/open-constructs/cdk-terrain/pull/413)).
+
+## Consent
+
+Usage metrics have their own flag in `cdktf.json`, `sendUsageTelemetry`. It's
+separate from `sendCrashReports`, which controls crash reports:
+
+```json
+{
+  "sendCrashReports": false,
+  "sendUsageTelemetry": false
+}
+```
+
+| Situation                                                            | Usage metrics                 | Crash reports |
+| -------------------------------------------------------------------- | ----------------------------- | ------------- |
+| `CHECKPOINT_DISABLE` is set to any non-empty value                   | Off                           | Unaffected    |
+| The flag is `true` or `false` in `cdktf.json`                        | As set                        | As set        |
+| The flag is missing, in an interactive terminal                      | The CLI asks once, saves your answer | The CLI asks once, saves your answer |
+| The flag is missing, in CI or with piped input or output             | On                            | Off           |
+
+- `CHECKPOINT_DISABLE` keeps working as the environment-wide opt-out and takes
+  precedence over `cdktf.json`.
+- The flags accept booleans or the strings `"true"` and `"false"`. Any other
+  value counts as missing.
+- The CLI only prompts when stdin and stdout are terminals, it isn't running in
+  CI, and the project has a `cdktf.json` to save the answer to.
+- `cdktn init` asks both questions for a new project. To answer them without a
+  prompt, pass `--enable-usage-telemetry=true|false` and
+  `--enable-crash-reporting=true|false`. Every built-in template writes both
+  flags.
+- If you agree to usage metrics only, the CLI sends no crash reports.
+
+<Note>
+  The crash-reporting prompt now also appears in existing projects whose
+  `cdktf.json` has no `sendCrashReports` key. Before v0.25 the CLI treated a
+  missing key as "no" and never asked.
+</Note>
+
+## What the CLI reports
+
+The metrics are counters and durations, aggregated per run. They cover:
+
+- **Each command run:** that it started, and whether it completed or failed,
+  with the error category. Synthesis duration. A count of each CLI error type.
+- **Environment:** the command, the CI system, the project language, the
+  operating system and architecture, whether the installed binary is Terraform
+  or OpenTofu and its version, your declared `targetVersions` ranges, whether
+  `validateInstalledBinary` is on, and the package manager.
+- **Stacks:** the backend type, counts of overrides, imports, and moves, the
+  public registry providers you require (`namespace/type`) with their version
+  constraints and whether the bindings are pre-built or generated, and the
+  resource types you override. Counts are capped per run.
+- **`get` and `init`:** which providers and modules they generate, how many,
+  and which built-in template `init` used.
+- **`convert`:** how many providers, modules, and lines it converted.
+
+Sentry adds a random install ID, stored in `~/.cdktf/config.json`.
+
+The CLI never sends stack names, construct IDs, resource addresses, file
+paths, your hostname or username, error messages, or `SENTRY_*` environment
+variables. Private registry hosts and module sources are reduced to a category
+such as `private-registry`, `git`, or `local`.
+
+These commands report metrics: `convert`, `deploy`, `destroy`, `diff`, `get`,
+`init`, `list`, `output`, `synth`, `watch`, `provider add`, `provider list`,
+and `provider upgrade`. `login`, `debug`, shell completion, `--help`, and
+`--version` don't.
+
+## Learn more
+
+[Crash Reporting](/telemetry#crash-reporting) describes what a crash report
+contains. To set the flags, see
+[Configuration File](/create-and-deploy/configuration-file#enable-crash-reporting-for-the-cli).
