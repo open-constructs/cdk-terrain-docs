@@ -100,23 +100,43 @@
                 "group": "Release",
                 "expanded": false,
                 "pages": [
-                  "release/index",
-                  "release/canonical-asset-hashes",
-                  "release/function-availability",
-                  "release/s3-native-locking",
-                  "release/upgrade-guide-v0-23",
-                  "release/upgrade-guide-v0-22",
-                  "release/upgrade-guide-v0-19",
-                  "release/upgrade-guide-v0-18",
-                  "release/upgrade-guide-v0-17",
-                  "release/upgrade-guide-v0-15",
-                  "release/upgrade-guide-v0-13",
-                  "release/upgrade-guide-v0-12",
-                  "release/upgrade-guide-v0-11",
-                  "release/upgrade-guide-v0-10",
-                  "release/upgrade-guide-v0-9",
-                  "release/upgrade-guide-v0-7",
-                  "release/upgrade-guide-v0-6"
+                  {
+                    "group": "What's New",
+                    "pages": [
+                      "release/index",
+                      {
+                        "group": "v0.24",
+                        "pages": [
+                          "release/whats-new/v0-24/canonical-asset-hashes"
+                        ]
+                      },
+                      {
+                        "group": "v0.23",
+                        "pages": [
+                          "release/whats-new/v0-23/function-availability",
+                          "release/whats-new/v0-23/s3-native-locking"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Upgrade Guides",
+                    "pages": [
+                      "release/upgrade-guide-v0-23",
+                      "release/upgrade-guide-v0-22",
+                      "release/upgrade-guide-v0-19",
+                      "release/upgrade-guide-v0-18",
+                      "release/upgrade-guide-v0-17",
+                      "release/upgrade-guide-v0-15",
+                      "release/upgrade-guide-v0-13",
+                      "release/upgrade-guide-v0-12",
+                      "release/upgrade-guide-v0-11",
+                      "release/upgrade-guide-v0-10",
+                      "release/upgrade-guide-v0-9",
+                      "release/upgrade-guide-v0-7",
+                      "release/upgrade-guide-v0-6"
+                    ]
+                  }
                 ]
               },
               "community",
@@ -1292,5 +1312,19 @@
       "slack": "https://cdk.dev",
       "github": "https://github.com/open-constructs/cdk-terrain"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/release/function-availability",
+      "destination": "/release/whats-new/v0-23/function-availability"
+    },
+    {
+      "source": "/release/s3-native-locking",
+      "destination": "/release/whats-new/v0-23/s3-native-locking"
+    },
+    {
+      "source": "/release/canonical-asset-hashes",
+      "destination": "/release/whats-new/v0-24/canonical-asset-hashes"
+    }
+  ]
 }
