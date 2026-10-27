@@ -1,0 +1,80 @@
+---
+title: "What's New in CDK Terrain v0.22"
+sidebarTitle: Overview
+description: >-
+  CDK Terrain v0.22 is the first release under the CDK Terrain name: packages
+  renamed from cdktf to cdktn, Maven Central and NuGet.org publishing restored,
+  and pre-built providers moved to cdktn-io.
+---
+
+CDK Terrain (CDKTN) v0.22.0 shipped on 2026-02-17 as the first release of the
+community continuation of CDK for Terraform (CDKTF). v0.22.1 followed on
+2026-03-27. To move an existing `cdktf` project over, follow the
+[migration guide](/release/upgrade-guide-v0-22).
+
+## Breaking changes
+
+### Packages renamed from `cdktf` to `cdktn` (v0.22.0)
+
+All packages have new names:
+
+- `cdktf` → `cdktn`
+- `cdktf-cli` → `cdktn-cli`
+- `@cdktf/*` → `@cdktn/*`
+
+The old packages are deprecated. Internal symbols and logical IDs are
+unchanged, so your Terraform state is unaffected. CDKTN still reads
+`cdktf.json`, writes to `cdktf.out/`, and honors `CDKTF_*` environment
+variables. The [migration guide](/release/upgrade-guide-v0-22#what-stays-the-same)
+lists everything that stays the same.
+
+### Pre-built providers require `cdktn` (v0.22.0)
+
+Pre-built providers now declare `cdktn` as their peer dependency, so each one
+shipped as a new major version under `@cdktn/provider-*`. If you mix old
+`@cdktf/provider-*` packages with `cdktn`, you can hit type errors. See
+[Transitional Period](/release/upgrade-guide-v0-22#transitional-period-dual-dependencies).
+
+## Features
+
+### Java and .NET packages published again (v0.22.1)
+
+`cdktn` Java artifacts are published to Maven Central, and .NET packages to
+NuGet.org.
+
+### Generated TypeScript without parameter properties (v0.22.1)
+
+Generated provider bindings no longer use TypeScript parameter properties
+(for example `constructor(private x: string)`). That syntax can't be erased,
+so removing it brings generated code closer to running directly in Node.js
+with type stripping.
+
+## Notable fixes
+
+- **`cdktn init` (v0.22.1):** the TypeScript template pins TypeScript 5.x,
+  because `ts-jest` didn't support TypeScript 6 yet.
+- **`TerraformOutput` (v0.22.1):** no longer triggers the Node.js `DEP0044`
+  deprecation warning about `util.isArray`.
+- **Provider generation (v0.22.1):** Terraform variable types with inline
+  comments that contain brackets now parse correctly.
+- **Go (v0.22.1):** Go module releases were fixed.
+
+See the [CHANGELOG](https://github.com/open-constructs/cdk-terrain/blob/main/CHANGELOG.md)
+for the complete list.
+
+## Pre-built providers
+
+These changes landed in the pre-built provider packages while v0.22 was
+current:
+
+- **Switched to `cdktn`:** the pre-built providers depend on `cdktn` and
+  `cdktn-cli` `^0.22.0` instead of `cdktf` and `cdktf-cli`.
+- **Providers imported into `cdktn-io`:** these providers moved from the
+  archived CDKTF organization and are now maintained under
+  [`cdktn-io`](https://github.com/orgs/cdktn-io/repositories?q=cdktn-provider-)
+  as `@cdktn/provider-*` packages:
+  `acme`, `azuread`, `cloudflare`, `databricks`, `datadog`, `hcp`, `helm`,
+  `newrelic`, `pagerduty`, `postgresql`, `snowflake`, and `vault`.
+
+Browse all pre-built providers and their current versions on the
+[provider dashboard](https://provider-dashboard.cdktn.io).

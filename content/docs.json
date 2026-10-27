@@ -119,6 +119,12 @@
                           "release/whats-new/v0-23/function-availability",
                           "release/whats-new/v0-23/s3-native-locking"
                         ]
+                      },
+                      {
+                        "group": "v0.22",
+                        "pages": [
+                          "release/whats-new/v0-22/index"
+                        ]
                       }
                     ]
                   },
