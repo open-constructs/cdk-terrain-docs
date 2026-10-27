@@ -411,24 +411,26 @@ of both products.
 
 ### Validating Function Usage at Synth Time
 
-With the `validateFunctionVersions` [feature flag](/release#feature-flags)
-enabled, CDK Terrain checks every function you use through `Fn` against the
-project's [declared `targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes)
-— the Terraform/OpenTofu version ranges your project intends to support.
-Projects created with `cdktn init` have the flag enabled by default; existing
-projects can opt in via `cdktf.json`:
+CDK Terrain checks every function you use through `Fn` against the project's
+[declared `targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes)
+— the Terraform/OpenTofu version ranges your project intends to support. If
+you don't declare `targetVersions`, CDK Terrain checks against Terraform
+`>=1.5.7` and OpenTofu `>=1.6.0`:
 
 ```json
 {
   "targetVersions": {
     "terraform": ">=1.5.7",
     "opentofu": ">=1.6.0"
-  },
-  "context": {
-    "validateFunctionVersions": "true"
   }
 }
 ```
+
+<Note>
+  Since v0.24 this validation is always on. In v0.23.4 it was opt-in through
+  the `validateFunctionVersions` feature flag, which v0.24 removed. See
+  [Function Validation On by Default](/release/whats-new/v0-24/function-validation-default).
+</Note>
 
 A function must be available across the *entire* declared range of every
 targeted product. If it is not, synthesis fails with an actionable error
@@ -436,7 +438,7 @@ instead of letting `terraform plan` fail later:
 
 ```
 Validation failed with the following errors:
-  [MyStack/resource] Terraform function "templatestring" requires terraform >=1.9.0, but the project targets terraform >=1.5.7. It is available in terraform >=1.9.0 and opentofu >=1.7.0.
+  [MyStack] Terraform function "templatestring" requires terraform >=1.9.0, but the project targets terraform >=1.5.7. It is available in terraform >=1.9.0 and opentofu >=1.7.0.
 ```
 
 Raise the declared floor (e.g. `"terraform": ">=1.9.0"`) — or drop the
