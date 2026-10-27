@@ -113,6 +113,9 @@
                       {
                         "group": "v0.23",
                         "pages": [
+                          "release/whats-new/v0-23/index",
+                          "release/whats-new/v0-23/mixins",
+                          "release/whats-new/v0-23/target-versions",
                           "release/whats-new/v0-23/function-availability",
                           "release/whats-new/v0-23/s3-native-locking"
                         ]

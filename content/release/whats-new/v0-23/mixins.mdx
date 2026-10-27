@@ -1,0 +1,43 @@
+---
+title: "What's New: Mixins"
+sidebarTitle: "Mixins"
+description: >-
+  CDK Terrain v0.23.0 raised the constructs peer dependency to 10.6, which adds
+  the IMixin interface and construct.with() for applying reusable behavior to a
+  single construct.
+---
+
+CDK Terrain v0.23.0 brought [mixins](/concepts/mixins) to CDKTN projects. A
+mixin applies a reusable piece of behavior to one specific construct, without
+subclassing it.
+
+## What changed
+
+### `constructs` peer dependency raised to `^10.6.0`
+
+v0.23.0 raised the [`constructs`](https://github.com/aws/constructs) peer
+dependency from `^10.4.2` to `^10.6.0`
+([cdk-terrain#20](https://github.com/open-constructs/cdk-terrain/pull/20)).
+`constructs` 10.6.0 adds the mixin primitive, and CDKTN inherits it from that
+library:
+
+- The `IMixin` interface, with a `supports(construct)` method that decides
+  whether the mixin applies to a construct and an `applyTo(construct)` method
+  that applies the change.
+- The `construct.with(...mixins)` method, which applies mixins to a construct
+  immediately and returns the same construct.
+
+If your project pins `constructs` below 10.6.0, raise it when you upgrade to
+v0.23.
+
+### No built-in mixins yet
+
+CDKTN core does not ship ready-made mixins. You write your own, using building
+blocks that work with any provider, such as `TerraformResource.isTerraformResource`
+and `addOverride`.
+
+## Learn more
+
+The [Mixins concept page](/concepts/mixins) shows how to define and apply
+mixins, with examples. It also explains when to use a mixin instead of an
+[Aspect](/concepts/aspects).
