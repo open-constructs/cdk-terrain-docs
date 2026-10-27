@@ -136,7 +136,8 @@
                       "release/upgrade-guide-v0-7",
                       "release/upgrade-guide-v0-6"
                     ]
-                  }
+                  },
+                  "release/changelog"
                 ]
               },
               "community",
