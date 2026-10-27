@@ -46,9 +46,69 @@ Connect your synthesized CDKTN configuration to a HCP Terraform workspace with t
 
 Refer to [Automatic Run Triggering](/terraform/cloud-docs/workspaces/settings/vcs#automatic-run-triggering) in the HCP Terraform documentation for details about how to trigger Terraform runs from merges and commits.
 
-### Terraform CDK GitHub Action
+### CDK Terrain GitHub Action
 
-You can use the [Terraform CDK GitHub Action](https://github.com/marketplace/actions/terraform-cdk-action) if you are using GitHub Actions and you want a default review / deployment workflow. The Terraform CDK GitHub Action runs the CDKTN CLI under the hood, it comments Terraform plans on your pull requests and provides a default review workflow. If you need more customization, refer to [GitHub Actions CI and HCP Terraform](#github-actions-ci-and-hcp-terraform).
+If you use GitHub Actions and want a default review / deployment workflow, use the [`cdktn-io/action`](https://github.com/cdktn-io/action) GitHub Action. It runs the CDKTN CLI (`cdktn-cli`) under the hood on **OpenTofu by default** (or Terraform), comments the plan on your pull requests, and supports `synth-only`, `plan-only`, `auto-approve-apply`, and `auto-approve-destroy` modes. If you need more customization, refer to [GitHub Actions CI and HCP Terraform](#github-actions-ci-and-hcp-terraform).
+
+<Note>
+  `cdktn-io/action` is the maintained successor to HashiCorp's archived [`terraform-cdk-action`](https://github.com/hashicorp/terraform-cdk-action). It accepts that action's inputs (`cdktfVersion`, `terraformVersion`, `terraformCloudToken`, `cdktfArgs`) as deprecated aliases, so an existing workflow keeps working after you change the `uses:` line. Note that `cdktfVersion` runs the legacy `cdktf-cli` package — replace it with `cdktnVersion` to run CDK Terrain.
+</Note>
+
+The action does **not** install the engine — pair it with [`opentofu/setup-opentofu`](https://github.com/opentofu/setup-opentofu) (or [`hashicorp/setup-terraform`](https://github.com/hashicorp/setup-terraform)) and disable the CLI wrapper so CDK Terrain can call the binary directly. The action verifies the engine on `PATH` rather than installing it: `engine: auto` (the default) detects whichever is installed, preferring OpenTofu, while `engine: tofu`/`terraform` forces a specific one.
+
+```yaml
+name: cdktn plan
+
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write # let the action comment the plan on the PR
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - uses: opentofu/setup-opentofu@v2
+        with:
+          tofu_version: 1.12.3
+          tofu_wrapper: false # let CDK Terrain call tofu directly
+      - run: npm ci
+      - uses: cdktn-io/action@v1
+        with:
+          mode: plan-only
+          stackName: my-stack
+          cdktnVersion: 0.25.0
+          engine: tofu # omit to auto-detect (prefers OpenTofu)
+          cloudToken: ${{ secrets.TF_API_TOKEN }} # for HCP Terraform
+          githubToken: ${{ github.token }}
+```
+
+After a successful `auto-approve-apply`, the action (v1.1+) sets the `stackOutputs` output: the stack's output values as a JSON string keyed by stack name, excluding sensitive outputs. For example, to use a stack output as the deployment URL (`|| '{}'` covers runs where `stackOutputs` is not set):
+
+```yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ fromJSON(steps.cdktn.outputs.stackOutputs || '{}').my-stack.url }}
+    steps:
+      # ... checkout, setup-node, setup-opentofu, npm ci as above
+      - id: cdktn
+        uses: cdktn-io/action@v1
+        with:
+          mode: auto-approve-apply
+          stackName: my-stack
+          cdktnVersion: 0.25.0
+```
+
+The [action README](https://github.com/cdktn-io/action#usage) has OpenTofu and Terraform usage examples, and its [inputs](https://github.com/cdktn-io/action#inputs) document all options, including the `auto-approve-apply` / `auto-approve-destroy` deployment modes and HCP Terraform configuration.
 
 ### GitHub Actions CI and HCP Terraform
 
