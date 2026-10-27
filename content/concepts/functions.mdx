@@ -460,5 +460,70 @@ To disable all synth-time validations, pass `skipValidation: true` to your
   overrides or hand-built `${...}` interpolations) are not tracked and
   therefore not validated.
 - [Provider-defined functions](https://developer.hashicorp.com/terraform/plugin/framework/functions)
-  (`provider::<name>::<function>`) are out of scope; availability depends on
-  the provider, not the CLI version.
+  (`provider::<name>::<function>`) are validated as a family, not
+  per-function: which functions exist depends on the provider, but *calling
+  any* of them requires Terraform >= 1.8.0 or OpenTofu >= 1.7.0, and that
+  floor is checked against your `targetVersions` (see
+  [Provider-Defined Functions](#provider-defined-functions) below).
+
+## Provider-Defined Functions
+
+Terraform (>= 1.8.0) and OpenTofu (>= 1.7.0) let providers ship their own
+functions, written in HCL as `provider::<name>::<function>(...)`. When a
+provider declares functions, `cdktn get` generates typed bindings for them,
+reachable from the generated provider class via its `functions` property:
+
+```ts
+import { TimeProvider } from "./.gen/providers/time/provider";
+
+const time = new TimeProvider(this, "time");
+
+new TerraformOutput(this, "parsed", {
+  value: time.functions.rfc3339Parse("2026-07-18T00:00:00Z"),
+});
+```
+
+This synthesizes to `${provider::time::rfc3339_parse(...)}`. The function
+namespace is the provider's local name in `required_providers`, which the
+provider construct already knows — there is nothing to configure, and
+provider configuration [aliases](/concepts/providers) play no role in
+function namespaces.
+
+Using any provider-defined function registers a synth-time validation
+against your declared `targetVersions` (unconditionally — no feature flag,
+since this is new API surface): the whole declared range of every targeted
+product must admit provider functions (Terraform >= 1.8.0, OpenTofu
+>= 1.7.0).
+
+For advanced cases (e.g. calling a function of a provider you do not
+instantiate), the lower-level
+`TerraformProviderFunction.invoke(providerLocalName, functionName, args)`
+escape hatch renders the same expression from raw parts.
+
+### Caveats
+
+**Generating bindings needs a newer OpenTofu than using them.** OpenTofu
+supports provider-defined functions in the *language* from 1.7.0, but its
+CLI only *exports provider function schemas* from 1.8.0. Targeting
+`"opentofu": ">=1.7.0"` is therefore valid for synthesizing configurations
+that call provider functions — but running `cdktn get` with an OpenTofu
+binary older than 1.8.0 cannot see the schemas and will not generate the
+bindings (`cdktn get` warns when the fetching binary structurally cannot
+emit sections your `targetVersions` admit). This skew is intentional; the
+usage floor and the schema-emission floor are different boundaries.
+
+**Do not call a provider's functions inside that same provider's
+configuration block.** Provider-defined functions are evaluated by the
+provider itself, so referencing e.g. `aws` provider functions while
+configuring the `AwsProvider` asks Terraform/OpenTofu to evaluate an AWS
+function while the AWS provider is still being configured — both report a
+self-referential cycle. Configure the provider first; call its functions
+from resources, data sources, or outputs.
+
+**Ephemeral values in outputs need both `Fn.ephemeralasnull` and
+`sensitive`.** If a function result (or any other value) is derived from
+ephemeral data — for example an ephemeral resource's attributes — a
+`TerraformOutput` of it must wrap the value in `Fn.ephemeralasnull(...)`
+(ephemeral values cannot appear in non-ephemeral contexts) *and* set
+`sensitive: true` (the value derives from secret ephemeral data). Omitting
+either makes `terraform plan` fail.
