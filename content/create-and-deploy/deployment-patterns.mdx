@@ -51,7 +51,7 @@ Refer to [Automatic Run Triggering](/terraform/cloud-docs/workspaces/settings/vc
 If you use GitHub Actions and want a default review / deployment workflow, use the [`cdktn-io/action`](https://github.com/cdktn-io/action) GitHub Action. It runs the CDKTN CLI (`cdktn-cli`) under the hood on **OpenTofu by default** (or Terraform), comments the plan on your pull requests, and supports `synth-only`, `plan-only`, `auto-approve-apply`, and `auto-approve-destroy` modes. If you need more customization, refer to [GitHub Actions CI and HCP Terraform](#github-actions-ci-and-hcp-terraform).
 
 <Note>
-  `cdktn-io/action` is the maintained successor to HashiCorp's archived [`terraform-cdk-action`](https://github.com/hashicorp/terraform-cdk-action).
+  `cdktn-io/action` is the maintained successor to HashiCorp's archived [`terraform-cdk-action`](https://github.com/hashicorp/terraform-cdk-action). It accepts that action's inputs (`cdktfVersion`, `terraformVersion`, `terraformCloudToken`, `cdktfArgs`) as deprecated aliases, so an existing workflow keeps working after you change the `uses:` line. Note that `cdktfVersion` runs the legacy `cdktf-cli` package — replace it with `cdktnVersion` to run CDK Terrain.
 </Note>
 
 The action does **not** install the engine — pair it with [`opentofu/setup-opentofu`](https://github.com/opentofu/setup-opentofu) (or [`hashicorp/setup-terraform`](https://github.com/hashicorp/setup-terraform)) and disable the CLI wrapper so CDK Terrain can call the binary directly. The action verifies the engine on `PATH` rather than installing it: `engine: auto` (the default) detects whichever is installed, preferring OpenTofu, while `engine: tofu`/`terraform` forces a specific one.
@@ -87,6 +87,25 @@ jobs:
           engine: tofu # omit to auto-detect (prefers OpenTofu)
           cloudToken: ${{ secrets.TF_API_TOKEN }} # for HCP Terraform
           githubToken: ${{ github.token }}
+```
+
+After a successful `auto-approve-apply`, the action (v1.1+) sets the `stackOutputs` output: the stack's output values as a JSON string keyed by stack name, excluding sensitive outputs. For example, to use a stack output as the deployment URL (`|| '{}'` covers runs where `stackOutputs` is not set):
+
+```yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ fromJSON(steps.cdktn.outputs.stackOutputs || '{}').my-stack.url }}
+    steps:
+      # ... checkout, setup-node, setup-opentofu, npm ci as above
+      - id: cdktn
+        uses: cdktn-io/action@v1
+        with:
+          mode: auto-approve-apply
+          stackName: my-stack
+          cdktnVersion: 0.25.0
 ```
 
 For a complete, runnable example see [`vincenthsh/cdktn-docker-demo`](https://github.com/vincenthsh/cdktn-docker-demo). The [action inputs](https://github.com/cdktn-io/action#inputs) document all options, including the `auto-approve-apply` / `auto-approve-destroy` deployment modes and HCP Terraform configuration.
