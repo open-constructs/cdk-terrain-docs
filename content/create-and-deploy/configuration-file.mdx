@@ -124,6 +124,51 @@ Omitting a product means your project does not target it. When you omit `targetV
   Values must be npm semver ranges (for example `>=1.5.7` or `~1.5.7`), not Terraform's `~>` pessimistic constraint syntax. CDK Terrain validates `targetVersions` when it parses `cdktf.json` and fails with an error if a range is malformed or uses `~>`.
 </Warning>
 
+### Write `required_version` from `targetVersions`
+
+CDK Terrain also writes each declared range into the stack's directory as a `required_version` constraint, so Terraform and OpenTofu refuse to run outside the versions your project supports. For example, with:
+
+```json
+{
+  "targetVersions": {
+    "terraform": "^1.9.0",
+    "opentofu": ">=1.8.0"
+  }
+}
+```
+
+each stack's directory gets one file per declared product, next to `cdk.tf.json`:
+
+```json settings.tf.json
+{
+  "terraform": {
+    "required_version": ">= 1.9.0, < 2.0.0"
+  }
+}
+```
+
+```json settings.tofu.json
+{
+  "terraform": {
+    "required_version": ">= 1.8.0"
+  }
+}
+```
+
+Terraform ignores `.tofu.json` files, and OpenTofu 1.8 and later loads `settings.tofu.json` in place of `settings.tf.json`, so each binary enforces only its own range. OpenTofu 1.12 and later only reads `required_version` from `.tofu` and `.tofu.json` files.
+
+- With [HCL output](/concepts/hcl-interoperability), the files are `settings.tf` and `settings.tofu` instead.
+- If you don't declare `targetVersions`, no files are written.
+- If you leave `opentofu` out of `targetVersions`, no `settings.tofu.json` is written.
+- If you leave `terraform` out, the `opentofu` range is written to `settings.tf.json` as well. OpenTofu 1.6 and 1.7 only read `settings.tf.json`, so this constrains them too.
+- A range that allows every version (`*`) gets a file without `required_version`.
+- Ranges that use `||` can't be written as a `required_version` constraint. CDK Terrain shows a warning and leaves that product unconstrained.
+- OpenTofu 1.6 and 1.7 read `settings.tf.json`. If your `opentofu` range includes them and your `terraform` range would reject them, CDK Terrain shows a warning and doesn't write `settings.tf.json`. To constrain Terraform as well, raise the `opentofu` floor to `>=1.8.0`.
+
+<Note>
+  A `required_version` set with an [escape hatch](/concepts/stacks#escape-hatch) ends up in `cdk.tf.json` instead, where Terraform and OpenTofu 1.8–1.11 both enforce it and OpenTofu 1.12 and later ignores it. Remove it once you declare `targetVersions`.
+</Note>
+
 ### Validate the Installed Binary
 
 The declarative checks above never run Terraform or OpenTofu, so they behave identically in CI, package builds, and environments without either installed. To additionally verify that the binary actually installed on a machine falls inside your declared `targetVersions`, opt in with `validateInstalledBinary`:
