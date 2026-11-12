@@ -266,3 +266,15 @@ Projects created with `cdktn init` have the flag enabled. Existing projects can 
 <Note>
   Enabling the flag on an existing project changes all asset hashes and paths once, so referencing resources see a one-time update. See [Canonical Asset Hashes](/release/whats-new/v0-24/canonical-asset-hashes) for details.
 </Note>
+
+## Rebuilding Bundled Assets
+
+A `TerraformAsset` with a `bundler` builds once per hash under the default `SOURCE` hashing, and also when you set a fixed `assetHash`. On later synths, CDKTN keeps the artifact already in the output directory (`cdktf.out` by default) as long as the hash and the asset `type` are unchanged, instead of running the bundler again. See [Bundlers](/release/whats-new/v0-25/asset-pipeline#bundlers) for how a bundler is set up.
+
+Under `SOURCE` hashing, the hash covers the source under `path`, `extraHash`, the bundler's `bundlerKey`, and the `cdktn:assetHashSalt` context value. Changes the hash can't see don't trigger a rebuild, for example:
+
+- A change to the bundler's code or options that its `bundlerKey` doesn't reflect.
+- Files the build reads from outside `path`, such as a working directory above the source or a shared package in a monorepo.
+- A new image behind a mutable Docker tag such as `node:20`.
+
+If you depend on such inputs, fold them into the hash with `extraHash`, for example a version string or a hash of the extra files. To force a rebuild once, delete the output directory, or change `cdktn:assetHashSalt` to rebuild every asset in the app. With a fixed `assetHash`, `extraHash` is not used, so change the `assetHash` value instead. With `AssetHashType.OUTPUT`, the bundler runs on every synth because the hash is taken from its output.
