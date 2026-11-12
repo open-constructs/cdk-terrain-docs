@@ -1,0 +1,296 @@
+---
+title: State Encryption - CDK Terrain
+sidebarTitle: State Encryption
+description: >-
+  Encrypt OpenTofu state and plan files at rest with the OpenTofuEncryption
+  construct.
+---
+
+OpenTofu can [encrypt state and plan files](https://opentofu.org/docs/language/state/encryption/) before it writes them, so they are unreadable without your key wherever they're stored, including a local `terraform.<stack>.tfstate` file. Use the `OpenTofuEncryption` construct to configure it for a stack.
+
+This is different from a backend's own encryption option, such as `encrypt` on `S3Backend`. That encrypts the object in the backend's storage, while OpenTofu's encryption protects the state contents themselves, on any backend.
+
+<Warning>
+  If you lose the key, you lose the state: OpenTofu can't read it, and there is no way to recover it. Keep the passphrase or key somewhere durable, such as a password manager or your organization's secret store, before you enable encryption.
+</Warning>
+
+## Requirements
+
+State encryption is an OpenTofu feature, and CDK Terrain requires OpenTofu 1.8 or later for it. OpenTofu 1.7 supports encryption but doesn't read the `settings.tofu.json` file CDK Terrain writes it to, so it would run with unencrypted state. Declare the versions you support in the [`targetVersions`](/create-and-deploy/configuration-file#declare-target-runtimes) field of `cdktf.json`:
+
+```json
+{
+  "targetVersions": {
+    "opentofu": ">=1.8.0"
+  }
+}
+```
+
+Synthesis fails if your project doesn't target OpenTofu, or if its `opentofu` range includes versions before 1.8. That includes projects that don't declare `targetVersions`, since the default allows OpenTofu 1.6.
+
+Terraform doesn't support state encryption and never reads `settings.tofu.json`. If your project also targets Terraform, synthesis shows a warning: state and plan files that Terraform writes for the stack aren't encrypted.
+
+## Encrypt State and Plans
+
+The following example reads a passphrase from a sensitive [variable](/concepts/variables-and-outputs), derives a key from it with the `pbkdf2` key provider, and encrypts the stack's state and plan files with the `aes_gcm` method.
+
+<CodeGroup>
+
+```ts TypeScript
+import { Construct } from "constructs";
+import { OpenTofuEncryption, TerraformStack, TerraformVariable } from "cdktn";
+
+export class EncryptedStack extends TerraformStack {
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+
+    const passphrase = new TerraformVariable(this, "state_passphrase", {
+      type: "string",
+      sensitive: true,
+    });
+
+    const encryption = new OpenTofuEncryption(this, "encryption");
+    const key = encryption.addKeyProvider("pbkdf2", "main", {
+      passphrase: passphrase.stringValue,
+    });
+    const aes = encryption.addMethod("aes_gcm", "main", { keys: key });
+
+    encryption.encryptState({ method: aes, enforced: true });
+    encryption.encryptPlan({ method: aes, enforced: true });
+  }
+}
+```
+
+```java Java
+import java.util.Map;
+import software.constructs.Construct;
+import io.cdktn.cdktn.OpenTofuEncryption;
+import io.cdktn.cdktn.OpenTofuEncryptionKeyProvider;
+import io.cdktn.cdktn.OpenTofuEncryptionMethod;
+import io.cdktn.cdktn.OpenTofuEncryptionMethodOptions;
+import io.cdktn.cdktn.OpenTofuEncryptionTarget;
+import io.cdktn.cdktn.TerraformStack;
+import io.cdktn.cdktn.TerraformVariable;
+import io.cdktn.cdktn.TerraformVariableConfig;
+
+public class EncryptedStack extends TerraformStack {
+
+    public EncryptedStack(Construct scope, String id) {
+        super(scope, id);
+
+        TerraformVariable passphrase = new TerraformVariable(this, "state_passphrase", TerraformVariableConfig.builder()
+                .type("string")
+                .sensitive(true)
+                .build());
+
+        OpenTofuEncryption encryption = new OpenTofuEncryption(this, "encryption");
+        OpenTofuEncryptionKeyProvider key = encryption.addKeyProvider("pbkdf2", "main",
+                Map.of("passphrase", passphrase.getStringValue()));
+        OpenTofuEncryptionMethod aes = encryption.addMethod("aes_gcm", "main",
+                OpenTofuEncryptionMethodOptions.builder().keys(key).build());
+
+        encryption.encryptState(OpenTofuEncryptionTarget.builder().method(aes).enforced(true).build());
+        encryption.encryptPlan(OpenTofuEncryptionTarget.builder().method(aes).enforced(true).build());
+    }
+}
+```
+
+```python Python
+from constructs import Construct
+from cdktn import OpenTofuEncryption, TerraformStack, TerraformVariable
+
+class EncryptedStack(TerraformStack):
+    def __init__(self, scope: Construct, id: str):
+        super().__init__(scope, id)
+
+        passphrase = TerraformVariable(self, "state_passphrase",
+            type = "string",
+            sensitive = True
+        )
+
+        encryption = OpenTofuEncryption(self, "encryption")
+        key = encryption.add_key_provider("pbkdf2", "main", {
+            "passphrase": passphrase.string_value
+        })
+        aes = encryption.add_method("aes_gcm", "main", keys = key)
+
+        encryption.encrypt_state(method = aes, enforced = True)
+        encryption.encrypt_plan(method = aes, enforced = True)
+```
+
+```csharp C#
+using System.Collections.Generic;
+using Constructs;
+using Io.Cdktn;
+
+namespace Examples
+{
+    class EncryptedStack : TerraformStack
+    {
+        public EncryptedStack(Construct scope, string name) : base(scope, name)
+        {
+            TerraformVariable passphrase = new TerraformVariable(this, "state_passphrase", new TerraformVariableConfig
+            {
+                Type = "string",
+                Sensitive = true
+            });
+
+            OpenTofuEncryption encryption = new OpenTofuEncryption(this, "encryption");
+            IOpenTofuEncryptionKeyProvider key = encryption.AddKeyProvider("pbkdf2", "main", new Dictionary<string, object>
+            {
+                { "passphrase", passphrase.StringValue }
+            });
+            IOpenTofuEncryptionMethod aes = encryption.AddMethod("aes_gcm", "main", new OpenTofuEncryptionMethodOptions
+            {
+                Keys = key
+            });
+
+            encryption.EncryptState(new OpenTofuEncryptionTarget { Method = aes, Enforced = true });
+            encryption.EncryptPlan(new OpenTofuEncryptionTarget { Method = aes, Enforced = true });
+        }
+    }
+}
+```
+
+```go Go
+import (
+	"github.com/aws/constructs-go/constructs/v10"
+	"github.com/aws/jsii-runtime-go"
+	"github.com/open-constructs/cdk-terrain-go/cdktn"
+)
+
+func NewEncryptedStack(scope constructs.Construct, name string) cdktn.TerraformStack {
+	stack := cdktn.NewTerraformStack(scope, &name)
+
+	passphrase := cdktn.NewTerraformVariable(stack, jsii.String("state_passphrase"), &cdktn.TerraformVariableConfig{
+		Type:      jsii.String("string"),
+		Sensitive: jsii.Bool(true),
+	})
+
+	encryption := cdktn.NewOpenTofuEncryption(stack, jsii.String("encryption"))
+	key := encryption.AddKeyProvider(jsii.String("pbkdf2"), jsii.String("main"), &map[string]interface{}{
+		"passphrase": passphrase.StringValue(),
+	})
+	aes := encryption.AddMethod(jsii.String("aes_gcm"), jsii.String("main"), &cdktn.OpenTofuEncryptionMethodOptions{
+		Keys: key,
+	})
+
+	encryption.EncryptState(&cdktn.OpenTofuEncryptionTarget{Method: aes, Enforced: jsii.Bool(true)})
+	encryption.EncryptPlan(&cdktn.OpenTofuEncryptionTarget{Method: aes, Enforced: jsii.Bool(true)})
+
+	return stack
+}
+```
+
+</CodeGroup>
+
+Set the passphrase in the `TF_VAR_state_passphrase` environment variable before you run `cdktn diff` or `cdktn deploy`. It must be at least 16 characters long. If the variable isn't set, OpenTofu prompts for it. Never write the passphrase into your code or `cdktf.json`.
+
+With `enforced` set, OpenTofu refuses to write the state or plan without encrypting it. Leave it unset on the state while you [migrate existing state](#migrate-existing-state).
+
+CDK Terrain writes the configuration to `settings.tofu.json` in the stack's directory, next to `cdk.tf.json`, together with the `required_version` it writes from `targetVersions`. With [HCL output](/concepts/hcl-interoperability), the file is `settings.tofu` instead.
+
+```json settings.tofu.json
+{
+  "terraform": {
+    "required_version": ">= 1.8.0",
+    "encryption": {
+      "key_provider": {
+        "pbkdf2": {
+          "main": {
+            "passphrase": "${var.state_passphrase}"
+          }
+        }
+      },
+      "method": {
+        "aes_gcm": {
+          "main": {
+            "keys": "key_provider.pbkdf2.main"
+          }
+        }
+      },
+      "state": {
+        "method": "method.aes_gcm.main",
+        "enforced": true
+      },
+      "plan": {
+        "method": "method.aes_gcm.main",
+        "enforced": true
+      }
+    }
+  }
+}
+```
+
+### Other Key Providers
+
+`addKeyProvider` and `addMethod` take the type and attributes that OpenTofu documents, so you can use any [key provider](https://opentofu.org/docs/language/state/encryption/#key-providers), such as `aws_kms`, `gcp_kms`, or `openbao`, in the same way as `pbkdf2`. Pass nested settings, such as `assume_role` for `aws_kms`, as objects.
+
+A method can also use a key provider that you define outside the code, in the `TF_ENCRYPTION` environment variable. Pass its type and name in place of the value `addKeyProvider` returns, for example `{ type: "aws_kms", name: "main" }`.
+
+## Migrate Existing State
+
+OpenTofu can't read unencrypted state once encryption is configured, unless you give it a fallback. To encrypt a stack that already has state, add an `unencrypted` method as the state's `fallback`, without `enforced`:
+
+<CodeGroup>
+
+```ts TypeScript
+const unencrypted = encryption.addMethod("unencrypted", "migrate");
+encryption.encryptState({ method: aes, fallback: unencrypted });
+```
+
+```java Java
+OpenTofuEncryptionMethod unencrypted = encryption.addMethod("unencrypted", "migrate");
+encryption.encryptState(OpenTofuEncryptionTarget.builder().method(aes).fallback(unencrypted).build());
+```
+
+```python Python
+unencrypted = encryption.add_method("unencrypted", "migrate")
+encryption.encrypt_state(method = aes, fallback = unencrypted)
+```
+
+```csharp C#
+IOpenTofuEncryptionMethod unencrypted = encryption.AddMethod("unencrypted", "migrate");
+encryption.EncryptState(new OpenTofuEncryptionTarget { Method = aes, Fallback = unencrypted });
+```
+
+```go Go
+unencrypted := encryption.AddMethod(jsii.String("unencrypted"), jsii.String("migrate"), nil)
+encryption.EncryptState(&cdktn.OpenTofuEncryptionTarget{Method: aes, Fallback: unencrypted})
+```
+
+</CodeGroup>
+
+Run `cdktn deploy`. OpenTofu reads the unencrypted state through the fallback and writes it back encrypted, even when there are no changes to apply. Then remove the fallback and set `enforced`, so OpenTofu stops accepting unencrypted state.
+
+## Read Encrypted State from Other Stacks
+
+When one stack uses another stack's outputs, CDK Terrain reads them with a `terraform_remote_state` data source (see [Cross-Stack References](/concepts/stacks#cross-stack-references)). If the other stack's state is encrypted, the stack reading it needs the key as well. Otherwise, OpenTofu fails with "This state file is encrypted and can not be read without an encryption configuration".
+
+Configure the method for the stack's remote state data sources with `encryptRemoteStateDataSources`, in the stack that reads the outputs:
+
+<CodeGroup>
+
+```ts TypeScript
+encryption.encryptRemoteStateDataSources({ method: aes });
+```
+
+```java Java
+encryption.encryptRemoteStateDataSources(OpenTofuEncryptionRemoteStateTarget.builder().method(aes).build());
+```
+
+```python Python
+encryption.encrypt_remote_state_data_sources(method = aes)
+```
+
+```csharp C#
+encryption.EncryptRemoteStateDataSources(new OpenTofuEncryptionRemoteStateTarget { Method = aes });
+```
+
+```go Go
+encryption.EncryptRemoteStateDataSources(&cdktn.OpenTofuEncryptionRemoteStateTarget{Method: aes})
+```
+
+</CodeGroup>
+
+The method applies to every remote state data source in the stack, so the stacks it reads from need to use the same key.

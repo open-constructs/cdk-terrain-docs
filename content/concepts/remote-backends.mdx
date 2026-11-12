@@ -12,6 +12,10 @@ By default, `cdktn init` will configure a HCP Terraform workspace and a correspo
 
 You can configure your CDK Terrain (CDKTN) remote backend to be [HCP Terraform](https://cloud.hashicorp.com/products/terraform), another Terraform [supported backend](#supported-backends), or a custom location.
 
+<Note>
+  Backend options such as `encrypt` on `S3Backend` encrypt the state in the backend's storage. To encrypt the state itself on any backend, including local state, use OpenTofu's [state encryption](/concepts/state-encryption).
+</Note>
+
 ## When to Use Remote Backends
 
 Consider using a remote backend when multiple individuals or teams need access to your infrastructure state data.
