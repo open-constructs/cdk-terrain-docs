@@ -42,6 +42,7 @@
                   "concepts/functions",
                   "concepts/iterators",
                   "concepts/remote-backends",
+                  "concepts/state-encryption",
                   "concepts/aspects",
                   "concepts/mixins",
                   "concepts/assets",
