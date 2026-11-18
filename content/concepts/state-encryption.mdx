@@ -294,7 +294,67 @@ You don't add the key provider and method separately: CDK Terrain writes the one
 
 ### Other Key Providers
 
-`OpenTofuKeyProvider.custom` takes the type and attributes of any [key provider](https://opentofu.org/docs/language/state/encryption/#key-providers) that OpenTofu documents, such as `aws_kms`, `gcp_kms`, or `openbao`. Pass nested settings, such as `assume_role` for `aws_kms`, as objects. `OpenTofuEncryptionMethod.custom` does the same for methods.
+Besides `pbkdf2`, `OpenTofuKeyProvider` has a factory for each [key provider](https://opentofu.org/docs/language/state/encryption/#key-providers) that OpenTofu ships: `awsKms`, `gcpKms`, `azureVault`, `openBao`, and `external`. Their settings are OpenTofu's attributes in camel case, such as `kmsKeyId` for `kms_key_id`. The following example takes its key from AWS KMS instead of a passphrase. It replaces both the passphrase variable and the `withKeys` call from the first example:
+
+<CodeGroup>
+
+```ts TypeScript
+OpenTofuEncryption.withKeys(this, "encryption", {
+  keys: OpenTofuKeyProvider.awsKms("main", {
+    kmsKeyId: "alias/state",
+    keySpec: "AES_256",
+    region: "us-east-1",
+  }),
+});
+```
+
+```java Java
+OpenTofuEncryption.withKeys(this, "encryption", OpenTofuEncryptionWithKeysOptions.builder()
+        .keys(OpenTofuKeyProvider.awsKms("main", OpenTofuAwsKmsKeyProviderConfig.builder()
+                .kmsKeyId("alias/state")
+                .keySpec("AES_256")
+                .region("us-east-1")
+                .build()))
+        .build());
+```
+
+```python Python
+OpenTofuEncryption.with_keys(self, "encryption",
+    keys = OpenTofuKeyProvider.aws_kms("main",
+        kms_key_id = "alias/state",
+        key_spec = "AES_256",
+        region = "us-east-1"
+    )
+)
+```
+
+```csharp C#
+OpenTofuEncryption.WithKeys(this, "encryption", new OpenTofuEncryptionWithKeysOptions
+{
+    Keys = OpenTofuKeyProvider.AwsKms("main", new OpenTofuAwsKmsKeyProviderConfig
+    {
+        KmsKeyId = "alias/state",
+        KeySpec = "AES_256",
+        Region = "us-east-1"
+    })
+});
+```
+
+```go Go
+cdktn.OpenTofuEncryption_WithKeys(stack, jsii.String("encryption"), &cdktn.OpenTofuEncryptionWithKeysOptions{
+	Keys: cdktn.OpenTofuKeyProvider_AwsKms(jsii.String("main"), &cdktn.OpenTofuAwsKmsKeyProviderConfig{
+		KmsKeyId: jsii.String("alias/state"),
+		KeySpec:  jsii.String("AES_256"),
+		Region:   jsii.String("us-east-1"),
+	}),
+})
+```
+
+</CodeGroup>
+
+The cloud key providers and `openBao` read credentials from the usual environment variables and files unless you set them. If you set a secret, such as `secretKey`, read it from a sensitive variable as with the passphrase. `azureVault` needs OpenTofu 1.11 and `external` needs OpenTofu 1.10, and synthesis fails if your `opentofu` range includes earlier versions. `OpenTofuEncryptionMethod.external` encrypts with programs you provide, and also needs OpenTofu 1.10.
+
+For a key provider without a factory, `OpenTofuKeyProvider.custom` takes the type and attributes that OpenTofu documents, and writes nested settings as objects. `OpenTofuEncryptionMethod.custom` does the same for methods.
 
 A method can also use a key provider that you define outside the code, in the `TF_ENCRYPTION` environment variable. Refer to it with `OpenTofuKeyProvider.fromEnvironment`, which takes its type and name. CDK Terrain then references it without writing it. `OpenTofuEncryptionMethod.fromEnvironment` does the same for methods.
 
