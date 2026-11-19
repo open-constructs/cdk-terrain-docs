@@ -12,6 +12,8 @@ When you set up a new project via `cdktn init`, you can supply one of the [built
 
 A template is a directory that contains at least a `cdktf.json` file, which is required for the `cdktn` CLI. When users run `cdktn init`, CDKTN downloads and and extracts a zip archive containing the files for the specified template. To create the project, it then searches all directories and extracts the directory containing the `cdktf.json` file. This allows you to create content (e.g. a `README.md`) in the root directory of your remote template that won't appear in the generated project directory.
 
+The file can also be named `cdktf.json{{}}`, as it is in the built-in templates. sscaff removes `{{}}` from file names, so the generated project still gets a `cdktf.json`. Use this name when your `cdktf.json` contains a substitution that isn't valid JSON until it's rendered, so editors and linters don't report errors in the template.
+
 You can use the library [`sscaff`](https://github.com/awslabs/node-sscaff) to scaffold a new project. The `sscaff` library copies all files into the new project directory while allowing for substitutions and hooks.
 
 ### Substitutions
