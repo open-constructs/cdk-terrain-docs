@@ -17,7 +17,11 @@ If you would like to add testing to an existing project, refer the following res
   ```js
   const cdktn = require("cdktn");
   cdktn.Testing.setupJest();
+  // Remove the temp dirs Testing.app() and Testing.fullSynth() create, after each test file
+  afterAll(() => cdktn.Testing.cleanup?.());
   ```
+
+  <Note>`Testing.app()` (without an `outdir`) and `Testing.fullSynth()` create a temp directory on every call. They are removed automatically when the process exits, but Jest runs each test file in a sandboxed process where that never fires, so call `Testing.cleanup()` from an `afterAll` hook as shown above. A caller-supplied `outdir` is never touched by `Testing.cleanup()`.</Note>
 
 - **Python:** Follow the [Get Started guide](https://docs.pytest.org/en/7.1.x/getting-started.html) for pytest. The assertions for CDKTN are available in the `cdktn` package under `Testing`.
 - **Java:** Follow the [Using JUnit documentation](https://docs.gradle.org/current/userguide/java_testing.html). The assertions for CDKTN specific are available in the `cdktn` package under `Testing`.

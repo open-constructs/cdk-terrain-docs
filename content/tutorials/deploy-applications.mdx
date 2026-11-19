@@ -284,6 +284,8 @@ Create `app/jest.setup.js`.
 ```js JavaScript
 const cdktn = require('cdktn')
 cdktn.Testing.setupJest()
+// Remove the temp dirs Testing.app() and Testing.fullSynth() create, after each test file
+afterAll(() => cdktn.Testing.cleanup?.())
 ```
 
 Create `app/__tests__/kubernetes-web-app-test.ts`.
