@@ -42,7 +42,7 @@ The following example reads a passphrase from a sensitive [variable](/concepts/v
 import { Construct } from "constructs";
 import {
   OpenTofuEncryption,
-  OpenTofuKeyProvider,
+  OpenTofuPbkdf2KeyProvider,
   TerraformStack,
   TerraformVariable,
 } from "cdktn";
@@ -57,7 +57,7 @@ export class EncryptedStack extends TerraformStack {
     });
 
     OpenTofuEncryption.withKeys(this, "encryption", {
-      keys: OpenTofuKeyProvider.pbkdf2("main", {
+      keys: new OpenTofuPbkdf2KeyProvider("main", {
         passphrase: passphrase.stringValue,
       }),
     });
@@ -69,7 +69,7 @@ export class EncryptedStack extends TerraformStack {
 import software.constructs.Construct;
 import io.cdktn.cdktn.OpenTofuEncryption;
 import io.cdktn.cdktn.OpenTofuEncryptionWithKeysOptions;
-import io.cdktn.cdktn.OpenTofuKeyProvider;
+import io.cdktn.cdktn.OpenTofuPbkdf2KeyProvider;
 import io.cdktn.cdktn.OpenTofuPbkdf2KeyProviderConfig;
 import io.cdktn.cdktn.TerraformStack;
 import io.cdktn.cdktn.TerraformVariable;
@@ -86,7 +86,7 @@ public class EncryptedStack extends TerraformStack {
                 .build());
 
         OpenTofuEncryption.withKeys(this, "encryption", OpenTofuEncryptionWithKeysOptions.builder()
-                .keys(OpenTofuKeyProvider.pbkdf2("main", OpenTofuPbkdf2KeyProviderConfig.builder()
+                .keys(new OpenTofuPbkdf2KeyProvider("main", OpenTofuPbkdf2KeyProviderConfig.builder()
                         .passphrase(passphrase.getStringValue())
                         .build()))
                 .build());
@@ -96,7 +96,7 @@ public class EncryptedStack extends TerraformStack {
 
 ```python Python
 from constructs import Construct
-from cdktn import OpenTofuEncryption, OpenTofuKeyProvider, TerraformStack, TerraformVariable
+from cdktn import OpenTofuEncryption, OpenTofuPbkdf2KeyProvider, TerraformStack, TerraformVariable
 
 class EncryptedStack(TerraformStack):
     def __init__(self, scope: Construct, id: str):
@@ -108,7 +108,7 @@ class EncryptedStack(TerraformStack):
         )
 
         OpenTofuEncryption.with_keys(self, "encryption",
-            keys = OpenTofuKeyProvider.pbkdf2("main",
+            keys = OpenTofuPbkdf2KeyProvider("main",
                 passphrase = passphrase.string_value
             )
         )
@@ -132,7 +132,7 @@ namespace Examples
 
             OpenTofuEncryption.WithKeys(this, "encryption", new OpenTofuEncryptionWithKeysOptions
             {
-                Keys = OpenTofuKeyProvider.Pbkdf2("main", new OpenTofuPbkdf2KeyProviderConfig
+                Keys = new OpenTofuPbkdf2KeyProvider("main", new OpenTofuPbkdf2KeyProviderConfig
                 {
                     Passphrase = passphrase.StringValue
                 })
@@ -158,7 +158,7 @@ func NewEncryptedStack(scope constructs.Construct, name string) cdktn.TerraformS
 	})
 
 	cdktn.OpenTofuEncryption_WithKeys(stack, jsii.String("encryption"), &cdktn.OpenTofuEncryptionWithKeysOptions{
-		Keys: cdktn.OpenTofuKeyProvider_Pbkdf2(jsii.String("main"), &cdktn.OpenTofuPbkdf2KeyProviderConfig{
+		Keys: cdktn.NewOpenTofuPbkdf2KeyProvider(jsii.String("main"), &cdktn.OpenTofuPbkdf2KeyProviderConfig{
 			Passphrase: passphrase.StringValue(),
 		}),
 	})
@@ -219,8 +219,8 @@ To choose the method for the state, the plan files, and other stacks' state sepa
 <CodeGroup>
 
 ```ts TypeScript
-const aes = OpenTofuEncryptionMethod.aesGcm("main", {
-  keys: OpenTofuKeyProvider.pbkdf2("main", {
+const aes = new OpenTofuAesGcmMethod("main", {
+  keys: new OpenTofuPbkdf2KeyProvider("main", {
     passphrase: passphrase.stringValue,
   }),
 });
@@ -232,8 +232,8 @@ new OpenTofuEncryption(this, "encryption", {
 ```
 
 ```java Java
-OpenTofuEncryptionMethod aes = OpenTofuEncryptionMethod.aesGcm("main", OpenTofuAesGcmMethodConfig.builder()
-        .keys(OpenTofuKeyProvider.pbkdf2("main", OpenTofuPbkdf2KeyProviderConfig.builder()
+OpenTofuEncryptionMethod aes = new OpenTofuAesGcmMethod("main", OpenTofuAesGcmMethodConfig.builder()
+        .keys(new OpenTofuPbkdf2KeyProvider("main", OpenTofuPbkdf2KeyProviderConfig.builder()
                 .passphrase(passphrase.getStringValue())
                 .build()))
         .build());
@@ -245,8 +245,8 @@ new OpenTofuEncryption(this, "encryption", OpenTofuEncryptionConfig.builder()
 ```
 
 ```python Python
-aes = OpenTofuEncryptionMethod.aes_gcm("main",
-    keys = OpenTofuKeyProvider.pbkdf2("main",
+aes = OpenTofuAesGcmMethod("main",
+    keys = OpenTofuPbkdf2KeyProvider("main",
         passphrase = passphrase.string_value
     )
 )
@@ -258,9 +258,9 @@ OpenTofuEncryption(self, "encryption",
 ```
 
 ```csharp C#
-OpenTofuEncryptionMethod aes = OpenTofuEncryptionMethod.AesGcm("main", new OpenTofuAesGcmMethodConfig
+OpenTofuEncryptionMethod aes = new OpenTofuAesGcmMethod("main", new OpenTofuAesGcmMethodConfig
 {
-    Keys = OpenTofuKeyProvider.Pbkdf2("main", new OpenTofuPbkdf2KeyProviderConfig
+    Keys = new OpenTofuPbkdf2KeyProvider("main", new OpenTofuPbkdf2KeyProviderConfig
     {
         Passphrase = passphrase.StringValue
     })
@@ -274,8 +274,8 @@ new OpenTofuEncryption(this, "encryption", new OpenTofuEncryptionConfig
 ```
 
 ```go Go
-aes := cdktn.OpenTofuEncryptionMethod_AesGcm(jsii.String("main"), &cdktn.OpenTofuAesGcmMethodConfig{
-	Keys: cdktn.OpenTofuKeyProvider_Pbkdf2(jsii.String("main"), &cdktn.OpenTofuPbkdf2KeyProviderConfig{
+aes := cdktn.NewOpenTofuAesGcmMethod(jsii.String("main"), &cdktn.OpenTofuAesGcmMethodConfig{
+	Keys: cdktn.NewOpenTofuPbkdf2KeyProvider(jsii.String("main"), &cdktn.OpenTofuPbkdf2KeyProviderConfig{
 		Passphrase: passphrase.StringValue(),
 	}),
 })
@@ -294,13 +294,13 @@ You don't add the key provider and method separately: CDK Terrain writes the one
 
 ### Other Key Providers
 
-Besides `pbkdf2`, `OpenTofuKeyProvider` has a factory for each [key provider](https://opentofu.org/docs/language/state/encryption/#key-providers) that OpenTofu ships: `awsKms`, `gcpKms`, `azureVault`, `openBao`, and `external`. Their settings are OpenTofu's attributes in camel case, such as `kmsKeyId` for `kms_key_id`. The following example takes its key from AWS KMS instead of a passphrase. It replaces both the passphrase variable and the `withKeys` call from the first example:
+Besides `OpenTofuPbkdf2KeyProvider`, there's a class for each [key provider](https://opentofu.org/docs/language/state/encryption/#key-providers) that OpenTofu ships: `OpenTofuAwsKmsKeyProvider`, `OpenTofuGcpKmsKeyProvider`, `OpenTofuAzureVaultKeyProvider`, `OpenTofuOpenBaoKeyProvider`, and `OpenTofuExternalKeyProvider`. Their settings are OpenTofu's attributes in camel case, such as `kmsKeyId` for `kms_key_id`. The following example takes its key from AWS KMS instead of a passphrase. It replaces both the passphrase variable and the `withKeys` call from the first example:
 
 <CodeGroup>
 
 ```ts TypeScript
 OpenTofuEncryption.withKeys(this, "encryption", {
-  keys: OpenTofuKeyProvider.awsKms("main", {
+  keys: new OpenTofuAwsKmsKeyProvider("main", {
     kmsKeyId: "alias/state",
     keySpec: "AES_256",
     region: "us-east-1",
@@ -310,7 +310,7 @@ OpenTofuEncryption.withKeys(this, "encryption", {
 
 ```java Java
 OpenTofuEncryption.withKeys(this, "encryption", OpenTofuEncryptionWithKeysOptions.builder()
-        .keys(OpenTofuKeyProvider.awsKms("main", OpenTofuAwsKmsKeyProviderConfig.builder()
+        .keys(new OpenTofuAwsKmsKeyProvider("main", OpenTofuAwsKmsKeyProviderConfig.builder()
                 .kmsKeyId("alias/state")
                 .keySpec("AES_256")
                 .region("us-east-1")
@@ -320,7 +320,7 @@ OpenTofuEncryption.withKeys(this, "encryption", OpenTofuEncryptionWithKeysOption
 
 ```python Python
 OpenTofuEncryption.with_keys(self, "encryption",
-    keys = OpenTofuKeyProvider.aws_kms("main",
+    keys = OpenTofuAwsKmsKeyProvider("main",
         kms_key_id = "alias/state",
         key_spec = "AES_256",
         region = "us-east-1"
@@ -331,7 +331,7 @@ OpenTofuEncryption.with_keys(self, "encryption",
 ```csharp C#
 OpenTofuEncryption.WithKeys(this, "encryption", new OpenTofuEncryptionWithKeysOptions
 {
-    Keys = OpenTofuKeyProvider.AwsKms("main", new OpenTofuAwsKmsKeyProviderConfig
+    Keys = new OpenTofuAwsKmsKeyProvider("main", new OpenTofuAwsKmsKeyProviderConfig
     {
         KmsKeyId = "alias/state",
         KeySpec = "AES_256",
@@ -342,7 +342,7 @@ OpenTofuEncryption.WithKeys(this, "encryption", new OpenTofuEncryptionWithKeysOp
 
 ```go Go
 cdktn.OpenTofuEncryption_WithKeys(stack, jsii.String("encryption"), &cdktn.OpenTofuEncryptionWithKeysOptions{
-	Keys: cdktn.OpenTofuKeyProvider_AwsKms(jsii.String("main"), &cdktn.OpenTofuAwsKmsKeyProviderConfig{
+	Keys: cdktn.NewOpenTofuAwsKmsKeyProvider(jsii.String("main"), &cdktn.OpenTofuAwsKmsKeyProviderConfig{
 		KmsKeyId: jsii.String("alias/state"),
 		KeySpec:  jsii.String("AES_256"),
 		Region:   jsii.String("us-east-1"),
@@ -352,9 +352,9 @@ cdktn.OpenTofuEncryption_WithKeys(stack, jsii.String("encryption"), &cdktn.OpenT
 
 </CodeGroup>
 
-The cloud key providers and `openBao` read credentials from the usual environment variables and files unless you set them. If you set a secret, such as `secretKey`, read it from a sensitive variable as with the passphrase. `azureVault` needs OpenTofu 1.11 and `external` needs OpenTofu 1.10, and synthesis fails if your `opentofu` range includes earlier versions. `OpenTofuEncryptionMethod.external` encrypts with programs you provide, and also needs OpenTofu 1.10.
+The cloud and OpenBao key providers read credentials from the usual environment variables and files unless you set them. If you set a secret, such as `secretKey`, read it from a sensitive variable as with the passphrase. `OpenTofuAzureVaultKeyProvider` needs OpenTofu 1.11 and `OpenTofuExternalKeyProvider` needs OpenTofu 1.10, and synthesis fails if your `opentofu` range includes earlier versions. `OpenTofuExternalMethod` encrypts with programs you provide, and also needs OpenTofu 1.10.
 
-For a key provider without a factory, `OpenTofuKeyProvider.custom` takes the type and attributes that OpenTofu documents, and writes nested settings as objects. `OpenTofuEncryptionMethod.custom` does the same for methods.
+For a key provider without its own class, `OpenTofuKeyProvider.custom` takes the type and attributes that OpenTofu documents, and writes nested settings as objects. `OpenTofuEncryptionMethod.custom` does the same for methods.
 
 A method can also use a key provider that you define outside the code, in the `TF_ENCRYPTION` environment variable. Refer to it with `OpenTofuKeyProvider.fromEnvironment`, which takes its type and name. CDK Terrain then references it without writing it. `OpenTofuEncryptionMethod.fromEnvironment` does the same for methods.
 
@@ -366,7 +366,7 @@ OpenTofu can't read unencrypted state once encryption is configured, unless you 
 
 ```ts TypeScript
 OpenTofuEncryption.withKeys(this, "encryption", {
-  keys: OpenTofuKeyProvider.pbkdf2("main", {
+  keys: new OpenTofuPbkdf2KeyProvider("main", {
     passphrase: passphrase.stringValue,
   }),
   migrateFromUnencrypted: true,
@@ -375,7 +375,7 @@ OpenTofuEncryption.withKeys(this, "encryption", {
 
 ```java Java
 OpenTofuEncryption.withKeys(this, "encryption", OpenTofuEncryptionWithKeysOptions.builder()
-        .keys(OpenTofuKeyProvider.pbkdf2("main", OpenTofuPbkdf2KeyProviderConfig.builder()
+        .keys(new OpenTofuPbkdf2KeyProvider("main", OpenTofuPbkdf2KeyProviderConfig.builder()
                 .passphrase(passphrase.getStringValue())
                 .build()))
         .migrateFromUnencrypted(true)
@@ -384,7 +384,7 @@ OpenTofuEncryption.withKeys(this, "encryption", OpenTofuEncryptionWithKeysOption
 
 ```python Python
 OpenTofuEncryption.with_keys(self, "encryption",
-    keys = OpenTofuKeyProvider.pbkdf2("main",
+    keys = OpenTofuPbkdf2KeyProvider("main",
         passphrase = passphrase.string_value
     ),
     migrate_from_unencrypted = True
@@ -394,7 +394,7 @@ OpenTofuEncryption.with_keys(self, "encryption",
 ```csharp C#
 OpenTofuEncryption.WithKeys(this, "encryption", new OpenTofuEncryptionWithKeysOptions
 {
-    Keys = OpenTofuKeyProvider.Pbkdf2("main", new OpenTofuPbkdf2KeyProviderConfig
+    Keys = new OpenTofuPbkdf2KeyProvider("main", new OpenTofuPbkdf2KeyProviderConfig
     {
         Passphrase = passphrase.StringValue
     }),
@@ -404,7 +404,7 @@ OpenTofuEncryption.WithKeys(this, "encryption", new OpenTofuEncryptionWithKeysOp
 
 ```go Go
 cdktn.OpenTofuEncryption_WithKeys(stack, jsii.String("encryption"), &cdktn.OpenTofuEncryptionWithKeysOptions{
-	Keys: cdktn.OpenTofuKeyProvider_Pbkdf2(jsii.String("main"), &cdktn.OpenTofuPbkdf2KeyProviderConfig{
+	Keys: cdktn.NewOpenTofuPbkdf2KeyProvider(jsii.String("main"), &cdktn.OpenTofuPbkdf2KeyProviderConfig{
 		Passphrase: passphrase.StringValue(),
 	}),
 	MigrateFromUnencrypted: jsii.Bool(true),
@@ -413,7 +413,7 @@ cdktn.OpenTofuEncryption_WithKeys(stack, jsii.String("encryption"), &cdktn.OpenT
 
 </CodeGroup>
 
-This adds an `unencrypted` method as the `fallback` for the state and for other stacks' state, and leaves `enforced` off for the state, since OpenTofu rejects an `unencrypted` method in an enforced target. If you configure the targets yourself, add the fallback with `OpenTofuEncryptionMethod.unencrypted`.
+This adds an `unencrypted` method as the `fallback` for the state and for other stacks' state, and leaves `enforced` off for the state, since OpenTofu rejects an `unencrypted` method in an enforced target. If you configure the targets yourself, add the fallback with `OpenTofuUnencryptedMethod`.
 
 Run `cdktn deploy`. OpenTofu reads the unencrypted state through the fallback and writes it back encrypted, even when there are no changes to apply. Then remove `migrateFromUnencrypted`, so OpenTofu stops accepting unencrypted state.
 
@@ -434,8 +434,8 @@ const networkPassphrase = new TerraformVariable(this, "network_passphrase", {
 });
 encryption.addRemoteStateSource({
   fromStack: network,
-  method: OpenTofuEncryptionMethod.aesGcm("network", {
-    keys: OpenTofuKeyProvider.pbkdf2("network", {
+  method: new OpenTofuAesGcmMethod("network", {
+    keys: new OpenTofuPbkdf2KeyProvider("network", {
       passphrase: networkPassphrase.stringValue,
     }),
   }),
@@ -449,8 +449,8 @@ TerraformVariable networkPassphrase = new TerraformVariable(this, "network_passp
         .build());
 encryption.addRemoteStateSource(OpenTofuEncryptionRemoteStateSource.builder()
         .fromStack(network)
-        .method(OpenTofuEncryptionMethod.aesGcm("network", OpenTofuAesGcmMethodConfig.builder()
-                .keys(OpenTofuKeyProvider.pbkdf2("network", OpenTofuPbkdf2KeyProviderConfig.builder()
+        .method(new OpenTofuAesGcmMethod("network", OpenTofuAesGcmMethodConfig.builder()
+                .keys(new OpenTofuPbkdf2KeyProvider("network", OpenTofuPbkdf2KeyProviderConfig.builder()
                         .passphrase(networkPassphrase.getStringValue())
                         .build()))
                 .build()))
@@ -464,8 +464,8 @@ network_passphrase = TerraformVariable(self, "network_passphrase",
 )
 encryption.add_remote_state_source(
     from_stack = network,
-    method = OpenTofuEncryptionMethod.aes_gcm("network",
-        keys = OpenTofuKeyProvider.pbkdf2("network",
+    method = OpenTofuAesGcmMethod("network",
+        keys = OpenTofuPbkdf2KeyProvider("network",
             passphrase = network_passphrase.string_value
         )
     )
@@ -481,9 +481,9 @@ TerraformVariable networkPassphrase = new TerraformVariable(this, "network_passp
 encryption.AddRemoteStateSource(new OpenTofuEncryptionRemoteStateSource
 {
     FromStack = network,
-    Method = OpenTofuEncryptionMethod.AesGcm("network", new OpenTofuAesGcmMethodConfig
+    Method = new OpenTofuAesGcmMethod("network", new OpenTofuAesGcmMethodConfig
     {
-        Keys = OpenTofuKeyProvider.Pbkdf2("network", new OpenTofuPbkdf2KeyProviderConfig
+        Keys = new OpenTofuPbkdf2KeyProvider("network", new OpenTofuPbkdf2KeyProviderConfig
         {
             Passphrase = networkPassphrase.StringValue
         })
@@ -498,8 +498,8 @@ networkPassphrase := cdktn.NewTerraformVariable(stack, jsii.String("network_pass
 })
 encryption.AddRemoteStateSource(&cdktn.OpenTofuEncryptionRemoteStateSource{
 	FromStack: network,
-	Method: cdktn.OpenTofuEncryptionMethod_AesGcm(jsii.String("network"), &cdktn.OpenTofuAesGcmMethodConfig{
-		Keys: cdktn.OpenTofuKeyProvider_Pbkdf2(jsii.String("network"), &cdktn.OpenTofuPbkdf2KeyProviderConfig{
+	Method: cdktn.NewOpenTofuAesGcmMethod(jsii.String("network"), &cdktn.OpenTofuAesGcmMethodConfig{
+		Keys: cdktn.NewOpenTofuPbkdf2KeyProvider(jsii.String("network"), &cdktn.OpenTofuPbkdf2KeyProviderConfig{
 			Passphrase: networkPassphrase.StringValue(),
 		}),
 	}),
